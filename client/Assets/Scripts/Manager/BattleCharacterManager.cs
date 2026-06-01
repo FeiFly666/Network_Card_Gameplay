@@ -338,6 +338,10 @@ namespace Assets.Scripts.Manager
                 {
                     cha.ChangeState(BattleCharacterState.Defend);
                     cha.targetID = -1;
+                    if(BattleManager.Instance.CurrentPhase == BattlePhase.PhaseAction)
+                    {
+                        cha.ShowDefend();
+                    }
                 }
                 else if (p.actionType == CharacterActionType.ChaActionTypeAttack)
                 {

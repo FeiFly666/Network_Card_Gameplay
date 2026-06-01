@@ -20,7 +20,7 @@ namespace GameServer.Model.Battle
         }
 
         /// <summary>
-        /// 广播信息给所有玩家
+        /// 广播信息给所有玩家11
         /// </summary>
         public void BroadCast(Message message, Player except = null)
         {
