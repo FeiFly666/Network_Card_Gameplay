@@ -1,0 +1,38 @@
+{
+    "character1":
+    {
+        "DataID" : "character1",
+        "Name" : "工程师",
+        "Description" : "远程进攻敌人",
+        "CharacterType" : 0,
+        "AttackType": 0,
+        "HP" : 6,
+        "ATK" : 2,
+        "DEF" : 0,
+        "Speed" : 5
+    },
+    "character2":
+    {
+        "DataID" : "character2",
+        "Name" : "骑士",
+        "Description" : "近程攻击敌人",
+        "CharacterType" : 0,
+        "AttackType": 0,
+        "HP" : 4,
+        "ATK" : 2,
+        "DEF" : 2,
+        "Speed" : 7
+    },
+    "character4":
+    {
+        "DataID" : "character4",
+        "Name" : "牧师",
+        "Description" : "为己方角色回复血量，但无法给自己回复血量",
+        "CharacterType" : 1,
+        "AttackType": 0,
+        "HP" : 4,
+        "ATK" : 2,
+        "DEF" : 0,
+        "Speed" : 6
+    }
+}

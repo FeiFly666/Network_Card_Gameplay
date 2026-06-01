@@ -1,0 +1,102 @@
+{
+    "effect1":
+    {
+        "DataID" : "effect1",
+        "Name" : "回复I",
+        "Description" : "回复1点血量",
+        "Type" : 0,
+        "EffectType" : 0,
+        "Param" : 1,
+        "Duration" : 0
+    },
+    "effect2":
+    {
+        "DataID" : "effect2",
+        "Name" : "防御I",
+        "Description" : "增加1点防御值",
+        "Type" : 0,
+        "EffectType" : 3,
+        "Param" : 1,
+        "Duration" : 0
+    },
+    "effect3":
+    {
+        "DataID" : "effect3",
+        "Name" : "速度I",
+        "Description" : "增加1点速度",
+        "Type" : 0,
+        "EffectType" : 4,
+        "Param" : 1,
+        "Duration" : 0
+    },
+    "effect4":
+    {
+        "DataID" : "effect4",
+        "Name" : "力量I",
+        "Description" : "增加1点攻击力",
+        "Type" : 0,
+        "EffectType" : 2,
+        "Param" : 1,
+        "Duration" : 0
+    },
+    "effect5":
+    {
+        "DataID" : "effect5",
+        "Name" : "增强I",
+        "Description" : "增加1点最大生命值",
+        "Type" : 0,
+        "EffectType" : 1,
+        "Param" : 1,
+        "Duration" : 0
+    },
+    "effect6":
+    {
+        "DataID" : "effect6",
+        "Name" : "回复II",
+        "Description" : "回复2点血量",
+        "Type" : 0,
+        "EffectType" : 0,
+        "Param" : 2,
+        "Duration" : 0
+    },
+    "effect7":
+    {
+        "DataID" : "effect7",
+        "Name" : "防御II",
+        "Description" : "增加2点防御值",
+        "Type" : 0,
+        "EffectType" : 3,
+        "Param" : 2,
+        "Duration" : 0
+    },
+    "effect8":
+    {
+        "DataID" : "effect8",
+        "Name" : "速度II",
+        "Description" : "增加2点速度",
+        "Type" : 0,
+        "EffectType" : 4,
+        "Param" : 2,
+        "Duration" : 0
+    },
+    "effect9":
+    {
+        "DataID" : "effect9",
+        "Name" : "力量II",
+        "Description" : "增加2点攻击力",
+        "Type" : 0,
+        "EffectType" : 2,
+        "Param" : 2,
+        "Duration" : 0
+    },
+    "effect10":
+    {
+        "DataID" : "effect10",
+        "Name" : "增强II",
+        "Description" : "增加2点最大生命值",
+        "Type" : 0,
+        "EffectType" : 1,
+        "Param" : 2,
+        "Duration" : 0
+    }
+}

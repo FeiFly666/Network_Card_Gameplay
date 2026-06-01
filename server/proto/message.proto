@@ -1,0 +1,468 @@
+syntax = "proto3";
+
+package NetMessage;
+
+enum BattlePhase
+{
+    PHASE_NONE = 0;
+    PHASE_PREPARE = 1;
+    PHASE_ACTION = 2;
+    PHASE_SETTLE = 3;
+}
+
+enum BattleActionType
+{
+	TYPE_NONE = 0;
+	TYPE_PLACE_CHARACTER = 1;
+	TYPE_ADD_BUFF = 2;
+	TYPE_REMOVE_BUFF = 3;
+    TYPE_CHANGE_ATTRIBUTE  = 4;
+	TYPE_DROP_CARD = 5;
+	TYPE_CHARACTER_ACTION = 6;
+	TYPE_CHARACTER_REMOVE = 7;
+}
+
+enum CharacterActionType
+{
+	CHA_ACTION_TYPE_NONE = 0;
+	CHA_ACTION_TYPE_ATTACK = 1;
+	CHA_ACTION_TYPE_DEFEND = 2;
+}
+
+enum NEffectType//作用于哪个属性
+{
+	Health = 0;
+	MaxHealth = 1;
+	Power = 2;
+	Defence = 3;
+	Speed = 4;
+}
+
+
+enum GameResult
+{
+	GAME_RESULT_NONE = 0;
+	GAME_RESULT_WIN = 1;
+	GAME_RESULT_LOSE = 2;
+	GAME_RESULT_DRAW = 3;
+}
+
+enum CharacterActionCoolDownType
+{
+	CHA_ACTION_COOLDOWN_NONE = 0;
+	CHA_ACTION_COOLDOWN_ATTACK = 1;
+	CHA_ACTION_COOLDOWN_DEFEND = 2;
+	CHA_ACTION_COOLDOWN_SKILL = 3;
+}
+
+message Message
+{
+	ResponseMessage response = 1;
+	RequestMessage request = 2;
+}
+
+message RequestMessage
+{
+	UserTalkRequest userTalk = 1;
+	UserMatchRequest userMatch = 2;
+	UserReadyRequest userReady = 3;
+	UserExitRequest userExit = 4;
+
+	UserEnterBattleRequest userEnterBattle = 5;
+	UserLeaveBattleRequest userLeaveBattle = 6;
+
+	BattleActionRequest battleAction = 7;
+
+	UserLoginRequest login = 8;
+
+	BattleStateSyncReq sync = 9;
+
+	BattlePlayingFinishRequest battlePlayFinish = 10;
+
+	UserChangeMainChaRequest changeMainCha = 11;
+
+	BattleEventPlayFinishRequest eventPlayFinish = 12;
+
+	HeartCheckRequest heart = 100;
+
+}
+message ResponseMessage
+{
+	UserTalkResponse userTalk = 1;
+	UserTalkBroadcast userTalkBroadCast = 2;
+
+	UserMatchResponse userMatch = 3;
+
+	UserReadyResponse userReady = 4;
+	UserExitResponse userExit = 5;
+	RoomInfoBroadcast roomInfo = 6;
+
+	BattleEnter enterBattle = 7;
+	UserEnterBattleResponse userEnterBattle = 8;
+	UserLeaveBattleResponse userLeaveBattle = 9;
+
+	BattleRoundStartBroadcast roundStart = 10;
+
+	BattleEventBroadcast battleEvent = 11;
+	BattleActionBroadcast battleActionBroadcast = 12;
+	BattleActionResponse battleAction = 13;
+	BattleStateSync battleSync = 14;
+	BattleTimedoutResponse battleTimedOut = 15;
+
+	UserLoginResponse login = 16;
+	UserForceLeaveReponse forceLeave = 17;
+
+	UserChangeMainChaResponse changeMainCha = 18;
+
+	BattleGameOverResponse gameover = 19;
+
+	BattleReconnectSnapshot reconnect = 20;
+
+	HeartCheckResponse heart = 100;
+
+
+}
+message HeartCheckRequest
+{
+
+}
+message HeartCheckResponse
+{
+
+}
+
+message UserLoginRequest
+{
+	string userID = 1;
+}
+message UserLoginResponse
+{
+	bool success = 1;
+	PlayerData playerData = 3;
+	string msg = 2;
+}
+message UserForceLeaveReponse
+{
+	string msg = 1;
+}
+message PlayerData
+{
+	string mainCharacterID = 1;
+}
+
+message UserChangeMainChaRequest
+{
+	string mainCharacterID = 1;
+}
+message UserChangeMainChaResponse
+{
+	bool success = 1;
+	PlayerData playerData = 3;
+	string msg = 2;
+}
+//测试用的聊天协议
+message UserTalkRequest
+{
+	string userID = 1;
+	string msg = 2;
+}
+
+message UserTalkResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+message UserTalkBroadcast
+{
+	string fromID = 1;
+	string msg = 2;
+}
+//测试结束
+
+//房间协议
+message PlayerInfo
+{
+	string userID = 1;
+	bool ready = 2;
+
+	PlayerData playerData = 3;
+
+	int32 position = 4;
+}
+
+message RoomInfo
+{
+	int32 roomID = 1;
+	repeated PlayerInfo players = 2;
+}
+
+message UserMatchRequest
+{
+	//string userID = 1;
+}
+
+message UserReadyRequest
+{
+	//string userID = 1;
+}
+
+message UserExitRequest
+{
+	//string userID = 1;
+}
+message UserMatchResponse
+{
+	bool success = 1;
+	int32 roomID = 2;
+}
+
+message UserReadyResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+message UserExitResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+message RoomInfoBroadcast
+{
+	RoomInfo roomInfo = 1;
+}
+
+
+//房间协议终止
+
+//战斗协议开始
+
+//通知客户端加载战斗场景
+message BattleEnter
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+//客户端通知服务端已进入
+message UserEnterBattleRequest
+{
+	//string userID = 1;
+
+}
+//客户端退出申请
+message UserLeaveBattleRequest
+{
+	//string userID = 1;
+}
+
+//客户端进入反馈
+message UserEnterBattleResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+//客户端退出反馈
+message UserLeaveBattleResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+//每回合开始或开始对战的广播
+message BattleRoundStartBroadcast
+{
+	int32 round = 1;
+
+	string firstPlayerID = 2;//用于开始对战谁先出手（弃用，规则已变成根据具体角色的速度先后决定具体角色的先后手）
+}
+
+//弃牌信息
+message DropCardInfo
+{
+	int32 id = 1;
+	string dataID = 2;
+}
+
+//操作详细
+message BattleAction 
+{
+	//string userID = 1;
+
+	BattleActionType type = 2;
+
+	ActionTarget source = 3;
+
+	ActionTarget target = 4;
+
+	CharacterActionType chaActionType = 5;
+	DropCardInfo dropCardInfo = 6;
+
+	int32 actionID = 7;
+}
+
+//操作请求
+message BattleActionRequest
+{
+	BattleAction action = 1;
+}
+//操作请求反馈
+message BattleActionResponse
+{
+	bool success = 1;
+	string msg = 2;
+	int32 actionID = 3;
+}
+
+//事件
+message BattleEvent
+{
+	enum EventType
+	{
+		EVENT_NONE = 0;
+		EVENT_DRAW_CARD = 1; // 返回牌型（广播，但只给请求者发id，其他人只知道你换了牌）
+		EVENT_DROP_CARD = 2; //弃牌（广播，所有人都知道你弃牌）
+		EVENT_SPAWN_CHARACTER = 3; // 广播，生成角色
+		EVENT_CHARACTER_DIE = 4; //广播，删除角色
+		EVENT_CHARACTER_HP_DECREASE = 5; //广播，角色扣血
+		EVENT_CHARACTER_HP_INCREASE = 6; //广播，角色回血
+		EVENT_CHARACTER_ADD_BUFF = 7;//广播，角色加buff
+		EVENT_CHARACTER_REMOVE_BUFF	= 8;//广播，角色减buff
+		EVENT_CHARACTER_ATTACK = 9;
+		EVENT_CHARACTER_DEFEND = 10;
+		EVENT_CHARACTER_ACTIONCOOLDOWN = 11;
+		EVENT_CHARACTER_ATTRIBUTECHANGE = 12;
+
+	}
+
+	EventType type = 1; //事件类型
+
+	string dataID = 2; //生成对象的dataID，比如要生成的角色，要加的buff，要生成的card
+
+	int32 id = 3; //如角色相关则为服务端角色id，如卡牌相关则为服务端卡牌id。
+
+	int32 param = 4; //数值参数：回血量、扣血量
+
+	int32 actionID = 5;//该效果属于哪个具体动作
+
+	string paramS = 6; //字符串参数
+
+	NEffectType effectType = 7;//效果类型
+
+	CharacterActionCoolDownType actionCoolDownType = 8;
+
+	int32 eventBatchID = 9;
+	int32 eventID = 10;
+
+}
+
+//操作ID信息
+message ActionTarget
+{
+	int32 id = 1;
+	string dataID = 2;
+}
+
+//操作请求广播
+message BattleActionBroadcast
+{
+	string userID = 1;
+
+	BattleAction action = 2;
+
+	int32 serverTime = 3;
+
+}
+
+//事件广播
+message BattleEventBroadcast
+{
+	repeated BattleEvent events = 1;
+}
+message BattleEventPlayFinishRequest
+{
+	int32 eventBatchID = 1;
+	int32 eventID = 2;
+}
+//战斗状态同步
+message BattleStateSync
+{
+	int32 remainTime = 1;
+	int32 round = 2;
+	BattlePhase state = 3;
+	bool needResponse = 4;
+}
+
+//告诉服务端战斗状态同步完毕（用于切换状态，同步时间无需发送）先做着不一定用，现在想的是切换一个阶段要等客户端全部切换再开始该阶段工作
+message BattleStateSyncReq
+{
+	string userID = 1;
+	int32 round = 2;
+	BattlePhase state = 3;
+}
+
+message BattleTimedoutResponse
+{
+
+}
+
+message BattlePlayingFinishRequest
+{
+
+}
+
+message BattleGameOverResponse
+{
+	GameResult result = 1;
+
+}
+
+//战斗协议结束
+message BattleReconnectSnapshot
+{
+	int32 roomID = 1;
+	int32 round = 2;
+	BattlePhase phase = 3;
+	int32 remainTime = 4;
+
+	repeated BattleCharacterSnapshot characters = 5;
+	repeated BattleCardSnapshot selfCards = 6;
+	int32 enemyCardCount = 7;
+
+	repeated BattlePendingActionSnapshot pendingActions = 8;
+}
+
+message BattleCharacterSnapshot
+{
+	string ownerID = 1;
+	int32 id = 2;
+	string dataID = 3;
+
+	bool isMain = 4;
+
+	int32 hp = 5;
+	int32 maxHp = 6;
+	int32 atk = 7;
+	int32 def = 8;
+	int32 speed = 9;
+
+	bool canDefend = 10;
+	bool canAttack = 11;
+}
+
+message BattleCardSnapshot
+{
+	int32 id = 1;
+	string dataID = 2;
+}
+
+message BattlePendingActionSnapshot
+{
+	string ownerID = 1;
+	int32 characterID = 2;
+	CharacterActionType actionType = 3;
+	int32 targetID = 4;
+}
