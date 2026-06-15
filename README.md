@@ -10,7 +10,7 @@
 
 ## 项目预览
 
-> 演示视频：https://www.bilibili.com/video/BV1RvVo6QEgk
+> 演示视频：https://www.bilibili.com/video/BV1oAJV6jEMY
 
 ------
 
