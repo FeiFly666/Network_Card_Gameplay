@@ -36,6 +36,7 @@ namespace Common.Network
 
                 if (message.Heart != null) Execute(session, message.Heart);
                 if (message.Login != null) Execute(session, message.Login);
+                if (message.Register != null) Execute(session, message.Register);
 
                 if (message.changeMainCha != null) Execute(session, message.changeMainCha);
 
@@ -43,6 +44,14 @@ namespace Common.Network
                 if (message.eventPlayFinish != null) Execute(session, message.eventPlayFinish);
 
                 if (message.Sync != null) Execute(session, message.Sync);
+
+                if (message.changeNickname != null) Execute(session, message.changeNickname);
+
+                if (message.addFriend != null) Execute(session, message.addFriend);
+                if (message.handleFriendRequest != null) Execute(session, message.handleFriendRequest);
+                if (message.deleteFriend != null) Execute(session, message.deleteFriend);
+                if (message.getFriendList != null) Execute(session, message.getFriendList);
+                if (message.searchPlayer != null) Execute(session, message.searchPlayer);
             }
         }
 
@@ -70,6 +79,7 @@ namespace Common.Network
 
                 if (message.Heart != null) Execute(session, message.Heart);
                 if (message.Login != null) Execute(session, message.Login);
+                if (message.Register != null) Execute(session, message.Register);
                 if (message.forceLeave != null) Execute(session, message.forceLeave);
 
                 if (message.battleTimedOut != null) Execute(session, message.battleTimedOut);
@@ -79,6 +89,14 @@ namespace Common.Network
                 if (message.Reconnect != null) Execute(session, message.Reconnect);
 
                 if (message.changeMainCha != null) Execute(session, message.changeMainCha);
+                if (message.changeNickname != null) Execute(session, message.changeNickname);
+
+                if (message.addFriend != null) Execute(session, message.addFriend);
+                if (message.handleFriendRequest != null) Execute(session, message.handleFriendRequest);
+                if (message.deleteFriend != null) Execute(session, message.deleteFriend);
+                if (message.getFriendList != null) Execute(session, message.getFriendList);
+                if (message.friendList != null) Execute(session, message.friendList);
+                if (message.searchPlayer != null) Execute(session, message.searchPlayer);
             }
         }
         public void Enqueue(Action action)

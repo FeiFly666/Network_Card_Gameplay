@@ -1,8 +1,10 @@
 # Unity 联机同步回合制卡牌对战 Demo
 
-基于 **Unity + C# + .NET Socket API + Protobuf** 开发的双人联机回合制卡牌对战 Demo。项目包含 Unity 客户端与 C# 服务端，实现了登录、匹配、房间准备、进入战斗、回合同步、出牌、角色生成、攻击/防御、战斗结算、断线重连等基础联机流程。
+基于 **Unity + C# + .NET Socket API + Protobuf** 开发的双人联机回合制卡牌对战 Demo。项目包含 Unity 客户端与 C# 服务端，实现了登录、注册、好友、匹配、房间准备、进入战斗、回合同步、出牌、角色生成、攻击/防御、战斗结算、断线重连等基础联机流程。
 
 项目采用 **服务端权威结算** 模式：客户端负责玩家操作提交与战斗表现播放，服务端负责战斗逻辑校验、状态切换、回合结算和同步广播。
+
+注意：本项目服务端未上传DataManager，因其包含服务器信息
 
 ------
 
@@ -47,6 +49,7 @@ Project
 ### 1. 基础联机流程
 
 - 玩家登录
+- 玩家注册
 - 双人匹配
 - 房间创建与加入
 - 准备状态同步
@@ -76,6 +79,7 @@ RoundEnd     # 回合结算，判断胜负或进入下一回合
 - 使用属性卡改变角色属性
 - 角色攻击
 - 角色防御
+- 角色使用技能
 - 主角色保护规则
 - 角色死亡与胜负结算
 
@@ -314,7 +318,7 @@ Info/Player.json
 2. 默认监听地址：
 
 ```text
-127.0.0.1:8080
+0.0.0.0:8080
 ```
 
 ### 客户端
@@ -325,6 +329,7 @@ Info/Player.json
 ```text
 Resources/Config/Card.json
 Resources/Config/Character.json
+Resources/Config/Skill.json
 Resources/Config/Effect.json
 Resources/SO/VisualContainer.asset
 Resources/Prefab/Character
@@ -350,6 +355,7 @@ Resources/Prefab/Character
 -  卡牌抽取与弃牌
 -  角色生成
 -  攻击与防御
+-  技能
 -  属性变化
 -  战斗事件队列播放
 -  游戏胜负结算

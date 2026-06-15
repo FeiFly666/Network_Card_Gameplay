@@ -220,6 +220,18 @@ namespace GameServer.Model
 
             messageSystem.SendToPlayer(reconnectPlayer, message);
         }
+        public string GetEnemyID(string request)
+        {
+            string res = string.Empty;
+            foreach(var playerkv in players)
+            {
+                if(playerkv.Key != request)
+                {
+                    res = playerkv.Key; break;
+                }
+            }
+            return res;
+        }
         public BattleReconnectSnapshot BuildReconnectSnapshot(Player self)
         {
             BattleReconnectSnapshot snapshot = new BattleReconnectSnapshot();
@@ -241,6 +253,7 @@ namespace GameServer.Model
 
                     c.canDefend = characterManager.CanCharacterDefend(cha.ID);
                     c.canAttack = characterManager.CanCharacterAttack(cha.ID);
+                    c.canUseSkill = characterManager.CanCharacterUseSkill(cha.ID);
 
                     snapshot.Characters.Add(c);
                 }

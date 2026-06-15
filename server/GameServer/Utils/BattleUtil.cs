@@ -69,10 +69,40 @@ namespace GameServer.Utils
 
             return totalDamage;
         }
+        public static int CalculateSkillDamage(Character attack, Character target, out int defenceDamage)
+        {
+            DataManager.Instance.m_Skills.TryGetValue(attack.data.SkillID, out var skill);
+            int totalDamage = attack.CurATK + skill.Param;
+
+            int defendDecrease = Math.Max(0, target.CurDEF);
+
+            defendDecrease = Math.Min(totalDamage, defendDecrease);
+
+            totalDamage = Math.Max(totalDamage - defendDecrease, 0);
+
+            if (target.isDefend)
+            {
+                defendDecrease = 0;
+            }
+            defenceDamage = defendDecrease;
+
+            return totalDamage;
+        }
 
         public static int CalculateHealNum(Character attack, Character target)
         {
             int totalHealNum = attack.CurATK;
+
+            int damagedNum = target.CurMaxHP - target.CurHP;
+
+            totalHealNum = Math.Min(totalHealNum, damagedNum);
+
+            return totalHealNum;
+        }
+        public static int CalculateSkillHealNum(Character attack, Character target)
+        {
+            DataManager.Instance.m_Skills.TryGetValue(attack.data.SkillID, out var skill);
+            int totalHealNum = attack.CurATK + skill.Param;
 
             int damagedNum = target.CurMaxHP - target.CurHP;
 
@@ -106,6 +136,7 @@ namespace GameServer.Utils
             snapshot.Atk = character.CurATK;
             snapshot.Def = character.CurDEF;
             snapshot.Speed = character.CurSpeed;
+            snapshot.Mp = character.CurMP;
 
             snapshot.isMain = character.isMain;
             snapshot.ownerID = player.id;

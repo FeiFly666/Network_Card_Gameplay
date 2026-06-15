@@ -39,7 +39,6 @@ namespace Assets.Scripts.Util
         }
         private static void HandleDrawCardEvent(BattleEvent e)
         {
-            Debug.Log("处理服务器发牌事件");
             Card newCard = new Card();
             if (e.Id == -1)//对手的牌更新
             {
@@ -51,7 +50,6 @@ namespace Assets.Scripts.Util
             }
 
             newCard.ID = e.Id;
-            Debug.Log("处理玩家手牌更新");
             newCard.Data = null;
 
             if (!DataManager.Instance.cardData.TryGetValue(e.dataID, out var Data))
@@ -92,11 +90,10 @@ namespace Assets.Scripts.Util
                 case CharacterActionCoolDownType.ChaActionCooldownAttack:
                     BattleCharacterManager.Instance.HandleCharacterAttackCoolDownSync(e.Id, e.Param == 1);
                     break;
+                case CharacterActionCoolDownType.ChaActionCooldownSkill:
+                    BattleCharacterManager.Instance.HandleCharacterSkillCoolDownSync(e.Id, e.Param == 1);
+                    break;
             }
-        }
-        private static void HandleDefendCoolDownSync(BattleEvent e)
-        {
-            BattleCharacterManager.Instance.HandleCharacterDefendCoolDownSync(e.Id, e.Param == 1);
         }
         private static void HandleCharacterAttributeChange(BattleEvent e)
         {

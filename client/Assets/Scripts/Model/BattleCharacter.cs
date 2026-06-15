@@ -17,7 +17,8 @@ namespace Assets.Scripts.Model
     {
         None,
         Defend,
-        Attack
+        Attack,
+        Skill
     }
     public class BattleCharacter : MonoBehaviour,IPointerEnterHandler, IPointerExitHandler ,IPointerClickHandler
     {
@@ -43,8 +44,10 @@ namespace Assets.Scripts.Model
         //public bool isMain;
 
         public int targetID = -1;
+        public Vector2 targetPosition;
         public bool canDefend = true;
         public bool canAttack = true;
+        public bool canUseSkill = false;
 
         public Action OnCharacterDead;
         public Action OnCharacterValueChanged;
@@ -62,11 +65,14 @@ namespace Assets.Scripts.Model
         }
 
         public bool isDead = false;
+
+        private SkillTargetType skillTargetType;
+        public int skillBattleGroup;
         private void Awake()
         {
             //spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             anim = GetComponentInChildren<Animator>();
-            battleView = GetComponent<BattleView>();
+            battleView = GetComponentInChildren<BattleView>();
             
         }
         private void OnEnable()
@@ -83,16 +89,26 @@ namespace Assets.Scripts.Model
             character.CurDEF = character.data.DEF;
             character.CurSpeed = character.data.Speed;
             character.Buffs = new List<Buff>();
+            character.CurMP = 0;
+
             if(character.isMain)
             {
                 character.CurMaxHP *= 2;
                 character.CurHP *= 2;
             }
+            canAttack = true;
+            canDefend = true;
+            canUseSkill = false;
+
+            if (this.character.data.SkillID == string.Empty) return;
+            if(!DataManager.Instance.skillData.TryGetValue(this.character.data.SkillID, out var skill))return;
+            skillTargetType = skill.TargetType;
+            skillBattleGroup = skill.HitCount;
         }
         public void ChangeValue(EffectType effectType, int param)
         {
             bool needVFX = false;
-            if (param > 0) needVFX = true;
+            if (param > 0 && effectType != EffectType.MP) needVFX = true;
             switch (effectType)
             {
                 case EffectType.Health:
@@ -109,6 +125,9 @@ namespace Assets.Scripts.Model
                     break;
                 case EffectType.MaxHealth:
                     character.CurMaxHP += param;
+                    break;
+                case EffectType.MP:
+                    character.CurMP += param;
                     break;
             }
             if (needVFX)
@@ -208,7 +227,22 @@ namespace Assets.Scripts.Model
                 return handle;
             }
 
-            return battleView.PlayAnim(target);
+            return battleView.PlayAttackAnim(target);
+
+        }
+        public BattleAttackHandler PlaySkill(BattleCharacter target = null)
+        {
+            if (battleView == null)
+            {
+                BattleAttackHandler handle = new BattleAttackHandler();
+                handle.MarkHit();
+                handle.MarkFinish();
+                return handle;
+            }
+
+            if(skillTargetType == SkillTargetType.SelectEnemy )return battleView.PlaySelectSkillAnim(target);
+
+            return battleView.PlaySkillAnim();
 
         }
         public IEnumerator PlayHit()

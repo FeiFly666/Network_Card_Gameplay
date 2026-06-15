@@ -144,6 +144,7 @@ namespace GameServer.Manager
                 message.Response.userReady.Msg = "无效旧信息";
 
                 session.Send(message);
+                return;
             }
 
             playerInfo.ready = !playerInfo.ready;
@@ -236,6 +237,7 @@ namespace GameServer.Manager
 
                 newPlayerInfo.playerData = new NetMessage.PlayerData();
                 newPlayerInfo.playerData.mainCharacterID = player.mainCharcterID;
+                newPlayerInfo.playerData.nickName = player.nickname;
                 if (!player.ready)
                 {
                     isAllPlayerReady = false;

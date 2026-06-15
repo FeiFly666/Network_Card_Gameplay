@@ -12,7 +12,7 @@ namespace GameServer.Service
 
     public class GameService
     {
-        Thread thread;
+        Thread? thread;
         bool isRunning;
         ChatService chatService;
         public void Init()
@@ -23,19 +23,20 @@ namespace GameServer.Service
             DataManager.Instance.Init();
             RoomManager.Instance.Init();
             BattleManager.Instance.Init();
-            OnlinePlayerManager.Instance.Init();
+            UserService.Instance.Init();
+            FriendShipManager.Instance.Init();
         }
 
         public void Start()
         {
             isRunning = true;
             NetService.Instance.Start();
-            thread.Start();
+            thread?.Start();
         }
         public void Stop()
         {
             isRunning = false;
-            thread.Join();
+            thread?.Join();
         }
         private void Update()
         {

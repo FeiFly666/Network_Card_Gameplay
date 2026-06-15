@@ -10,6 +10,7 @@ namespace Assets.Scripts.UI.Battle
     public class UIBattleCharacterInfo : MonoBehaviour
     {
         [SerializeField] private TMP_Text hp;
+        [SerializeField] private TMP_Text mp;
         [SerializeField] private TMP_Text def;
         [SerializeField] private TMP_Text atk;
         [SerializeField] private TMP_Text spd;
@@ -110,6 +111,7 @@ namespace Assets.Scripts.UI.Battle
             currentCharacter = character;
 
             hp.text = $"{character.character.CurHP} / {character.character.CurMaxHP}";
+            mp.text = $"{character.character.CurMP} / {character.character.data.MP}";
             def.text = character.character.CurDEF.ToString();
             atk.text = character.character.CurATK.ToString();
             spd.text = character.character.CurSpeed.ToString();

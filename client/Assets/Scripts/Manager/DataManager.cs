@@ -18,6 +18,7 @@ namespace Assets.Scripts.Manager
         public Dictionary<string, CardData> cardData = new Dictionary<string, CardData>();
         public Dictionary<string, CharacterData> characterData = new Dictionary<string,CharacterData>();
         public Dictionary<string, BuffData> effectData = new Dictionary<string, BuffData>();
+        public Dictionary<string, SkillData> skillData = new Dictionary<string, SkillData>();
 
         private string sOPath = "SO/";
         //public VisualContainer VisualContianer { get; set; }
@@ -25,6 +26,7 @@ namespace Assets.Scripts.Manager
         public Dictionary<string, Color> cardBgColors = new Dictionary<string, Color>();
         public Dictionary<EffectType, Sprite> buffImages = new Dictionary<EffectType, Sprite>();
         public Dictionary<EffectType, EffectObject> buffVFXs = new Dictionary<EffectType, EffectObject>();
+        public Dictionary<int, EffectObject> VFXs = new Dictionary<int, EffectObject>();
 
         private string characterPath = "Prefab/Character";
 
@@ -49,6 +51,10 @@ namespace Assets.Scripts.Manager
             text = Resources.Load<TextAsset>(configPath + "Effect");
 
             effectData = JsonConvert.DeserializeObject<Dictionary<string, BuffData>>(text.text);
+
+            text = Resources.Load<TextAsset>(configPath + "Skill");
+
+            skillData = JsonConvert.DeserializeObject<Dictionary<string, SkillData>>(text.text);
         }
         private void LoadVisualContainuer()
         {
@@ -104,6 +110,18 @@ namespace Assets.Scripts.Manager
                 }
             }
 
+            foreach (var vfx in VisualContianer.VFXs) 
+            {
+                if(!VFXs.ContainsKey(vfx.id))
+                {
+                    VFXs.Add(vfx.id, vfx.effect.GetComponent<EffectObject>());
+                }
+                else
+                {
+                    VFXs[vfx.id] = vfx.effect.GetComponent<EffectObject>();
+                }
+            }
+
         }
         public void Start()
         {
@@ -114,6 +132,10 @@ namespace Assets.Scripts.Manager
             foreach(var vfx in buffVFXs.Values)
             {
                 PoolManager.Instance.CreateGameObjectPool<EffectObject>(vfx, 5, 3);
+            }
+            foreach(var vfx in VFXs.Values)
+            {
+                PoolManager.Instance.CreateGameObjectPool<EffectObject>(vfx, 2, 1);
             }
         }
         private void LoadCharacterPrefab()

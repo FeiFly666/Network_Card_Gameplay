@@ -2,23 +2,35 @@ using Assets.Scripts.Manager;
 using Assets.Scripts.Model;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIBattleCharacterPanel : MonoBehaviour
 {
+    private enum AttackType
+    {
+        None,
+        Attack,
+        Skill
+    }
     [SerializeField] private Button characterAttack;
     [SerializeField] private Button characterDefend;
     [SerializeField] private Button characterRemove;
+    [SerializeField] private Button characterSkill;
     [SerializeField] private Button characterCancleRemove;
     [SerializeField] private GameObject arrow;
+    [SerializeField] private TMP_Text tips;
     private BattleCharacter currentCharacter;
 
     private RectTransform rTransform;
 
-    [SerializeField]private Vector2 originPos = new Vector2(2500,400);
+    [SerializeField]private Vector2 originPos = new Vector2(5500,400);
 
     private bool isSelectingEnemy = false;
+    private AttackType currentSelectType = AttackType.None;
+    
     private void Awake()
     {
         rTransform = this.GetComponent<RectTransform>();
@@ -40,11 +52,14 @@ public class UIBattleCharacterPanel : MonoBehaviour
         characterDefend.onClick.AddListener(HidePanel);
 
         characterAttack.onClick.RemoveAllListeners();
-        characterAttack.onClick.AddListener(CharacterSelectTarget);
+        characterAttack.onClick.AddListener(HandleAttack);
 
         characterCancleRemove.onClick.RemoveAllListeners();
         characterCancleRemove.onClick.AddListener(SendCharacterCancleRemove);
         characterCancleRemove.onClick.AddListener(HidePanel);
+
+        characterSkill.onClick.RemoveAllListeners();
+        characterSkill.onClick.AddListener(HandleSkill);
     }
 
     private void HandleNewCharacterClicked(BattleCharacter character)
@@ -102,7 +117,13 @@ public class UIBattleCharacterPanel : MonoBehaviour
                             return;
                         }
                     }
-                    SendCharacterAttackRequest(character.character.ID);
+                    if(currentSelectType == AttackType.Attack)
+                        SendCharacterAttackRequest(character.character.ID);
+                    else
+                    {
+                        SendCharacterSkillRequest(character.character.ID);
+                        currentCharacter.targetPosition = character.transform.position;
+                    }
                     ShowArrow(character);
                     characterCancleRemove.gameObject.transform.parent.gameObject.SetActive(currentCharacter.state != BattleCharacterState.None);
                 }
@@ -120,12 +141,38 @@ public class UIBattleCharacterPanel : MonoBehaviour
                 //点击自己人则上传攻击请求
                 if (currentCharacter.ownerID == character.ownerID)
                 {
-                    SendCharacterAttackRequest(character.character.ID);
+                    if(currentSelectType == AttackType.Attack)
+                        SendCharacterAttackRequest(character.character.ID);
+                    else if (currentSelectType == AttackType.Skill)
+                    {
+                        SendCharacterSkillRequest(character.character.ID);
+                        currentCharacter.targetPosition = character.transform.position;
+                    }
                     ShowArrow(character);
                     characterCancleRemove.gameObject.transform.parent.gameObject.SetActive(currentCharacter.state != BattleCharacterState.None);
                 }
             }
         }
+    }
+    private void HandleSkill()
+    {
+        DataManager.Instance.skillData.TryGetValue(currentCharacter.character.data.SkillID, out var skill);
+        if (skill.TargetType == Common.Data.SkillTargetType.AllEnemies || skill.TargetType == Common.Data.SkillTargetType.AllAllies)//群攻不选
+        {
+            SendCharacterSkillRequest();
+            if (skill.TargetType == Common.Data.SkillTargetType.AllEnemies) currentCharacter.targetPosition = BattleCharacterManager.Instance.enemyCenter;
+            else currentCharacter.targetPosition = BattleCharacterManager.Instance.playerCenter;
+
+            HidePanel();
+            return;
+        }
+        CharacterSelectTarget();
+        currentSelectType = AttackType.Skill;
+    }
+    private void HandleAttack()
+    {
+        CharacterSelectTarget();
+        currentSelectType = AttackType.Attack;
     }
     private void CheckRemovedCharacter(BattleCharacter removed)
     {
@@ -137,11 +184,34 @@ public class UIBattleCharacterPanel : MonoBehaviour
     private void CharacterSelectTarget()
     {
         isSelectingEnemy = true;
+        tips.gameObject.SetActive(true);
+        if(currentCharacter.character.data.CharacterType == Common.Data.CharacterType.Attack)
+        {
+            tips.text = "请点击对方角色作为目标";
+        }
+        else
+        {
+            tips.text = "请点击己方角色作为目标";
+        }
+        if (currentSelectType == AttackType.Attack)
+        {
+            tips.color = Color.black;
+        }
+        else
+        {
+            tips.color = Color.red;
+        }
     }
     private void SendCharacterAttackRequest(int targetID)
     {
         if (currentCharacter != null)
             BattleCharacterManager.Instance.SendCharacterAttackRequest(currentCharacter, targetID);
+    }
+    private void SendCharacterSkillRequest(int targetID = -1)
+    {
+        if(currentCharacter != null)
+            BattleCharacterManager.Instance.SendCharacterSkillRequest(currentCharacter, targetID);
+
     }
     private void SendCurrentCharacterDefend()
     {
@@ -164,7 +234,7 @@ public class UIBattleCharacterPanel : MonoBehaviour
         this.gameObject.transform.position = originPos;
         currentCharacter = null;
         isSelectingEnemy = false;
-
+        tips.gameObject.SetActive(false);
         HideArrow();
     }
     private void ShowPanel()
@@ -190,8 +260,10 @@ public class UIBattleCharacterPanel : MonoBehaviour
         }
         characterDefend.interactable = currentCharacter.canDefend;
         characterAttack.interactable = currentCharacter.canAttack;
+        characterSkill.interactable = currentCharacter.canUseSkill;
         characterRemove.interactable = !currentCharacter.character.isMain;
         characterCancleRemove.gameObject.transform.parent.gameObject.SetActive(currentCharacter.state != BattleCharacterState.None);
+        currentSelectType = AttackType.None;
     }
     private void ShowArrow(BattleCharacter enemy)
     {

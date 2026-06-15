@@ -10,18 +10,26 @@ namespace Assets.Scripts.Util
     {
         public bool Hit {  get; set; }
         public bool Finish {  get; set; }
+        private int hitNum = 0;
+        public void Refresh()
+        {
+            Hit = false;
+            Finish = false;
+            hitNum = 0;
+        }
 
         public void MarkHit()
         {
-            Hit = true;
+            hitNum++;
+            
         }
         public void MarkFinish()
         {
             Finish = true;
         }
-        public IEnumerator WaitHit()
+        public IEnumerator WaitHit(int current)
         {
-            while (!Hit)
+            while (hitNum < current)
             {
                 yield return null;
             }

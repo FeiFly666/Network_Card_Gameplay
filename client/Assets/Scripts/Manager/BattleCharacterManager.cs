@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Assets.Scripts.Manager
 {
@@ -37,6 +38,9 @@ namespace Assets.Scripts.Manager
         public Action<BattleCharacter> OnCharacterStateChanged;
 
         public bool CanAddPlayerCha => m_playerCharacters.Count < 4;
+
+        public Vector2 playerCenter;
+        public Vector2 enemyCenter;
         private void Awake()
         {
             if(Instance == null)
@@ -74,6 +78,13 @@ namespace Assets.Scripts.Manager
             if (m_playerCharacters.TryGetValue(characterID, out BattleCharacter character))
             {
                 character.canAttack = canAttack;
+            }
+        }
+        public void HandleCharacterSkillCoolDownSync(int characterID, bool canUseSkill)
+        {
+            if (m_playerCharacters.TryGetValue(characterID, out BattleCharacter character))
+            {
+                character.canUseSkill = canUseSkill;
             }
         }
         public void HandleCharacterAttributeChange(int characterID, EffectType effect,int param)
@@ -168,6 +179,14 @@ namespace Assets.Scripts.Manager
             });
 
             m_lockedCharacters.Add(character.character.ID);
+        }
+        public void SendCharacterSkillRequest(BattleCharacter character, int targetID = -1)
+        {
+            if (m_lockedCharacters.Contains(character.character.ID)) return;
+            BattleService.Instance.SendCharacterSkill(character.character.ID, (success) =>
+            {
+                OnRecieveCharacterSkillResponse(character, targetID, success);
+            }, targetID);
         }
         public void SendCharacterCancleAction(BattleCharacter character)
         {
@@ -311,6 +330,19 @@ namespace Assets.Scripts.Manager
                 OnCharacterStateChanged?.Invoke(character);
             }
         }
+        private void OnRecieveCharacterSkillResponse(BattleCharacter character, int targetID, bool success)
+        {
+            if (m_lockedCharacters.Contains(character.character.ID))
+            {
+                m_lockedCharacters.Remove(character.character.ID);
+            }
+            if (success)
+            {
+                character.targetID = targetID;
+                character.ChangeState(BattleCharacterState.Skill);
+                OnCharacterStateChanged?.Invoke(character);
+            }
+        }
         private void OnRecieveCharacterCancleResponse(BattleCharacter character, bool success)
         {
             if(m_lockedCharacters.Contains(character.character.ID))
@@ -349,6 +381,12 @@ namespace Assets.Scripts.Manager
                     cha.ChangeState(BattleCharacterState.Attack);
                     OnCharacterStateChanged?.Invoke(cha);
                 }
+                else if (p.actionType == CharacterActionType.ChaActionTypeSkill)
+                {
+                    cha.targetID = p.targetID;
+                    cha.ChangeState(BattleCharacterState.Skill);
+                    OnCharacterStateChanged?.Invoke(cha);
+                }
             }
         }
         private void AddCharacterFromSnapshot(BattleCharacterSnapshot s)
@@ -373,8 +411,11 @@ namespace Assets.Scripts.Manager
                 uiCha.character.CurATK = s.Atk;
                 uiCha.character.CurDEF = s.Def;
                 uiCha.character.CurSpeed = s.Speed;
+                uiCha.character.CurMP = s.Mp;
                 uiCha.canDefend = s.canDefend;
                 uiCha.canAttack = s.canAttack;
+                uiCha.canUseSkill = s.canUseSkill;
+                
 
                 uiCha.OnCharacterValueChanged?.Invoke();
             }

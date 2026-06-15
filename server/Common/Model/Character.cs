@@ -15,7 +15,7 @@ namespace Common.Model
         public bool isMain { get; set; }
         public int CurMaxHP { get; set; }
         public int CurHP { get; set; }
-
+        public int CurMP { get; set; }
         public int CurATK { get; set; }
         public int CurDEF{ get; set;}
         public int CurSpeed{ get; set;}

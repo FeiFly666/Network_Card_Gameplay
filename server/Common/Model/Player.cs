@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace Common.Model
         public int socketID { get; set; }
         public bool ready { get; set; }
         public string mainCharcterID {  get; set; }
+        public string nickname { get; set; }
+        public PlayerFriendState friendState { get; set; } = new PlayerFriendState();
 
         public BattlePlayer battlePlayer { get; set; } = new BattlePlayer();
     }

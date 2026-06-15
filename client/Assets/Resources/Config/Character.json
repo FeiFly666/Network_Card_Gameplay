@@ -3,36 +3,42 @@
     {
         "DataID" : "character1",
         "Name" : "工程师",
-        "Description" : "远程进攻敌人",
+        "Description" : "远程",
         "CharacterType" : 0,
         "AttackType": 0,
         "HP" : 6,
+        "MP" : 4,
         "ATK" : 2,
         "DEF" : 0,
-        "Speed" : 5
+        "Speed" : 5,
+        "SkillID" : "Character1_Skill"
     },
     "character2":
     {
         "DataID" : "character2",
         "Name" : "骑士",
-        "Description" : "近程攻击敌人",
+        "Description" : "近战",
         "CharacterType" : 0,
         "AttackType": 0,
         "HP" : 4,
+        "MP" : 4,
         "ATK" : 2,
         "DEF" : 2,
-        "Speed" : 7
+        "Speed" : 7,
+        "SkillID" : "Character2_Skill"
     },
     "character4":
     {
         "DataID" : "character4",
         "Name" : "牧师",
-        "Description" : "为己方角色回复血量，但无法给自己回复血量",
+        "Description" : "回血",
         "CharacterType" : 1,
         "AttackType": 0,
         "HP" : 4,
+        "MP" : 3,
         "ATK" : 2,
         "DEF" : 0,
-        "Speed" : 6
+        "Speed" : 6,
+        "SkillID" : "Character4_Skill"
     }
 }

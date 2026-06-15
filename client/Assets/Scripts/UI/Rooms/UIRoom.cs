@@ -16,6 +16,7 @@ namespace Assets.Scripts.UI.Rooms
     public class UIRoom : MonoBehaviour
     {
         [SerializeField] private Button readyButton;
+        [SerializeField] private TMP_Text readyText;
         [SerializeField] private Button exitButton;
 
         [SerializeField] private TMP_Text player1Name;
@@ -54,16 +55,14 @@ namespace Assets.Scripts.UI.Rooms
         {
             if(room == null)
             {
-                Debug.Log("空房间信息，关闭UI");
                 this.gameObject.SetActive(false);
                 return;
             }
-            Debug.Log("非空房间信息，开始更新");
             this.gameObject.SetActive(true);
             //硬编码，目前只支持两个人
-            if(player1Name.text != room.Players[0].id)
+            if(player1Name.text != room.Players[0].nickname)
             {
-                player1Name.text = room.Players[0].id;
+                player1Name.text = room.Players[0].nickname;
             }
             player1ReadyStatus.gameObject.SetActive(room.Players[0].ready);
             string player1MainCha = room.Players[0].mainCharcterID;
@@ -72,9 +71,9 @@ namespace Assets.Scripts.UI.Rooms
 
             if (room.Players.Count > 1)
             {
-                if (player2Name.text != room.Players[1].id)
+                if (player2Name.text != room.Players[1].nickname)
                 {
-                    player2Name.text = room.Players[1].id;
+                    player2Name.text = room.Players[1].nickname;
                 }
                 player2ReadyStatus.gameObject.SetActive(room.Players[1].ready);
                 string player2MainCha = room.Players[1].mainCharcterID;
@@ -86,6 +85,13 @@ namespace Assets.Scripts.UI.Rooms
                 player2Name.text = string.Empty;
                 player2ReadyStatus.gameObject.SetActive(false);
                 character2Show.HideAllPrefabs();
+            }
+            foreach(var player in room.Players)
+            {
+                if(player.id == PlayerInfoManager.Instance.userID)
+                {
+                    readyText.text = player.ready ? "取消" : "准备";
+                }
             }
         }
         private void SendReady()

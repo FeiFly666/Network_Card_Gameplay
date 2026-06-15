@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardImages:
   - id: card1
-    icon: {fileID: 21300000, guid: 4f59f6de47ea78c40b8cf1d8592f0c34, type: 3}
+    icon: {fileID: -1420571957, guid: a0d463f13d2b50a40b7f83e75bbcc791, type: 3}
     bgColor: {r: 0.99215686, g: 0.8117647, b: 0.49803922, a: 1}
   - id: card2
     icon: {fileID: 21300000, guid: 20503b8ea5e26b04da5582886f50dc77, type: 3}
@@ -32,10 +32,10 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 40283eaff39f91c418087633a4bd8e8f, type: 3}
     bgColor: {r: 0.8509804, g: 0.1254902, b: 0.22745098, a: 1}
   - id: card7
-    icon: {fileID: 21300000, guid: ab0b503a917bb3c4f8e503c21735eb9c, type: 3}
+    icon: {fileID: 1114351414, guid: ff8e7aa5560985948b81fe54d2a520f9, type: 3}
     bgColor: {r: 0.16470589, g: 0.45882353, b: 0.7176471, a: 1}
   - id: card8
-    icon: {fileID: 21300000, guid: b8d4b6ebdd1ed5e469124d1ea18d0ece, type: 3}
+    icon: {fileID: -806966948, guid: b992c4f9b4a965c41a33e3505f9264cc, type: 3}
     bgColor: {r: 0.8584906, g: 0.45759168, b: 0.6778816, a: 1}
   - id: card9
     icon: {fileID: 21300000, guid: 20503b8ea5e26b04da5582886f50dc77, type: 3}
@@ -54,15 +54,15 @@ MonoBehaviour:
     bgColor: {r: 0.8509804, g: 0.1254902, b: 0.22745098, a: 1}
   BuffImages:
   - type: 0
-    icon: {fileID: 21300000, guid: 20503b8ea5e26b04da5582886f50dc77, type: 3}
+    icon: {fileID: 21300000, guid: d075e0babc7bb1449ba4feba390d552a, type: 3}
   - type: 1
-    icon: {fileID: 21300000, guid: 40283eaff39f91c418087633a4bd8e8f, type: 3}
+    icon: {fileID: 21300000, guid: f66ffc5707de2f841b24561d47a341e0, type: 3}
   - type: 3
-    icon: {fileID: 21300000, guid: 33d7a2e5c1d0c4c45bbcced2fdd843dc, type: 3}
+    icon: {fileID: 21300000, guid: a54b895f884306a47bb0908823e4831e, type: 3}
   - type: 2
-    icon: {fileID: 21300000, guid: e4f51aaa403a5694fb011242ab173b8c, type: 3}
+    icon: {fileID: 21300000, guid: 8920b0991f64d7d4bab2c363f67c0efa, type: 3}
   - type: 4
-    icon: {fileID: 21300000, guid: 940d8d75d63900b4b95dbbad5ae38933, type: 3}
+    icon: {fileID: 21300000, guid: cc8ca87db7f0b134fa8fc1e1f5ab18a5, type: 3}
   BuffVFXs:
   - type: 0
     effect: {fileID: 8472788096264403886, guid: 73f4b51f2fce1fa4b8eb9aaca35e4c6e, type: 3}
@@ -74,3 +74,12 @@ MonoBehaviour:
     effect: {fileID: 7871396329572036783, guid: bc123cf5d2cbf514d90752e0e12be886, type: 3}
   - type: 4
     effect: {fileID: 1793735870733922374, guid: 0d4fc0bbd762e8645a775cadb5b1a4bd, type: 3}
+  VFXs:
+  - id: 41
+    effect: {fileID: 7525491967679992508, guid: 326528500c33b414fa382a58064a710e, type: 3}
+  - id: 22
+    effect: {fileID: 6909454670981132465, guid: 1a2a329cf048f1f41926478c6453ea06, type: 3}
+  - id: 23
+    effect: {fileID: 6909454670981132465, guid: 1da4ea89e59c6744c906ab03e9812a02, type: 3}
+  - id: 12
+    effect: {fileID: 7525491967679992508, guid: 528c5ec88208c6e4495895a2ae8c7c3b, type: 3}

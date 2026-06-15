@@ -15,10 +15,8 @@ namespace Assets.Scripts.Manager
 
         public void RefreshRoom(RoomInfo roomInfo)
         {
-            Debug.Log("更新房间信息");
             if(roomInfo == null)
             {
-                Debug.Log("房间信息为空");
                 OnRoomInfoChanged?.Invoke(null);
                 return;
             }
@@ -33,6 +31,7 @@ namespace Assets.Scripts.Manager
                 player.ready = playerInfo.Ready;
                 player.id = playerInfo.userID;
                 player.mainCharcterID = playerInfo.playerData.mainCharacterID;
+                player.nickname = playerInfo.playerData.nickName;
                 if(player.id == PlayerInfoManager.Instance.userID) { isSelfIn = true; };
                 currentRoom.Players.Add(player);
             }

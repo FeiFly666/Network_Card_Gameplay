@@ -3,8 +3,8 @@ using Common.Data;
 using NetMessage;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Assets.Scripts.Manager
 {
@@ -69,34 +69,26 @@ namespace Assets.Scripts.Manager
                     break;
 
                 case BattleEvent.EventType.EventCharacterAttack:
-                    int attackerID = e.Id;
-                    int targetID = e.actionID;
-
-                    if (BattleCharacterManager.Instance.TryGetCharacter(attackerID, out var attacker)
-                        && BattleCharacterManager.Instance.TryGetCharacter(targetID, out var target))
                     {
-                        BattleAttackHandler handler = attacker.PlayAttack(target);
+                        int attackerID = e.Id;
+                        int targetID = e.actionID;
 
-                        yield return handler.WaitHit();
-
-                        while (BattleManager.Instance.eventQueue.Count > 0 && IsResultEvent(BattleManager.Instance.eventQueue.Peek()))
+                        if (BattleCharacterManager.Instance.TryGetCharacter(attackerID, out var attacker)
+                            && BattleCharacterManager.Instance.TryGetCharacter(targetID, out var target))
                         {
-                            BattleEvent result = BattleManager.Instance.eventQueue.Dequeue();
-                            yield return PlayEvent(result);
+                            BattleAttackHandler handler = attacker.PlayAttack(target);
+
+                            yield return handler.WaitHit(1);
+
+                            while (BattleManager.Instance.eventQueue.Count > 0 && IsResultEvent(BattleManager.Instance.eventQueue.Peek()))
+                            {
+                                BattleEvent result = BattleManager.Instance.eventQueue.Dequeue();
+                                yield return PlayEvent(result);
+                            }
+
+                            yield return handler.WaitFinish();
+
                         }
-
-                        yield return handler.WaitFinish();
-
-                    }
-                    break;
-
-                case BattleEvent.EventType.EventCharacterHpDecrease:
-                    {
-                        /*if (BattleCharacterManager.Instance.TryGetCharacter(e.Id, out var hurt))
-                        {
-                            hurt.ChangeHP(-e.Param);
-                            yield return hurt.PlayHit();
-                        }*/
                     }
                     break;
                 case BattleEvent.EventType.EventCharacterAttributechange:
@@ -111,7 +103,52 @@ namespace Assets.Scripts.Manager
                         }
                     }
                     break;
+                case BattleEvent.EventType.EventCharacterSkill:
+                    {
+                        int attackerID = e.Id;
+                        
+                        if (BattleCharacterManager.Instance.TryGetCharacter(attackerID, out var skiller))
+                        {
+                            DataManager.Instance.skillData.TryGetValue(skiller.character.data.SkillID, out var skill);
+                            BattleCharacterManager.Instance.TryGetCharacter(e.actionID, out var target);
+                            if (skiller.ownerID != PlayerInfoManager.Instance.userID)
+                            {
+                                if (skill.TargetType != Common.Data.SkillTargetType.AllEnemies) skiller.targetPosition = BattleCharacterManager.Instance.enemyCenter;
+                                else skiller.targetPosition = BattleCharacterManager.Instance.playerCenter;
+                            }
+                            BattleAttackHandler handler = skiller.PlaySkill(target);
+                            int currentBattleGroup = 1;
+                            while(currentBattleGroup <=skiller.skillBattleGroup)
+                            {
+                                yield return handler.WaitHit(currentBattleGroup);
 
+                                while (BattleManager.Instance.eventQueue.Count > 0 && IsResultEvent(BattleManager.Instance.eventQueue.Peek()) && BattleManager.Instance.eventQueue.Peek().battleGroup == currentBattleGroup)
+                                {
+                                    BattleEvent currentEvent = BattleManager.Instance.eventQueue.Dequeue();
+                                    if(BattleManager.Instance.eventQueue.Count == 0)
+                                    {
+                                        yield return PlayEvent(currentEvent);
+                                        break;
+                                    }
+                                    BattleEvent nextEvent = BattleManager.Instance.eventQueue.Peek();
+
+                                    if(!IsResultEvent(nextEvent) || nextEvent.battleGroup != currentBattleGroup)
+                                    {
+                                        yield return PlayEvent(currentEvent);
+                                    }
+                                    else
+                                    {
+                                        StartCoroutine(PlayEvent(currentEvent));
+                                    }
+                                }
+                                currentBattleGroup++;
+                            }
+                            
+                            yield return handler.WaitFinish();
+
+                        }
+                    }
+                    break;
                 case BattleEvent.EventType.EventCharacterDie:
                     BattleCharacterManager.Instance.RemoveCharacter(e.Id, e.paramS, e.Param == 1);
                     yield return new WaitForSeconds(1f);

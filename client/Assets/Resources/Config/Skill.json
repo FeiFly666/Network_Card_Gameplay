@@ -1,0 +1,38 @@
+{
+    "Character1_Skill":
+    {
+        "DataID" : "Character1_Skill",
+        "Name" : "来个大的",
+        "Description" : "向敌人阵地轰出更大的光球，对全员造成伤害",
+        "Type" : 0,
+        "TargetType" : 3,
+        "Param" : 1,
+        "HitCount" : 1,
+        "Cost" : 4,
+        "BuffID" : null
+    },
+    "Character2_Skill":
+    {
+        "DataID" : "Character2_Skill",
+        "Name" : "圣剑劈砍",
+        "Description" : "召唤圣剑劈砍单个敌人",
+        "Type" : 0,
+        "TargetType" : 1,
+        "Param" : 1,
+        "HitCount" : 2,
+        "Cost" : 4,
+        "BuffID" : null
+    },
+    "Character4_Skill":
+    {
+        "DataID" : "Character4_Skill",
+        "Name" : "全员回血",
+        "Description" : "为己方所有角色回复血量",
+        "Type" : 1,
+        "TargetType" : 4,
+        "Param" : 4,
+        "HitCount" : 1,
+        "Cost" : 3,
+        "BuffID" : null
+    }
+}

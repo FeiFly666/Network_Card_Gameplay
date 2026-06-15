@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Manager;
 using Assets.Scripts.Service;
+using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,25 @@ namespace Assets.Scripts.UI.Main
             matchButton.onClick.RemoveAllListeners();
          
             matchButton.onClick.AddListener(SendMatch);
+
+            PlayerInfoManager.Instance.NicknameResponse += SetNewNickNameCallback;
         }
         private void Start()
         {
-            OnPlayerEnterScene();
+            if(!PlayerInfoManager.Instance.hasSetNickname)
+            {
+                InputFieldBox.Show("请输入昵称，如取消则将ID设置为昵称，后续可修改", (nickname) =>
+                {
+                    PlayerInfoManager.Instance.SendNewNickname(nickname);
+                },()=>
+                {
+                    PlayerInfoManager.Instance.SendNewNickname(PlayerInfoManager.Instance.userID);
+                });
+            }
+            else
+            {
+                OnPlayerEnterScene();
+            }
         }
 
         private void SendMatch()
@@ -34,7 +50,23 @@ namespace Assets.Scripts.UI.Main
 
         private void OnPlayerEnterScene()
         {
-            playerID.text = PlayerInfoManager.Instance.userID;
+            playerID.text = PlayerInfoManager.Instance.nickname;
+        }
+        private void OnDisable()
+        {
+            PlayerInfoManager.Instance.NicknameResponse -= SetNewNickNameCallback;
+        }
+        private void SetNewNickNameCallback(bool success)
+        {
+            if(success)
+            {
+                OnPlayerEnterScene();
+                InputFieldBox.Close();
+            }
+            else
+            {
+                
+            }
         }
     }
 }

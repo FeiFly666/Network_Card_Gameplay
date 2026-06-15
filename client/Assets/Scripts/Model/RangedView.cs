@@ -14,7 +14,7 @@ namespace Assets.Scripts.Model
         [SerializeField] private float bulletSpeed = 10f;
         [SerializeField] private float moveTime = 0.1f;
         [SerializeField] private bool isNeedScale = false;
-        public override BattleAttackHandler PlayAnim(BattleCharacter target)
+        public override BattleAttackHandler PlayAttackAnim(BattleCharacter target)
         {
             BattleAttackHandler handler = new BattleAttackHandler();
             StartCoroutine(PlayAttackRoutine(target, handler));
@@ -23,15 +23,15 @@ namespace Assets.Scripts.Model
 
         IEnumerator PlayAttackRoutine(BattleCharacter target, BattleAttackHandler handler)
         {
-            Quaternion originRotation = weaponRoot.localRotation;
+            Quaternion originRotation = weaponMoveRoot.localRotation;
 
             Vector3 hitPos = target.transform.position;
             hitPos.y += 0.5f;
 
-            Transform space = weaponRoot.parent;
+            Transform space = weaponMoveRoot.parent;
 
             Vector3 localHitPos = space.InverseTransformPoint(hitPos);
-            Vector3 localWeaponPos = space.InverseTransformPoint(weaponRoot.position);
+            Vector3 localWeaponPos = space.InverseTransformPoint(weaponMoveRoot.position);
 
             Vector3 dir  = localHitPos - localWeaponPos;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -39,19 +39,19 @@ namespace Assets.Scripts.Model
 
             Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
 
-            Quaternion startRotation = weaponRoot.localRotation;
+            Quaternion startRotation = weaponMoveRoot.localRotation;
 
 
             float t = 0f;
             while (t < moveTime)
             {
                 t += Time.deltaTime;
-                weaponRoot.transform.localRotation = Quaternion.Slerp(startRotation, targetRotation,t / moveTime);
+                weaponMoveRoot.transform.localRotation = Quaternion.Slerp(startRotation, targetRotation,t / moveTime);
 
                 yield return null;
             }
 
-            weaponRoot.transform.localRotation = targetRotation;
+            weaponMoveRoot.transform.localRotation = targetRotation;
 
             Transform bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity).transform;
 
@@ -76,17 +76,17 @@ namespace Assets.Scripts.Model
             handler.MarkHit();
 
             t = 0f;
-            startRotation = weaponRoot.localRotation;
+            startRotation = weaponMoveRoot.localRotation;
 
             while (t < moveTime)
             {
                 t += Time.deltaTime;
-                weaponRoot.localRotation = Quaternion.Slerp(startRotation,originRotation,t / moveTime);
+                weaponMoveRoot.localRotation = Quaternion.Slerp(startRotation,originRotation,t / moveTime);
 
                 yield return null;
             }
 
-            weaponRoot.localRotation = originRotation;
+            weaponMoveRoot.localRotation = originRotation;
 
             handler.MarkFinish();
         }

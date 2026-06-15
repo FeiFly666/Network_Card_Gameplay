@@ -27,6 +27,7 @@ enum CharacterActionType
 	CHA_ACTION_TYPE_NONE = 0;
 	CHA_ACTION_TYPE_ATTACK = 1;
 	CHA_ACTION_TYPE_DEFEND = 2;
+	CHA_ACTION_TYPE_SKILL = 3;
 }
 
 enum NEffectType//作用于哪个属性
@@ -36,6 +37,7 @@ enum NEffectType//作用于哪个属性
 	Power = 2;
 	Defence = 3;
 	Speed = 4;
+	MP = 5;
 }
 
 
@@ -53,6 +55,14 @@ enum CharacterActionCoolDownType
 	CHA_ACTION_COOLDOWN_ATTACK = 1;
 	CHA_ACTION_COOLDOWN_DEFEND = 2;
 	CHA_ACTION_COOLDOWN_SKILL = 3;
+}
+
+enum FriendStatus
+{
+	FRIEND_STATUS_PENDING = 0;
+	FRIEND_STATUS_ACCEPTED = 1;
+	FRIEND_STATUS_REJECTED = 2;
+	FRIEND_STATUS_DELETE = 3;
 }
 
 message Message
@@ -74,6 +84,7 @@ message RequestMessage
 	BattleActionRequest battleAction = 7;
 
 	UserLoginRequest login = 8;
+	UserRegisterRequest register = 13;
 
 	BattleStateSyncReq sync = 9;
 
@@ -82,6 +93,18 @@ message RequestMessage
 	UserChangeMainChaRequest changeMainCha = 11;
 
 	BattleEventPlayFinishRequest eventPlayFinish = 12;
+
+    UserChangeNicknameRequest changeNickname = 14;
+
+	UserAddFriendRequest addFriend = 15;
+
+	UserDeleteFriendRequest deleteFriend = 16;
+
+	UserHandleFriendRequest handleFriendRequest = 17;
+
+	UserGetFriendListRequest getFriendList = 18;
+
+	UserSearchPlayerRequest searchPlayer = 19;
 
 	HeartCheckRequest heart = 100;
 
@@ -110,6 +133,7 @@ message ResponseMessage
 	BattleTimedoutResponse battleTimedOut = 15;
 
 	UserLoginResponse login = 16;
+	UserRegisterResponse register = 21;
 	UserForceLeaveReponse forceLeave = 17;
 
 	UserChangeMainChaResponse changeMainCha = 18;
@@ -117,6 +141,20 @@ message ResponseMessage
 	BattleGameOverResponse gameover = 19;
 
 	BattleReconnectSnapshot reconnect = 20;
+
+	UserChangeNicknameResponse changeNickname = 22;
+
+	UserAddFriendResponse addFriend = 23;
+
+	UserHandleFriendResponse handleFriendRequest = 24;
+
+	UserDeleteFriendResponse deleteFriend = 25;
+
+	UserGetFriendListResponse getFriendList = 26;
+
+	UserFriendListChangedBroadcast friendList = 27;
+
+	UserSearchPlayerResponse searchPlayer = 28;
 
 	HeartCheckResponse heart = 100;
 
@@ -134,11 +172,22 @@ message HeartCheckResponse
 message UserLoginRequest
 {
 	string userID = 1;
+	string password = 2;
 }
 message UserLoginResponse
 {
 	bool success = 1;
 	PlayerData playerData = 3;
+	string msg = 2;
+}
+message UserRegisterRequest
+{
+	string userID = 1;
+	string password = 2;
+}
+message UserRegisterResponse
+{
+	bool success = 1;
 	string msg = 2;
 }
 message UserForceLeaveReponse
@@ -148,6 +197,19 @@ message UserForceLeaveReponse
 message PlayerData
 {
 	string mainCharacterID = 1;
+	string nickName = 2;
+	bool hasSetNickName = 3;
+}
+
+message UserChangeNicknameRequest
+{
+	string nickName = 1;
+}
+message UserChangeNicknameResponse
+{
+	bool success = 1;
+	string msg = 2;
+	PlayerData playerData = 3;
 }
 
 message UserChangeMainChaRequest
@@ -181,6 +243,7 @@ message UserTalkBroadcast
 //测试结束
 
 //房间协议
+//房间角色信息
 message PlayerInfo
 {
 	string userID = 1;
@@ -190,27 +253,28 @@ message PlayerInfo
 
 	int32 position = 4;
 }
-
+//房间信息
 message RoomInfo
 {
 	int32 roomID = 1;
 	repeated PlayerInfo players = 2;
 }
-
+//用户匹配
 message UserMatchRequest
 {
 	//string userID = 1;
 }
-
+//用户准备
 message UserReadyRequest
 {
 	//string userID = 1;
 }
-
+//用户退出
 message UserExitRequest
 {
 	//string userID = 1;
 }
+
 message UserMatchResponse
 {
 	bool success = 1;
@@ -228,7 +292,7 @@ message UserExitResponse
 	bool success = 1;
 	string msg = 2;
 }
-
+//房间信息同步
 message RoomInfoBroadcast
 {
 	RoomInfo roomInfo = 1;
@@ -333,6 +397,7 @@ message BattleEvent
 		EVENT_CHARACTER_REMOVE_BUFF	= 8;//广播，角色减buff
 		EVENT_CHARACTER_ATTACK = 9;
 		EVENT_CHARACTER_DEFEND = 10;
+		EVENT_CHARACTER_SKILL = 13;
 		EVENT_CHARACTER_ACTIONCOOLDOWN = 11;
 		EVENT_CHARACTER_ATTRIBUTECHANGE = 12;
 
@@ -357,6 +422,7 @@ message BattleEvent
 	int32 eventBatchID = 9;
 	int32 eventID = 10;
 
+	int32 battleGroup = 11;
 }
 
 //操作ID信息
@@ -382,6 +448,7 @@ message BattleEventBroadcast
 {
 	repeated BattleEvent events = 1;
 }
+//客户端事件播放完成
 message BattleEventPlayFinishRequest
 {
 	int32 eventBatchID = 1;
@@ -403,24 +470,23 @@ message BattleStateSyncReq
 	int32 round = 2;
 	BattlePhase state = 3;
 }
-
+//超时
 message BattleTimedoutResponse
 {
 
 }
-
+//客户端动画播放完成
 message BattlePlayingFinishRequest
 {
 
 }
-
+//游戏结束
 message BattleGameOverResponse
 {
 	GameResult result = 1;
 
 }
-
-//战斗协议结束
+//断线重连快照
 message BattleReconnectSnapshot
 {
 	int32 roomID = 1;
@@ -434,7 +500,7 @@ message BattleReconnectSnapshot
 
 	repeated BattlePendingActionSnapshot pendingActions = 8;
 }
-
+//断线重连角色快照
 message BattleCharacterSnapshot
 {
 	string ownerID = 1;
@@ -451,14 +517,16 @@ message BattleCharacterSnapshot
 
 	bool canDefend = 10;
 	bool canAttack = 11;
+	int32 mp = 12;
+	bool canUseSkill = 13;
 }
-
+//断线重连卡牌快照
 message BattleCardSnapshot
 {
 	int32 id = 1;
 	string dataID = 2;
 }
-
+//断线重连角色状态快照
 message BattlePendingActionSnapshot
 {
 	string ownerID = 1;
@@ -466,3 +534,113 @@ message BattlePendingActionSnapshot
 	CharacterActionType actionType = 3;
 	int32 targetID = 4;
 }
+//战斗协议结束
+
+
+//好友协议开始
+//好友信息+搜索玩家信息
+message FriendInfo
+{
+	string id = 1;
+	string nickname = 2;
+	string mainCharacterID = 3;
+
+	bool online = 4;
+}
+//好友申请协议
+message FriendRequestInfo
+{
+	int64 id = 1;
+	string requesterID = 2;
+	string requesterNickname = 3;
+	string requestMainCharacterID = 4;
+	int64 createTime = 5;
+}
+
+//发送好友请求
+message UserAddFriendRequest
+{
+	string targetID = 1;
+}
+//发送好友请求回调
+message UserAddFriendResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+//服务端好友列表信息广播
+message UserFriendListChangedBroadcast
+{
+	repeated FriendInfo friends = 1;
+	repeated FriendRequestInfo requests = 2;
+	repeated string removedFriendIDs = 3;
+	repeated int64 removedRequestIDs = 4;
+}
+//客户端请求好友列表
+message UserGetFriendListRequest
+{
+
+}
+message UserGetFriendListResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+//玩家同意/拒绝好友请求
+message UserHandleFriendRequest
+{
+	int64 requestID = 1;
+	bool accept = 2;
+}
+message UserHandleFriendResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+
+//玩家删除好友请求
+message UserDeleteFriendRequest
+{
+	string deleteID = 1;
+}
+message UserDeleteFriendResponse
+{
+	bool success = 1;
+	string msg = 2;
+}
+//搜索相应玩家
+message UserSearchPlayerRequest
+{
+    string keyword = 1;
+}
+message UserSearchPlayerResponse
+{
+    bool success = 1;
+    string msg = 2;
+    repeated PlayerSearchInfo players = 3;
+}
+//搜索信息
+message PlayerSearchInfo
+{
+    string userID = 1;
+    string nickname = 2;
+    string mainCharacterID = 3;
+    bool online = 4;
+
+    FriendRelationState relation = 5;
+}
+
+enum FriendRelationState
+{
+    FRIEND_RELATION_NONE = 0;          // 不是好友，也没有申请
+    FRIEND_RELATION_FRIEND = 1;        // 已是好友
+    FRIEND_RELATION_REQUEST_SENT = 2;  // 我已经向他发送申请
+    FRIEND_RELATION_REQUEST_RECEIVED = 3; // 他已经向我发送申请
+    FRIEND_RELATION_SELF = 4; // 自己
+    FRIEND_RELATION_BLOCKED = 5;       // 可选，前期不用
+}
+
+
+//好友协议结束

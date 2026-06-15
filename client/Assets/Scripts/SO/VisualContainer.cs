@@ -15,6 +15,7 @@ namespace Assets.Scripts.SO
         public List<CardImage> CardImages = new List<CardImage>();
         public List<BuffImage> BuffImages = new List<BuffImage>();
         public List<BuffVFX> BuffVFXs = new List<BuffVFX>();
+        public List<VFX> VFXs = new List<VFX>();
     }
     [Serializable]
     public class CardImage
@@ -34,6 +35,12 @@ namespace Assets.Scripts.SO
     public class BuffVFX
     {
         public EffectType type;
+        public GameObject effect;
+    }
+    [Serializable]
+    public class VFX
+    {
+        public int id;
         public GameObject effect;
     }
 }

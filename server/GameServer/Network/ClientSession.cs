@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using Common.Network;
 using Common.Model;
+using GameServer.Manager;
 
 namespace GameServer.Network
 {
@@ -25,6 +26,12 @@ namespace GameServer.Network
 
         public bool isOnline = true;
         private float lastCommunicateTime;
+
+        private int m_closed = 0;
+        public bool IsClosed
+        {
+            get { return Interlocked.CompareExchange(ref m_closed, 0, 0) == 1; }
+        }
 
         public Player player;
 
@@ -118,16 +125,24 @@ namespace GameServer.Network
         }
         private void OnClientSendHeart(ISession session, HeartCheckRequest request)
         {
+            FriendShipManager.Instance.AppendDirtyFriendData(this, heartMessage);
             this.Send(heartMessage);
+            heartMessage.Response.friendList = null;
         }
 
         public void Send(Message message)
         {
-            byte[] data = MessageHandler.Package(message);
+            if(IsClosed) return;
 
-            if (data == null) return;;
+            byte[] data = null;
 
-            lock(m_sendLock)
+            data = MessageHandler.Package(message);
+           
+
+            if (data == null) return;
+
+
+            lock (m_sendLock)
             {
                 m_sendQueue.Enqueue(data);
 
@@ -180,19 +195,35 @@ namespace GameServer.Network
         }
         public void Close()
         {
+            if (Interlocked.Exchange(ref m_closed, 1) == 1)
+            {
+                return;
+            }
+
             try
             {
-                m_clientSocket.Shutdown(SocketShutdown.Both);
+                if (m_clientSocket.Connected)
+                {
+                    m_clientSocket.Shutdown(SocketShutdown.Both);
+                }
             }
             catch
             {
-                
             }
             finally
             {
                 MessageDispatcher.Instance.Unsubscribe<HeartCheckRequest>(OnClientSendHeart);
-                m_clientSocket.Close();
+
+                try
+                {
+                    m_clientSocket.Close();
+                }
+                catch
+                {
+                }
+
                 OnDisconnected?.Invoke(this);
+                OnDisconnected = null;
             }
         }
     }

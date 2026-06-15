@@ -2,8 +2,10 @@
 using Common.Model;
 using GameServer.Manager;
 using GameServer.Utils;
+using Microsoft.EntityFrameworkCore.Query;
 using NetMessage;
 using System;
+using System.Net.Http.Headers;
 
 
 namespace GameServer.Model.Battle.States
@@ -14,7 +16,7 @@ namespace GameServer.Model.Battle.States
         public BattleState stateType { get; }
 
         public float timeLeft { get; set; }
-        private float maxTime = 30;
+        private float maxTime = 20;
 
         public SubmitBattleState(BattleRoom room)
         {
@@ -227,18 +229,13 @@ namespace GameServer.Model.Battle.States
                         {
                             return false;
                         }
-
-                        if(!room.characterManager.IsCharacterExist(attackerID) || !room.characterManager.IsCharacterExist(targetID))
+                        if (!room.characterManager.GetCharacterOwner(targetID, out var targetOwnerID)
+                        || !room.characterManager.GetCharacterOwner(attackerID, out var attackerOwnerID))
                         {
                             return false;
                         }
 
-                        if(!room.characterManager.GetCharacterData(attackerID, out var data))
-                        {
-                            return false;
-                        }
-                        if (!room.characterManager.GetCharacterOwner(targetID, out var targetOwnerID) 
-                            || !room.characterManager.GetCharacterOwner(attackerID, out var attackerOwnerID))
+                        if (!room.characterManager.GetCharacterData(attackerID, out var data))
                         {
                             return false;
                         }
@@ -261,10 +258,67 @@ namespace GameServer.Model.Battle.States
                         Console.WriteLine($"battle room {room.Id} : character {attackerID} send attack to {targetID} request");
                     }
                     break;
+                case CharacterActionType.ChaActionTypeSkill:
+                    {
+                        int characterID = action.Source.Id;
+                        if(!room.characterManager.GetCharacterData(characterID, out var data))
+                        {
+                            return false;
+                        }
+                        if(!DataManager.Instance.m_Skills.TryGetValue(data.SkillID, out var skill))
+                        {
+                            return false;
+                        }
+                        return HandleSkillRequest(action, skill);
+                    }
             }
             return true;
         }
-       
+        private bool HandleSkillRequest(BattleAction action, SkillData skill)
+        {
+            if(!room.characterManager.GetCharacterOwner(action.Source.Id, out var sourceOwner)) return false;
+            Console.WriteLine($"battle room {room.Id} : character{action.Source.Id} try to use skill");
+
+            if(!room.characterManager.CanCharacterUseSkill(action.Source.Id)) return false;
+
+            switch (skill.TargetType)
+            {
+                case SkillTargetType.Self:
+                    {
+                        return true;
+                    }
+                case SkillTargetType.SelectEnemy:
+                    {
+                        if(action.Target == null)return false;
+
+                        if (!room.characterManager.GetCharacterOwner(action.Target.Id, out var targetOwner)) return false;
+
+                        if(sourceOwner == targetOwner) return false;
+
+                        return true;
+                    }
+
+                case SkillTargetType.SelectAlly:
+                    {
+                        if (action.Target == null) return false;
+
+                        if (!room.characterManager.GetCharacterOwner(action.Target.Id, out var targetOwner)) return false;
+
+                        if (sourceOwner != targetOwner) return false;
+
+                        return true;
+                    }
+                case SkillTargetType.AllEnemies:
+                    {
+                        return true;
+                    }
+                case SkillTargetType.AllAllies:
+                    {
+                        return true;
+                    }
+            }
+            return false;
+        }
         public void Exit()
         {
 

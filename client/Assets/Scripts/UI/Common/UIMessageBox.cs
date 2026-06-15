@@ -19,8 +19,8 @@ namespace Assets.Scripts.UI.Common
     }
     public class UIMessageBox : MonoBehaviour
     {
-        [SerializeField] private Image infoTypeImg;
-        [SerializeField] private Sprite[] infoTypeIcon;
+        [SerializeField] private Image bg;
+        [SerializeField] private Sprite[] infoTypeBg;
 
         [SerializeField] private TMP_Text messageText;
 
@@ -62,7 +62,7 @@ namespace Assets.Scripts.UI.Common
 
         private void ChangeInfoTypeImg(MessageType type)
         {
-            infoTypeImg.overrideSprite = infoTypeIcon[(int)type];
+            bg.overrideSprite = infoTypeBg[(int)type];
         }
         private void ChangeMessageType(UIMessageType type)
         {

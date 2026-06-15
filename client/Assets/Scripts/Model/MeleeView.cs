@@ -18,7 +18,7 @@ namespace Assets.Scripts.Model
         [SerializeField] private float weaponRotateAngle = -60f;
         [SerializeField] private float moveSpeed = 20f;
         [SerializeField] private bool isStatic = false;
-        public override BattleAttackHandler PlayAnim(BattleCharacter target)
+        public override BattleAttackHandler PlayAttackAnim(BattleCharacter target)
         {
             BattleAttackHandler handler = new BattleAttackHandler();
             StartCoroutine(PlayAttackRoutine(target, handler));
@@ -58,21 +58,21 @@ namespace Assets.Scripts.Model
 
             Quaternion targetRotation = Quaternion.Euler(0, 0, weaponRotateAngle);
 
-            Quaternion startRotation = weaponRoot.localRotation;
+            Quaternion startRotation = weaponMoveRoot.localRotation;
             Quaternion originRotaion = startRotation;
 
             float t = 0f;
             while (t < rotateTime)
             {
                 t += Time.deltaTime;
-                weaponRoot.transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t / rotateTime);
+                weaponMoveRoot.transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t / rotateTime);
 
                 yield return null;
             }
 
             handler.MarkHit();
 
-            startRotation = weaponRoot.localRotation;
+            startRotation = weaponMoveRoot.localRotation;
 
             targetRotation = originRotaion;
 
@@ -80,7 +80,7 @@ namespace Assets.Scripts.Model
             while (t < rotateTime)
             {
                 t += Time.deltaTime;
-                weaponRoot.transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t / rotateTime);
+                weaponMoveRoot.transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t / rotateTime);
 
                 yield return null;
             }

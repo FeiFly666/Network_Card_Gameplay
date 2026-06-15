@@ -4,11 +4,7 @@ using GameServer.Model;
 using GameServer.Utils;
 using NetMessage;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
+
 
 namespace GameServer.Manager
 {
@@ -20,6 +16,7 @@ namespace GameServer.Manager
 
         private Dictionary<int, int> characterDefendRound = new Dictionary<int, int>();
         private Dictionary<int, int> characterCantAttackStartRound = new Dictionary<int, int>();
+        private Dictionary<int, int> characterCantSkillStartRound = new Dictionary<int, int>();
         public BattleCharacterManager(BattleRoom battleRoom)
         {
             this.room = battleRoom;
@@ -36,6 +33,7 @@ namespace GameServer.Manager
             character.ID = room.currentFreeID++;
             character.CurMaxHP = character.data.HP;
             character.CurHP = character.data.HP;
+            character.CurMP = 0;
             character.CurATK = character.data.ATK;
             character.CurDEF = character.data.DEF;
             character.CurSpeed = character.data.Speed;
@@ -140,6 +138,10 @@ namespace GameServer.Manager
         {
             return characterOwner.TryGetValue(characterID, out player);
         }
+        public bool GetCharacter(int characterID, out Character character)
+        {
+            return m_characters.TryGetValue(characterID, out character);
+        }
         public bool GetCharacterData(int characterID, out CharacterData data)
         {
             data = null;
@@ -177,6 +179,26 @@ namespace GameServer.Manager
                 return true;
             }
         }
+        public bool CanCharacterUseSkill(int characterID)
+        {
+            if (characterCantSkillStartRound.TryGetValue(characterID, out var startRound))
+            {
+                return room.round - startRound >= 1;
+            }
+
+            if (!m_characters.TryGetValue(characterID, out var character))
+            {
+                return false;
+            }
+            string skillID = character.data.SkillID;
+
+            if(!DataManager.Instance.m_Skills.TryGetValue(skillID, out var skill))
+            {
+                return false;
+            }
+
+            return character.CurMP >= skill.Cost;
+        }
         public void CharacterDefend(int characterID)
         {
             characterDefendRound[characterID] = room.round;
@@ -184,6 +206,10 @@ namespace GameServer.Manager
         public void CharacterCantAttack(int characterID)
         {
             characterCantAttackStartRound[characterID] = room.round;
+        }
+        public void CharacterCantSkill(int characterID)
+        {
+            characterCantSkillStartRound[characterID] = room.round;
         }
 
     }

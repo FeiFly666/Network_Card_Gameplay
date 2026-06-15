@@ -11,6 +11,7 @@ using System;
 using Assets.Scripts.Util;
 using Assets.Scripts.UI.Common;
 using Assets.Scripts.Manager;
+using Assets.Scripts;
 public class NetClient : Singleton<NetClient>, ISession
 {
     public const int MaxBytes = 1024 * 1024;
@@ -35,6 +36,9 @@ public class NetClient : Singleton<NetClient>, ISession
     private readonly object m_sendLock = new object();
     private Queue<byte[]> m_sendQueue = new Queue<byte[]>();
     private bool isSending = false;
+
+    private string serverIp => LoadingService.Instance.ServerIP;
+    private int serverPort = 8080;
 
     public void Init()
     {
@@ -88,7 +92,7 @@ public class NetClient : Singleton<NetClient>, ISession
     {
         try
         {
-            m_TcpSocket.Connect("127.0.0.1", 8080);
+            m_TcpSocket.Connect(serverIp, serverPort);
 
             if (m_TcpSocket.Connected)
             {
@@ -126,7 +130,7 @@ public class NetClient : Singleton<NetClient>, ISession
                 {
                     if(PlayerInfoManager.Instance.userID != string.Empty)
                     {
-                        PlayerInfoManager.Instance.SendLogin(PlayerInfoManager.Instance.userID);
+                        PlayerInfoManager.Instance.SendLogin(PlayerInfoManager.Instance.userID, PlayerInfoManager.Instance.password);
                     }
                 }
             }

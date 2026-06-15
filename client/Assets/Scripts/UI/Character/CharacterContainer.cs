@@ -39,6 +39,8 @@ namespace Assets.Scripts.UI.Characters
             {
                 enemyAvialableSlot[i] = true;
             }
+            BattleCharacterManager.Instance.playerCenter = (playerMain + playerCharacterSlots[1]) / 2;
+            BattleCharacterManager.Instance.enemyCenter = (enemyMain + enemyCharacterSlots[1]) / 2;
         }
 
         // Update is called once per frame

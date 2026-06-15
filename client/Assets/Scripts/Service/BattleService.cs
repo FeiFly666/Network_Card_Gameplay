@@ -217,7 +217,31 @@ namespace Assets.Scripts.Service
 
             m_pendings.Add(action.actionID, callback);
         }
+        public void SendCharacterSkill(int attackID, Action<bool> callback, int targetID = -1)
+        {
+            BattleAction action = new BattleAction();
 
+            action.actionID = currentAvailableActionID++;
+            action.Type = BattleActionType.TypeCharacterAction;
+
+            action.Source = new ActionTarget();
+            action.Source.Id = attackID;
+            action.chaActionType = CharacterActionType.ChaActionTypeSkill;
+
+            if(targetID != -1)
+            {
+                action.Target = new ActionTarget();
+                action.Target.Id = targetID;
+            }
+
+            battleActionMessage.Request.battleAction.Action = action;
+
+            NetClient.Instance.Send(battleActionMessage);
+            battleActionMessage.Request.battleAction = new BattleActionRequest();
+
+            m_pendings.Add(action.actionID, callback);
+        }
+        
         public void SendCharacterCancleAction(int characterID, Action<bool> callback)
         {
             BattleAction action = new BattleAction();

@@ -1,0 +1,2 @@
+dotnet ef migrations add AddFriendShips
+dotnet ef database update 

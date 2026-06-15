@@ -10,20 +10,33 @@ namespace Assets.Scripts.Model
         protected BattleCharacter owner;
 
         [SerializeField] protected Transform characterRoot;
+        [SerializeField] protected Transform weaponMoveRoot;
         [SerializeField] protected Transform weaponRoot;
 
         [SerializeField] protected float backAngle;
         [SerializeField] protected float hitDuration;
 
+        [SerializeField] private bool isWeaponOutBody = false;
+
         private void Awake()
         {
-            owner = GetComponent<BattleCharacter>();
+            Init();
         }
-        public virtual BattleAttackHandler PlayAnim(BattleCharacter target)
+        protected virtual void Init()
+        {
+            owner = GetComponentInParent<BattleCharacter>();
+        }
+        public virtual BattleAttackHandler PlayAttackAnim(BattleCharacter target)
         {
 
             return null;
         }
+        public virtual BattleAttackHandler PlaySelectSkillAnim(BattleCharacter target)//选择目标的技能，即需要走到目标附近的技能
+        {
+
+            return null;
+        }
+        public virtual BattleAttackHandler PlaySkillAnim() { return null; }//非目标选择技能
         public virtual IEnumerator PlayHit()
         {
             if (characterRoot == null) yield break;
@@ -46,6 +59,15 @@ namespace Assets.Scripts.Model
 
             Quaternion target = originRotation * Quaternion.Euler(0, 0, -backAngle * face);
 
+            Transform originParent = null;
+
+            if(isWeaponOutBody)
+            {
+                originParent = weaponRoot.transform.parent;
+
+                weaponRoot.transform.SetParent(null);
+            }
+
             while(t < hitDuration)
             {
                 t += Time.deltaTime;
@@ -55,10 +77,16 @@ namespace Assets.Scripts.Model
                 yield return null;
             }
 
+            if(isWeaponOutBody)
+            {
+                weaponRoot.transform.SetParent(originParent);
+            }
+
             for (int i = 0; i < sprites.Length; i++)
             {
                 sprites[i].color = originColors[i];
             }
+            
         }
     }
 }

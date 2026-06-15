@@ -8,7 +8,8 @@ namespace Common.Data
         MaxHealth,
         Power,
         Defence,
-        Speed
+        Speed,
+        MP
     }
 
     public enum BuffType//具体类型

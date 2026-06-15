@@ -86,6 +86,7 @@ namespace GameServer.Model.Battle.States
         {
             SyncCharacterDefendCoolDown();
             SyncCharacterAttackCoolDown();
+            SyncCharacterSkillCoolDown();
         }
         private void SyncCharacterDefendCoolDown()
         {
@@ -139,14 +140,39 @@ namespace GameServer.Model.Battle.States
                 }
             }
         }
+        private void SyncCharacterSkillCoolDown()
+        {
+            Message sync = new Message();
+            sync.Response = new ResponseMessage();
+            sync.Response.battleEvent = new BattleEventBroadcast();
+
+            foreach (var playerkv in room.players)
+            {
+                sync.Response.battleEvent.Events.Clear();
+                if (room.loadedPlayers.Contains(playerkv.Key))
+                {
+                    foreach (var characterKv in playerkv.Value.battlePlayer.characters)
+                    {
+                        BattleEvent e = new BattleEvent();
+                        e.Type = BattleEvent.EventType.EventCharacterActioncooldown;
+                        e.actionCoolDownType = CharacterActionCoolDownType.ChaActionCooldownSkill;
+                        e.Id = characterKv.Key;
+                        e.Param = room.characterManager.CanCharacterUseSkill(characterKv.Key) ? 1 : 0;
+                        e.actionID = -1;
+
+                        sync.Response.battleEvent.Events.Add(e);
+                    }
+
+                    room.messageSystem.SendToPlayer(playerkv.Value, sync);
+                }
+            }
+        }
         public void Update()
         {
             if (losePlayer != null) return;
             timeLeft -= Time.deltaTime;
             if (timeLeft <= 0)
             {
-                //room.DisbandRoom();
-                //room.HandleLoadTimedOut();
                 room.NewRoundStart();
                 return;
             }

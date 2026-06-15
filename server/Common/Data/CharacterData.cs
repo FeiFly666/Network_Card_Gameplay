@@ -25,10 +25,11 @@ namespace Common.Data
         public CharacterType CharacterType { get; set; }
         public AttackType AttackType { get; set; }
         public int HP { get; set; }
+        public int MP { get; set; }
         public int ATK { get; set; }
         public int DEF { get; set; }
         public int Speed { get; set; }
-
+        public string SkillID { get; set; }
         public string PrefabPath { get; set; }
 
     }

@@ -13,6 +13,7 @@ namespace GameServer.Network
         private readonly Socket m_listenSocket;
         private readonly SocketAsyncEventArgs m_acceptArgs;
 
+        private object m_clientLock = new object();
         private List<ClientSession> m_timeoutClients = new List<ClientSession>();
         public TcpSocketListener()
         {
@@ -24,7 +25,7 @@ namespace GameServer.Network
 
         public void Start(string ip, int port)
         {
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, port);
 
             m_listenSocket.Bind(localEndPoint);
             m_listenSocket.Listen(100);
@@ -91,7 +92,7 @@ namespace GameServer.Network
             return Clients.TryGetValue(clientID, out session);
         }
 
-        private void RemoveClientSession(ClientSession session)
+       /* private void RemoveClientSession(ClientSession session)
         {
             if(m_connectedClients.ContainsKey(session.ClientSocket))
             {
@@ -99,8 +100,6 @@ namespace GameServer.Network
 
                 if (session.ClientSocket == null) return;
                 if (!m_connectedClients.ContainsKey(session.ClientSocket)) return;
-
-
 
                 if (Clients.ContainsKey(m_connectedClients[session.ClientSocket]))
                 {
@@ -117,19 +116,48 @@ namespace GameServer.Network
                                 OnlinePlayerManager.Instance.RemoveOnlinePlayer(session.player.id);
                             }
                         }
-                        //OnlinePlayerManager.Instance.RemoveOnlinePlayer(session.player.id);
                     }
                     if (RoomManager.Instance.IsPlayerInRoom(session.player.id, session.ClientID))
                     {
-                        //TODO:ÍË³ö·¿¼ä
-                        UserExitRequest request = new UserExitRequest();
-                        RoomManager.Instance.OnUserExit(session, request);
-
-                        //m_socketToID.Remove(session.ClientID);
+                        RoomManager.Instance.RemovePlayerFromRoomBySession(session);
                     }
                 }
                 m_connectedClients.Remove(session.ClientSocket);
             }
+        }*/
+
+        private void RemoveClientSession(ClientSession session)
+        {
+            int clientID;
+
+            lock (m_clientLock)
+            {
+                if (session.ClientSocket == null) return;
+
+                if (!m_connectedClients.TryGetValue(session.ClientSocket, out clientID))
+                {
+                    return;
+                }
+
+                m_connectedClients.Remove(session.ClientSocket);
+                Clients.Remove(clientID);
+            }
+
+            Console.WriteLine($"client disconnected: id={clientID}");
+
+            if (session.player == null) return;
+
+            if (OnlinePlayerManager.Instance.TryGetClientSession(session.player.id, out var onlineSession))
+            {
+                if (onlineSession == session)
+                {
+                    FriendShipManager.Instance.OnUserExit(onlineSession);
+                    OnlinePlayerManager.Instance.RemoveOnlinePlayer(session.player.id);
+                }
+            }
+            
+
+            RoomManager.Instance.RemovePlayerFromRoomBySession(session);
         }
     }
 }

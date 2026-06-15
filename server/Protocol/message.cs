@@ -52,6 +52,9 @@ namespace NetMessage
         [global::ProtoBuf.ProtoMember(8, Name = @"login")]
         public UserLoginRequest Login { get; set; }
 
+        [global::ProtoBuf.ProtoMember(13, Name = @"register")]
+        public UserRegisterRequest Register { get; set; }
+
         [global::ProtoBuf.ProtoMember(9, Name = @"sync")]
         public BattleStateSyncReq Sync { get; set; }
 
@@ -63,6 +66,24 @@ namespace NetMessage
 
         [global::ProtoBuf.ProtoMember(12)]
         public BattleEventPlayFinishRequest eventPlayFinish { get; set; }
+
+        [global::ProtoBuf.ProtoMember(14)]
+        public UserChangeNicknameRequest changeNickname { get; set; }
+
+        [global::ProtoBuf.ProtoMember(15)]
+        public UserAddFriendRequest addFriend { get; set; }
+
+        [global::ProtoBuf.ProtoMember(16)]
+        public UserDeleteFriendRequest deleteFriend { get; set; }
+
+        [global::ProtoBuf.ProtoMember(17)]
+        public UserHandleFriendRequest handleFriendRequest { get; set; }
+
+        [global::ProtoBuf.ProtoMember(18)]
+        public UserGetFriendListRequest getFriendList { get; set; }
+
+        [global::ProtoBuf.ProtoMember(19)]
+        public UserSearchPlayerRequest searchPlayer { get; set; }
 
         [global::ProtoBuf.ProtoMember(100, Name = @"heart")]
         public HeartCheckRequest Heart { get; set; }
@@ -124,6 +145,9 @@ namespace NetMessage
         [global::ProtoBuf.ProtoMember(16, Name = @"login")]
         public UserLoginResponse Login { get; set; }
 
+        [global::ProtoBuf.ProtoMember(21, Name = @"register")]
+        public UserRegisterResponse Register { get; set; }
+
         [global::ProtoBuf.ProtoMember(17)]
         public UserForceLeaveReponse forceLeave { get; set; }
 
@@ -135,6 +159,27 @@ namespace NetMessage
 
         [global::ProtoBuf.ProtoMember(20, Name = @"reconnect")]
         public BattleReconnectSnapshot Reconnect { get; set; }
+
+        [global::ProtoBuf.ProtoMember(22)]
+        public UserChangeNicknameResponse changeNickname { get; set; }
+
+        [global::ProtoBuf.ProtoMember(23)]
+        public UserAddFriendResponse addFriend { get; set; }
+
+        [global::ProtoBuf.ProtoMember(24)]
+        public UserHandleFriendResponse handleFriendRequest { get; set; }
+
+        [global::ProtoBuf.ProtoMember(25)]
+        public UserDeleteFriendResponse deleteFriend { get; set; }
+
+        [global::ProtoBuf.ProtoMember(26)]
+        public UserGetFriendListResponse getFriendList { get; set; }
+
+        [global::ProtoBuf.ProtoMember(27)]
+        public UserFriendListChangedBroadcast friendList { get; set; }
+
+        [global::ProtoBuf.ProtoMember(28)]
+        public UserSearchPlayerResponse searchPlayer { get; set; }
 
         [global::ProtoBuf.ProtoMember(100, Name = @"heart")]
         public HeartCheckResponse Heart { get; set; }
@@ -170,6 +215,10 @@ namespace NetMessage
         [global::System.ComponentModel.DefaultValue("")]
         public string userID { get; set; } = "";
 
+        [global::ProtoBuf.ProtoMember(2, Name = @"password")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Password { get; set; } = "";
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -184,6 +233,39 @@ namespace NetMessage
 
         [global::ProtoBuf.ProtoMember(3)]
         public PlayerData playerData { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserRegisterRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string userID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"password")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Password { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserRegisterResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -214,6 +296,45 @@ namespace NetMessage
         [global::ProtoBuf.ProtoMember(1)]
         [global::System.ComponentModel.DefaultValue("")]
         public string mainCharacterID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string nickName { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public bool hasSetNickName { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserChangeNicknameRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string nickName { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserChangeNicknameResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public PlayerData playerData { get; set; }
 
     }
 
@@ -617,6 +738,9 @@ namespace NetMessage
         [global::ProtoBuf.ProtoMember(10)]
         public int eventID { get; set; }
 
+        [global::ProtoBuf.ProtoMember(11)]
+        public int battleGroup { get; set; }
+
         [global::ProtoBuf.ProtoContract()]
         public enum EventType
         {
@@ -642,6 +766,8 @@ namespace NetMessage
             EventCharacterAttack = 9,
             [global::ProtoBuf.ProtoEnum(Name = @"EVENT_CHARACTER_DEFEND")]
             EventCharacterDefend = 10,
+            [global::ProtoBuf.ProtoEnum(Name = @"EVENT_CHARACTER_SKILL")]
+            EventCharacterSkill = 13,
             [global::ProtoBuf.ProtoEnum(Name = @"EVENT_CHARACTER_ACTIONCOOLDOWN")]
             EventCharacterActioncooldown = 11,
             [global::ProtoBuf.ProtoEnum(Name = @"EVENT_CHARACTER_ATTRIBUTECHANGE")]
@@ -857,6 +983,12 @@ namespace NetMessage
         [global::ProtoBuf.ProtoMember(11)]
         public bool canAttack { get; set; }
 
+        [global::ProtoBuf.ProtoMember(12, Name = @"mp")]
+        public int Mp { get; set; }
+
+        [global::ProtoBuf.ProtoMember(13)]
+        public bool canUseSkill { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -894,6 +1026,251 @@ namespace NetMessage
 
         [global::ProtoBuf.ProtoMember(4)]
         public int targetID { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class FriendInfo : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"id")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Id { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"nickname")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Nickname { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string mainCharacterID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"online")]
+        public bool Online { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class FriendRequestInfo : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"id")]
+        public long Id { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string requesterID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string requesterNickname { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(4)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string requestMainCharacterID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public long createTime { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserAddFriendRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string targetID { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserAddFriendResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserFriendListChangedBroadcast : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"friends")]
+        public global::System.Collections.Generic.List<FriendInfo> Friends { get; } = new global::System.Collections.Generic.List<FriendInfo>();
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"requests")]
+        public global::System.Collections.Generic.List<FriendRequestInfo> Requests { get; } = new global::System.Collections.Generic.List<FriendRequestInfo>();
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public global::System.Collections.Generic.List<string> removedFriendIDs { get; } = new global::System.Collections.Generic.List<string>();
+
+        [global::ProtoBuf.ProtoMember(4, IsPacked = true)]
+        public long[] removedRequestIDs { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserGetFriendListRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserGetFriendListResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserHandleFriendRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public long requestID { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"accept")]
+        public bool Accept { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserHandleFriendResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserDeleteFriendRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string deleteID { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserDeleteFriendResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserSearchPlayerRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"keyword")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Keyword { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserSearchPlayerResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"players")]
+        public global::System.Collections.Generic.List<PlayerSearchInfo> Players { get; } = new global::System.Collections.Generic.List<PlayerSearchInfo>();
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class PlayerSearchInfo : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string userID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"nickname")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Nickname { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string mainCharacterID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"online")]
+        public bool Online { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5, Name = @"relation")]
+        public FriendRelationState Relation { get; set; }
 
     }
 
@@ -940,6 +1317,8 @@ namespace NetMessage
         ChaActionTypeAttack = 1,
         [global::ProtoBuf.ProtoEnum(Name = @"CHA_ACTION_TYPE_DEFEND")]
         ChaActionTypeDefend = 2,
+        [global::ProtoBuf.ProtoEnum(Name = @"CHA_ACTION_TYPE_SKILL")]
+        ChaActionTypeSkill = 3,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -950,6 +1329,8 @@ namespace NetMessage
         Power = 2,
         Defence = 3,
         Speed = 4,
+        [global::ProtoBuf.ProtoEnum(Name = @"MP")]
+        Mp = 5,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -976,6 +1357,36 @@ namespace NetMessage
         ChaActionCooldownDefend = 2,
         [global::ProtoBuf.ProtoEnum(Name = @"CHA_ACTION_COOLDOWN_SKILL")]
         ChaActionCooldownSkill = 3,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum FriendStatus
+    {
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_STATUS_PENDING")]
+        FriendStatusPending = 0,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_STATUS_ACCEPTED")]
+        FriendStatusAccepted = 1,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_STATUS_REJECTED")]
+        FriendStatusRejected = 2,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_STATUS_DELETE")]
+        FriendStatusDelete = 3,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum FriendRelationState
+    {
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_RELATION_NONE")]
+        FriendRelationNone = 0,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_RELATION_FRIEND")]
+        FriendRelationFriend = 1,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_RELATION_REQUEST_SENT")]
+        FriendRelationRequestSent = 2,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_RELATION_REQUEST_RECEIVED")]
+        FriendRelationRequestReceived = 3,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_RELATION_SELF")]
+        FriendRelationSelf = 4,
+        [global::ProtoBuf.ProtoEnum(Name = @"FRIEND_RELATION_BLOCKED")]
+        FriendRelationBlocked = 5,
     }
 
 }
