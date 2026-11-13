@@ -1,6 +1,9 @@
 ﻿using Assets.Scripts.Manager;
 using Assets.Scripts.Model;
+using Assets.Scripts.Service;
+using Assets.Scripts.UI.SpecialEffectUI;
 using Common.Data;
+using Common.Model;
 using NetMessage;
 using System;
 using System.Collections.Generic;
@@ -11,7 +14,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.Main
 {
-    public class UICharacterSelect :MonoBehaviour
+    public class UICharacterSelect :UIWindow
     {
         //private Dictionary<string, GameObject> m_characterPrefabs = new Dictionary<string, GameObject>();
         private List<UIShowCard> m_generatedCards = new List<UIShowCard>();
@@ -24,29 +27,33 @@ namespace Assets.Scripts.UI.Main
         [SerializeField] private Button exitButton;
         [SerializeField] private Button submitButton;
         [SerializeField] private Button alreadySubmitButton;
-
-        private Message submitMainCha;
+        [Header("当前角色被动显示")]
+        [SerializeField] private UIChaSpecialEffectSlot slotOne;
+        [SerializeField] private UIChaSpecialEffectSlot slotTwo;
+        [SerializeField] private UISpecialEffectSelectPanel effectSelectPanel;
         private string currentCharacterID;
         private void Awake()
         {
-            //DataManager.Instance.Init();
-
-            submitMainCha = new Message();
-            submitMainCha.Request = new RequestMessage();
-            submitMainCha.Request.changeMainCha = new UserChangeMainChaRequest();
-
-            exitButton.onClick.AddListener(() => { this.gameObject.SetActive(false); });
             submitButton.onClick.AddListener(SendChangeMainCharRequest);
+
+            showCha = GameObject.Find("ShowCharacterROOT").GetComponent<UICharacterShow>();
+
+            InitSlot();
         }
         public void OnEnable()
         {
             InitShowCards();
             currentCharacterID = string.Empty;
             PlayerInfoManager.Instance.OnMainCharacterChanged += ChangeButtonUI;
+
+            SpecialEffectsManager.Instance.OnEffectChanged += HandleEffectChange;
+
+            SpecialEffectsService.Instance.SendGetSpecialEffectLists();
+
+            SpecialEffectInfoPanel.OnPanelClosed += HideLockObj;
         }
         private void InitShowCards()
         {
-            //m_characterPrefabs.Clear();
             m_generatedCards.Clear();
             foreach(var cardData in DataManager.Instance.cardData)
             {
@@ -61,6 +68,53 @@ namespace Assets.Scripts.UI.Main
                 }
             }
         }
+        private void InitSlot()
+        {
+            slotOne.currentSlot = 0;
+            slotTwo.currentSlot = 1;
+
+            slotOne.OnClicked += OnSlotClicked;
+            slotTwo.OnClicked += OnSlotClicked;
+        }
+        private void OnSlotClicked(int index, string effectID)//显示被动选择UI并传入当前槽位数字
+        {
+            if (string.IsNullOrEmpty(currentCharacterID))
+                return;
+
+            if (effectSelectPanel.ToggleForSlot(index, currentCharacterID, effectID))
+            {
+                slotOne.SetSelected(index == 0);
+                slotTwo.SetSelected(index == 1);
+            }
+        }
+        public void HideLockObj()
+        {
+            slotOne.lockObj.SetActive(false);
+            slotTwo.lockObj.SetActive(false);
+        }
+
+        private void HandleEffectChange(SpecialEffect effect)
+        {
+            if(SpecialEffectsManager.Instance.GetSlotEffect(currentCharacterID, 0, out var effect1))
+            {
+                slotOne.UpdateIcon(effect1.Data.DataID);
+            }
+            else
+            {
+                slotOne.UpdateIcon("");
+            }
+
+            if(SpecialEffectsManager.Instance.GetSlotEffect(currentCharacterID, 1, out var effect2))
+            {
+                slotTwo.UpdateIcon(effect2.Data.DataID);
+            }
+            else
+            {
+                slotTwo.UpdateIcon("");
+            }
+
+        }
+
         private void HandleClickCard(string cardCharacterID)
         {
             showCha.ChangeShowPrefab(cardCharacterID);
@@ -69,6 +123,12 @@ namespace Assets.Scripts.UI.Main
             currentCharacterID = cardCharacterID;
 
             ChangeButtonUI();
+
+            slotOne.gameObject.SetActive(true);
+            slotTwo.gameObject.SetActive(true);
+            HandleEffectChange(null);
+
+            effectSelectPanel.Hide();
         }
         private void ChangeButtonUI()
         {
@@ -85,14 +145,25 @@ namespace Assets.Scripts.UI.Main
         }
         private void SendChangeMainCharRequest()
         {
-            submitMainCha.Request.changeMainCha.mainCharacterID = currentCharacterID;
-            NetClient.Instance.Send(submitMainCha);
+            PlayerInfoManager.Instance.SendChangeMainCharRequest(currentCharacterID);
         }
         private void OnDisable()
         {
             ClearCards();
             HideAllPrefabs();
             PlayerInfoManager.Instance.OnMainCharacterChanged -= ChangeButtonUI;
+            
+            SpecialEffectsManager.Instance.OnEffectChanged -= HandleEffectChange;
+
+            SpecialEffectInfoPanel.OnPanelClosed -= HideLockObj;
+
+            slotOne.gameObject.SetActive(false);
+            slotTwo.gameObject.SetActive(false);
+
+            submitButton.gameObject.SetActive(false);
+            alreadySubmitButton.gameObject.SetActive(false);
+
+            effectSelectPanel.gameObject.SetActive(false);
         }
         private void ClearCards()
         {

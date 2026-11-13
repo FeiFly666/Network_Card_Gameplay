@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4462f55120e09a4bb90cf6c1e3adff2, type: 3}
+  m_Name: SpecialEffectPicture
+  m_EditorClassIdentifier: 
+  pics:
+  - name: attack_follow_up
+    icon: {fileID: 21300000, guid: 2da170c2c7f09954ca36df727c4003b8, type: 3}
+  - name: damage_reflect
+    icon: {fileID: 21300000, guid: c91c00dd04afe13428d958e118082f15, type: 3}
+  - name: death_mp_to_hp
+    icon: {fileID: 21300000, guid: 4379f92745eb3f5479c34ddf95e9ac1f, type: 3}
+  - name: defend_add_def_2
+    icon: {fileID: 21300000, guid: a2141e71ff86ea64c8953ee4227635df, type: 3}
+  - name: defend_add_mp_2
+    icon: {fileID: 21300000, guid: fae00d37d894ba94fa7adaba86523a5c, type: 3}

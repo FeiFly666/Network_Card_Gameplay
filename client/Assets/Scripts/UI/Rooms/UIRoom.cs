@@ -13,7 +13,7 @@ using Assets.Scripts.UI.Main;
 
 namespace Assets.Scripts.UI.Rooms
 {
-    public class UIRoom : MonoBehaviour
+    public class UIRoom : UIWindow
     {
         [SerializeField] private Button readyButton;
         [SerializeField] private TMP_Text readyText;
@@ -27,35 +27,38 @@ namespace Assets.Scripts.UI.Rooms
 
         [SerializeField] private UICharacterShow character1Show;
         [SerializeField] private UICharacterShow character2Show;
-        private bool isInit = true;
 
         private void Awake()
         {
-            this.gameObject.SetActive(true);
             readyButton.onClick.RemoveAllListeners();
             readyButton.onClick.AddListener(SendReady);
 
             exitButton.onClick.RemoveAllListeners();
             exitButton.onClick.AddListener(SendExit);
-
-            isInit = false;
-            RoomManager.Instance.OnRoomInfoChanged += RefreshUI;
+            //RoomManager.Instance.OnRoomInfoChanged += RefreshUI;
         }
         private void OnEnable()
         {
            /* isInit = false;
             RoomManager.Instance.OnRoomInfoChanged += RefreshUI;*/
         }
+        public override void OnOpen()
+        {
+            //base.OnOpen();
+            RoomManager.Instance.OnRoomInfoChanged += RefreshUI;
+            character1Show = GameObject.Find("ShowCharacterROOT")?.GetComponent<UICharacterShow>();
+            character2Show = GameObject.Find("ShowCharacterROOT2")?.GetComponent<UICharacterShow>();
+        }
         private void Start()
         {
-            this.gameObject.SetActive(false);
+
         }
 
         private void RefreshUI(Room room)
         {
             if(room == null)
             {
-                this.gameObject.SetActive(false);
+                CloseUI();
                 return;
             }
             this.gameObject.SetActive(true);
@@ -107,8 +110,9 @@ namespace Assets.Scripts.UI.Rooms
             character1Show.HideAllPrefabs();
             character2Show.HideAllPrefabs();
         }
-        private void OnDestroy()
+        public override void OnClose()
         {
+            base.OnClose();
             RoomManager.Instance.OnRoomInfoChanged -= RefreshUI;
         }
     }

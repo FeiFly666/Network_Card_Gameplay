@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Service;
+﻿using Assets.Scripts.Manager;
+using Assets.Scripts.Service;
 using NetMessage;
 using System.Collections;
 using TMPro;
@@ -14,6 +15,7 @@ namespace Assets.Scripts.UI.Friend
         [SerializeField] TMP_Text online;
         [SerializeField] Button button;
         [SerializeField] TMP_Text buttonText;
+        [SerializeField] Image mainCharacterPic;
         private string playerID;
         private bool canSend = true;
         private void Awake()
@@ -26,6 +28,7 @@ namespace Assets.Scripts.UI.Friend
             ID.text = info.userID;
             playerID = info.userID;
             Nickname.text = info.Nickname;
+            mainCharacterPic.overrideSprite = DataManager.Instance.profilePictures[info.mainCharacterID];
 
             switch (info.Relation)
             {

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI.Start
 {
-    public class UIStartPanel : MonoBehaviour
+    public class UIStartPanel : UIWindow
     {
         public enum Panel
         {

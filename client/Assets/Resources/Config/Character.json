@@ -1,44 +1,52 @@
 {
-    "character1":
-    {
-        "DataID" : "character1",
-        "Name" : "工程师",
-        "Description" : "远程",
-        "CharacterType" : 0,
-        "AttackType": 0,
-        "HP" : 6,
-        "MP" : 4,
-        "ATK" : 2,
-        "DEF" : 0,
-        "Speed" : 5,
-        "SkillID" : "Character1_Skill"
-    },
-    "character2":
-    {
-        "DataID" : "character2",
-        "Name" : "骑士",
-        "Description" : "近战",
-        "CharacterType" : 0,
-        "AttackType": 0,
-        "HP" : 4,
-        "MP" : 4,
-        "ATK" : 2,
-        "DEF" : 2,
-        "Speed" : 7,
-        "SkillID" : "Character2_Skill"
-    },
-    "character4":
-    {
-        "DataID" : "character4",
-        "Name" : "牧师",
-        "Description" : "回血",
-        "CharacterType" : 1,
-        "AttackType": 0,
-        "HP" : 4,
-        "MP" : 3,
-        "ATK" : 2,
-        "DEF" : 0,
-        "Speed" : 6,
-        "SkillID" : "Character4_Skill"
-    }
+  "character1": {
+    "DataID": "character1",
+    "Name": "工程师",
+    "Description": "远程",
+    "CharacterType": 0,
+    "AttackType": 0,
+    "HP": 6,
+    "MP": 4,
+    "ATK": 2,
+    "DEF": 0,
+    "Speed": 5,
+    "SkillID": "Character1_Skill",
+    "SpecialEffectIDs": [
+      "defend_add_def_2",
+      "damage_reflect"
+    ]
+  },
+  "character2": {
+    "DataID": "character2",
+    "Name": "骑士",
+    "Description": "近战",
+    "CharacterType": 0,
+    "AttackType": 0,
+    "HP": 4,
+    "MP": 4,
+    "ATK": 2,
+    "DEF": 2,
+    "Speed": 7,
+    "SkillID": "Character2_Skill",
+    "SpecialEffectIDs": [
+      "defend_add_mp_2",
+      "attack_follow_up"
+    ]
+  },
+  "character4": {
+    "DataID": "character4",
+    "Name": "牧师",
+    "Description": "回血",
+    "CharacterType": 1,
+    "AttackType": 0,
+    "HP": 4,
+    "MP": 3,
+    "ATK": 2,
+    "DEF": 0,
+    "Speed": 6,
+    "SkillID": "Character4_Skill",
+    "SpecialEffectIDs": [
+      "death_mp_to_hp"
+    ]
+  }
 }

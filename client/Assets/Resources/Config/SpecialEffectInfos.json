@@ -1,0 +1,27 @@
+{
+  "defend_add_def_2": {
+    "DataID": "defend_add_def_2",
+    "Name": "防御增强II",
+    "Description": "防御成功后，增加2点护盾"
+  },
+  "defend_add_mp_2": {
+    "DataID": "defend_add_mp_2",
+    "Name": "魔力防御II",
+    "Description": "防御成功后，增加2点魔力（无视上限）"
+  },
+  "death_mp_to_hp": {
+    "DataID": "death_mp_to_hp",
+    "Name": "死亡轮转",
+    "Description": "角色死亡时，随机为友军提供等同角色魔力值的治疗（无视上限）"
+  },
+  "attack_follow_up": {
+    "DataID": "attack_follow_up",
+    "Name": "乘风",
+    "Description": "每次攻击增加连击次数，攻击被防御时重置"
+  },
+  "damage_reflect": {
+    "DataID": "damage_reflect",
+    "Name": "荆棘",
+    "Description": "受击后，无视护盾反伤1点血量"
+  }
+}

@@ -523,6 +523,7 @@ MonoBehaviour:
   online: {fileID: 8113836870994346542}
   button: {fileID: 3341974442610073267}
   buttonText: {fileID: 3311340124792324023}
+  mainCharacterPic: {fileID: 2162411866564536247}
 --- !u!1 &8340941857735621454
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,7 +675,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3436758109194753445
 RectTransform:
   m_ObjectHideFlags: 0

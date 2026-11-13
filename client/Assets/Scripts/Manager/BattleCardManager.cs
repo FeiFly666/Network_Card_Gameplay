@@ -54,18 +54,20 @@ namespace Assets.Scripts.Manager
             m_lockedCards.Clear();
             m_otherCardNum = 0;
         }
-        public void GetCardInfo()
+        public List<UICard> GetAllPlayerCardInfo()
         {
-
+            return m_cards.Values.ToList();
+        }
+        public int GetEnemyCardNum()
+        {
+            return m_otherCardNum;
         }
         public void SetNewCard(string playerID, Card newCard = null)//生成UICard
         {
             UICard newUICard = null;
             if(newCard == null)//生成对方假卡
             {
-                newUICard = GameObject.Instantiate(fCardPrefab);
-
-                m_otherCardNum++;
+                newUICard = GenerateFakeCard();
                
                 OnAddNewCard?.Invoke(newUICard);
                 return;
@@ -97,6 +99,14 @@ namespace Assets.Scripts.Manager
 
             OnAddNewCard?.Invoke(newUICard);
         }
+        public UICard GenerateFakeCard()
+        {
+            UICard newUICard = GameObject.Instantiate(fCardPrefab);
+
+            m_otherCardNum++;
+
+            return newUICard;
+        }
         public void RemoveCard(int cardID, bool isDrop)
         {
 
@@ -106,6 +116,7 @@ namespace Assets.Scripts.Manager
             {
                 isPlayer = false;
                 m_otherCardNum--;
+
             }
             else
             {

@@ -9,18 +9,8 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.Setting
 {
-    public class UISettingButton : MonoBehaviour
+    public class UISettingButton : UIButton
     {
-        Button button;
-        private void Awake()
-        {
-            button = this.GetComponent<Button>();
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(ShowPanel);
-        }
-        private void ShowPanel()
-        {
-            SettingPanel.Show();
-        }
+
     }
 }

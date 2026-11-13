@@ -17,8 +17,10 @@ namespace Assets.Scripts.Manager
         private string configPath = "Config/";
         public Dictionary<string, CardData> cardData = new Dictionary<string, CardData>();
         public Dictionary<string, CharacterData> characterData = new Dictionary<string,CharacterData>();
-        public Dictionary<string, BuffData> effectData = new Dictionary<string, BuffData>();
+        public Dictionary<string, BuffData> buffData = new Dictionary<string, BuffData>();
+        public Dictionary<string, BuffEffectData> buffEffectData = new Dictionary<string, BuffEffectData>();
         public Dictionary<string, SkillData> skillData = new Dictionary<string, SkillData>();
+        public Dictionary<string, SpecialEffectData> specialEffectData = new Dictionary<string, SpecialEffectData>();
 
         private string sOPath = "SO/";
         //public VisualContainer VisualContianer { get; set; }
@@ -27,6 +29,8 @@ namespace Assets.Scripts.Manager
         public Dictionary<EffectType, Sprite> buffImages = new Dictionary<EffectType, Sprite>();
         public Dictionary<EffectType, EffectObject> buffVFXs = new Dictionary<EffectType, EffectObject>();
         public Dictionary<int, EffectObject> VFXs = new Dictionary<int, EffectObject>();
+        public Dictionary<string, Sprite> profilePictures = new Dictionary<string, Sprite>();
+        public Dictionary<string, Sprite> specialEffectPictures = new Dictionary<string, Sprite>();
 
         private string characterPath = "Prefab/Character";
 
@@ -36,6 +40,7 @@ namespace Assets.Scripts.Manager
         {
             LoadCardData();
             LoadVisualContainuer();
+            LoadSpecialEffectPictures();
             LoadCharacterPrefab();
         }
         private void LoadCardData()
@@ -48,13 +53,39 @@ namespace Assets.Scripts.Manager
 
             characterData = JsonConvert.DeserializeObject<Dictionary<string, CharacterData>>(text.text);
 
-            text = Resources.Load<TextAsset>(configPath + "Effect");
+            text = Resources.Load<TextAsset>(configPath + "Buff");
 
-            effectData = JsonConvert.DeserializeObject<Dictionary<string, BuffData>>(text.text);
+            buffData = JsonConvert.DeserializeObject<Dictionary<string, BuffData>>(text.text);
+
+            text = Resources.Load<TextAsset>(configPath + "BuffEffect");
+
+            buffEffectData = JsonConvert.DeserializeObject<Dictionary<string, BuffEffectData>>(text.text);
 
             text = Resources.Load<TextAsset>(configPath + "Skill");
 
             skillData = JsonConvert.DeserializeObject<Dictionary<string, SkillData>>(text.text);
+
+            text = Resources.Load<TextAsset>(configPath + "SpecialEffectInfos");
+
+            specialEffectData = JsonConvert.DeserializeObject<Dictionary<string, SpecialEffectData>>(text.text);
+        }
+        private void LoadSpecialEffectPictures()
+        {
+            SpecialEffectPicture pictures = Resources.Load<SpecialEffectPicture>(sOPath + "SpecialEffectPicture");
+
+            specialEffectPictures.Clear();
+
+            foreach(var pic in pictures.pics)
+            {
+                if(!specialEffectPictures.ContainsKey(pic.name))
+                {
+                    specialEffectPictures.Add(pic.name, pic.icon);
+                }
+                else
+                {
+                    specialEffectPictures[pic.name] = pic.icon;
+                }
+            }
         }
         private void LoadVisualContainuer()
         {
@@ -119,6 +150,18 @@ namespace Assets.Scripts.Manager
                 else
                 {
                     VFXs[vfx.id] = vfx.effect.GetComponent<EffectObject>();
+                }
+            }
+
+            foreach(var picture in VisualContianer.profilePics)
+            {
+                if(!profilePictures.ContainsKey(picture.characterID))
+                {
+                    profilePictures.Add(picture.characterID, picture.picture);
+                }
+                else
+                {
+                    profilePictures[picture.characterID] = picture.picture;
                 }
             }
 

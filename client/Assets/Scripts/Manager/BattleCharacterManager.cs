@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Model;
 using Assets.Scripts.Service;
+using Assets.Scripts.UI.Battle;
 using Common;
 using Common.Data;
 using Common.Model;
@@ -59,7 +60,15 @@ namespace Assets.Scripts.Manager
             m_allCharacters.Clear();
             m_characterRank.Clear();
             m_lockedCharacters.Clear();
-            
+
+            OnPointerEnterCharacter += OnPointerEnterCharacterFunc;
+        }
+        private void OnPointerEnterCharacterFunc(BattleCharacter character)
+        {
+            UIManager.Instance.ShowUI<UIBattleCharacterInfo>("UIBattleCharacterInfo", (ui) =>
+            {
+                ui.OnPointerInNewCharacter(character);
+            });
         }
         public void HandleCharacterClicked(BattleCharacter character)
         {

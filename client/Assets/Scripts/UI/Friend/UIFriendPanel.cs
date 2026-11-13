@@ -16,7 +16,7 @@ namespace Assets.Scripts.UI.Friend
         Request,
         Search
     }
-    public class UIFriendPanel : MonoBehaviour
+    public class UIFriendPanel : UIWindow
     {
         [Header("预制体")]
         [SerializeField] private UIFriendInfoItem friendInfoItemPrefab;
@@ -50,8 +50,10 @@ namespace Assets.Scripts.UI.Friend
             FriendManager.Instance.OnRemoveFriend += RemoveFriend;
             FriendManager.Instance.OnRequestChange += ChangeRequest;
             FriendManager.Instance.OnRemoveRequest += RemoveRequest;
+            FriendManager.Instance.OnUpdateSearchedInfo += UpdateSearchInfo;
 
             FriendService.Instance.OnSearchFinished += ShowSearchInfo;
+            
 
             FriendManager.Instance.CallActionForCurrentData();
             currentPanel = CurrentPanel.Search;
@@ -82,7 +84,7 @@ namespace Assets.Scripts.UI.Friend
                 friendInfoItems.Add(info.Id, item);
             }
 
-            item.SetInfo(info.Id, info.Nickname, info.Online);
+            item.SetInfo(info.Id, info.Nickname, info.Online, info.mainCharacterID);
             RefreshFriendOrder();
         }
         private void RemoveFriend(string id)
@@ -130,7 +132,7 @@ namespace Assets.Scripts.UI.Friend
                 item = Instantiate(friendRequestInfoItemPrefab, panelContents[(int)CurrentPanel.Request]);
                 requestInfoItems.Add(info.Id, item);
             }
-            item.SetInfo(info.Id, info.requesterID, info.requesterNickname, info.createTime);
+            item.SetInfo(info.Id, info.requesterID, info.requesterNickname, info.createTime, info.requestMainCharacterID);
         }
         private void RemoveRequest(long id)
         {
@@ -153,6 +155,13 @@ namespace Assets.Scripts.UI.Friend
                 item.SetInfo(info);
             }
         }
+        private void UpdateSearchInfo(PlayerSearchInfo info)
+        {
+            if(searchInfoItems.TryGetValue(info.userID, out var item))
+            {
+                item.SetInfo(info);
+            }
+        }
         private void ClearSearchInfos()
         {
             foreach (var item in searchInfoItems)
@@ -167,6 +176,7 @@ namespace Assets.Scripts.UI.Friend
             FriendManager.Instance.OnRemoveFriend -= RemoveFriend;
             FriendManager.Instance.OnRequestChange -= ChangeRequest;
             FriendManager.Instance.OnRemoveRequest -= RemoveRequest;
+            FriendManager.Instance.OnUpdateSearchedInfo -= UpdateSearchInfo;
 
             FriendService.Instance.OnSearchFinished -= ShowSearchInfo;
 

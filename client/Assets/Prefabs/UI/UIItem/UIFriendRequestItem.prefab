@@ -181,6 +181,7 @@ MonoBehaviour:
   time: {fileID: 5483120564287457270}
   greenButton: {fileID: 4966024118374205319}
   redButton: {fileID: 8970474299730122614}
+  mainCharacterPic: {fileID: 5460905260330516423}
 --- !u!1 &821359921438291859
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,158 +1,132 @@
 {
-    "card1":
-    {
-        "DataID" : "card1",
-        "Name" : "工程师卡",
-        "Description" : "使用后生成角色“工程师”",
-        "Type" : 0,
-        "Quality" : 3,
-        "targetID":
-        [
-            "character1"
-        ]
-    },
-    "card2":
-    {
-        "DataID" : "card2",
-        "Name" : "回血卡I",
-        "Description" : "选定一个角色回复血量",
-        "Type" : 2,
-        "Quality" : 1,
-        "targetID":
-        [
-            "effect1"
-        ]
-    },
-    "card3":
-    {
-        "DataID" : "card3",
-        "Name" : "防御卡I",
-        "Description" : "选定一个角色增加防御",
-        "Type" : 2,
-        "Quality" : 1,
-        "targetID":
-        [
-            "effect2"
-        ]
-    },
-    "card4":
-    {
-        "DataID" : "card4",
-        "Name" : "速度卡I",
-        "Description" : "选定一个角色增加速度",
-        "Type" : 2,
-        "Quality" : 1,
-        "targetID":
-        [
-            "effect3"
-        ]
-    },
-    "card5":
-    {
-        "DataID" : "card5",
-        "Name" : "力量卡I",
-        "Description" : "选定一个角色增加攻击力",
-        "Type" : 2,
-        "Quality" : 1,
-        "targetID":
-        [
-            "effect4"
-        ]
-    },
-    "card6":
-    {
-        "DataID" : "card6",
-        "Name" : "健康卡I",
-        "Description" : "选定一个角色增加最大生命值",
-        "Type" : 2,
-        "Quality" : 1,
-        "targetID":
-        [
-            "effect5"
-        ]
-    },
-    "card7":
-    {
-        "DataID" : "card7",
-        "Name" : "骑士卡",
-        "Description" : "使用后生成角色“骑士”",
-        "Type" : 0,
-        "Quality" : 3,
-        "targetID":
-        [
-            "character2"
-        ]
-    },
-    "card8":
-    {
-        "DataID" : "card8",
-        "Name" : "牧师卡",
-        "Description" : "使用后生成角色“牧师”",
-        "Type" : 0,
-        "Quality" : 3,
-        "targetID":
-        [
-            "character4"
-        ]
-    },
-    "card9":
-    {
-        "DataID" : "card9",
-        "Name" : "回血卡II",
-        "Description" : "选定一个角色回复血量",
-        "Type" : 2,
-        "Quality" : 2,
-        "targetID":
-        [
-            "effect6"
-        ]
-    },
-    "card10":
-    {
-        "DataID" : "card10",
-        "Name" : "防御卡II",
-        "Description" : "选定一个角色增加防御",
-        "Type" : 2,
-        "Quality" : 2,
-        "targetID":
-        [
-            "effect7"
-        ]
-    },
-    "card11":
-    {
-        "DataID" : "card11",
-        "Name" : "速度卡II",
-        "Description" : "选定一个角色增加速度",
-        "Type" : 2,
-        "Quality" : 2,
-        "targetID":
-        [
-            "effect8"
-        ]
-    },
-    "card12":
-    {
-        "DataID" : "card12",
-        "Name" : "力量卡II",
-        "Description" : "选定一个角色增加攻击力",
-        "Type" : 2,
-        "Quality" : 2,
-        "targetID":
-        [
-            "effect9"
-        ]
-    },
-    "card13":
-    {
-        "DataID" : "card13",
-        "Name" : "健康卡II",
-        "Description" : "选定一个角色增加最大生命值",
-        "Type" : 2,
-        "Quality" : 2,
-        "targetID":
-        [
-            "effect10"
-        ]
-    }
+  "card1": {
+    "DataID": "card1",
+    "Name": "工程师卡",
+    "Description": "使用后生成角色“工程师”",
+    "Type": 0,
+    "Quality": 3,
+    "targetID": [
+      "character1"
+    ]
+  },
+  "card2": {
+    "DataID": "card2",
+    "Name": "回血卡I",
+    "Description": "选定一个角色回复血量",
+    "Type": 2,
+    "Quality": 1,
+    "targetID": [
+      "buff1"
+    ]
+  },
+  "card3": {
+    "DataID": "card3",
+    "Name": "防御卡I",
+    "Description": "选定一个角色增加防御",
+    "Type": 2,
+    "Quality": 1,
+    "targetID": [
+      "buff2"
+    ]
+  },
+  "card4": {
+    "DataID": "card4",
+    "Name": "速度卡I",
+    "Description": "选定一个角色增加速度",
+    "Type": 2,
+    "Quality": 1,
+    "targetID": [
+      "buff3"
+    ]
+  },
+  "card5": {
+    "DataID": "card5",
+    "Name": "力量卡I",
+    "Description": "选定一个角色增加攻击力",
+    "Type": 2,
+    "Quality": 1,
+    "targetID": [
+      "buff4"
+    ]
+  },
+  "card6": {
+    "DataID": "card6",
+    "Name": "健康卡I",
+    "Description": "选定一个角色增加最大生命值",
+    "Type": 2,
+    "Quality": 1,
+    "targetID": [
+      "buff5"
+    ]
+  },
+  "card7": {
+    "DataID": "card7",
+    "Name": "骑士卡",
+    "Description": "使用后生成角色“骑士”",
+    "Type": 0,
+    "Quality": 3,
+    "targetID": [
+      "character2"
+    ]
+  },
+  "card8": {
+    "DataID": "card8",
+    "Name": "牧师卡",
+    "Description": "使用后生成角色“牧师”",
+    "Type": 0,
+    "Quality": 3,
+    "targetID": [
+      "character4"
+    ]
+  },
+  "card9": {
+    "DataID": "card9",
+    "Name": "回血卡II",
+    "Description": "选定一个角色回复血量",
+    "Type": 2,
+    "Quality": 2,
+    "targetID": [
+      "buff6"
+    ]
+  },
+  "card10": {
+    "DataID": "card10",
+    "Name": "防御卡II",
+    "Description": "选定一个角色增加防御",
+    "Type": 2,
+    "Quality": 2,
+    "targetID": [
+      "buff7"
+    ]
+  },
+  "card11": {
+    "DataID": "card11",
+    "Name": "速度卡II",
+    "Description": "选定一个角色增加速度",
+    "Type": 2,
+    "Quality": 2,
+    "targetID": [
+      "buff8"
+    ]
+  },
+  "card12": {
+    "DataID": "card12",
+    "Name": "力量卡II",
+    "Description": "选定一个角色增加攻击力",
+    "Type": 2,
+    "Quality": 2,
+    "targetID": [
+      "buff9"
+    ]
+  },
+  "card13": {
+    "DataID": "card13",
+    "Name": "健康卡II",
+    "Description": "选定一个角色增加最大生命值",
+    "Type": 2,
+    "Quality": 2,
+    "targetID": [
+      "buff10"
+    ]
+  }
 }

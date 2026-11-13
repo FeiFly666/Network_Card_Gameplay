@@ -41,9 +41,14 @@ namespace Assets.Scripts
 
                 FriendService.Instance.Init();
 
+                SpecialEffectsService.Instance.Init();
+                SpecialEffectsManager.Instance.Init();
+
                 NetClient.Instance.OnConnected += StartHeart;
 
                 SettingManager.Instance.Init();
+
+                
 
                 hearMessage = new Message();
                 hearMessage.Request = new RequestMessage();

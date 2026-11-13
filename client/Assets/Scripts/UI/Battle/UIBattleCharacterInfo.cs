@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI.Battle
 {
-    public class UIBattleCharacterInfo : MonoBehaviour
+    public class UIBattleCharacterInfo : UIWindow
     {
         [SerializeField] private TMP_Text hp;
         [SerializeField] private TMP_Text mp;
@@ -24,16 +24,18 @@ namespace Assets.Scripts.UI.Battle
         private BattleCharacter pendingCharacter;
 
         [SerializeField] private Vector2 originPos;
-        private RectTransform rTransform;
+        private RectTransform rTransform => GetComponent<RectTransform>();
         private void Awake()
         {
-            rTransform = GetComponent<RectTransform>();
+            //rTransform = GetComponent<RectTransform>();
         }
 
-        private void OnEnable()
+        public override void OnOpen()
         {
+            rTransform.position = originPos;
+            base.OnOpen();
             BattleCharacterManager.Instance.OnCharacterAttributeChanged += OnOneCharacterAttributeChanged;
-            BattleCharacterManager.Instance.OnPointerEnterCharacter += OnPointerInNewCharacter;
+            //BattleCharacterManager.Instance.OnPointerEnterCharacter += OnPointerInNewCharacter;
             BattleCharacterManager.Instance.OnPointerExitCharacter += OnPointerOut;
         }
         public void OnPointerInNewCharacter(BattleCharacter character)
@@ -140,19 +142,25 @@ namespace Assets.Scripts.UI.Battle
             }
 
         }
-        private void OnDisable()
+        public override void OnClose()
         {
+            base.OnClose();
             BattleCharacterManager.Instance.OnCharacterAttributeChanged -= OnOneCharacterAttributeChanged;
-            BattleCharacterManager.Instance.OnPointerEnterCharacter -= OnPointerInNewCharacter;
+            //BattleCharacterManager.Instance.OnPointerEnterCharacter -= OnPointerInNewCharacter;
             BattleCharacterManager.Instance.OnPointerExitCharacter -= OnPointerOut;
         }
         private void HideInfo()
         {
-            rTransform.position = originPos;
+            //rTransform.position = originPos;
+            CloseUI();
         }
         private void ShowInfo()
         {
-            if (currentCharacter == null) return;
+            if (currentCharacter == null)
+            {
+                CloseUI();
+                return;
+            }
 
             Vector2 pos = Camera.main.WorldToScreenPoint(currentCharacter.InfoPos.transform.position);
 

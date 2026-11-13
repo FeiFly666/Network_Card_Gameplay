@@ -79,6 +79,7 @@ namespace Assets.Scripts.Manager
                             BattleAttackHandler handler = attacker.PlayAttack(target);
 
                             yield return handler.WaitHit(1);
+                            if(handler.Cancelled)break;
 
                             while (BattleManager.Instance.eventQueue.Count > 0 && IsResultEvent(BattleManager.Instance.eventQueue.Peek()))
                             {

@@ -253,6 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 9106710601015805390}
   Nickname: {fileID: 52575662201669639}
+  mainCharacterPic: {fileID: 7676634635736461722}
   online: {fileID: 8718588002860141628}
   greenButton: {fileID: 606414098656062664}
   redButton: {fileID: 6058151124120672310}

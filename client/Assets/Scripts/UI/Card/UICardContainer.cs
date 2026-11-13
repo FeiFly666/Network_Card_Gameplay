@@ -6,20 +6,38 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI.Card
 {
-    public class UICardContainer : MonoBehaviour
+    public class UICardContainer : UIWindow
     {
         [SerializeField] private Transform enemyCardRoot;
         [SerializeField] private Transform playerCardRoot;
-        [SerializeField] private Transform dragRoot;
+        private Transform dragRoot;
 
         [SerializeField] private List<UICard> enemyCards = new List<UICard>();
 
         private Dictionary<int, UICard> playerCards = new Dictionary<int, UICard>();
         // Use this for initialization
-        private void OnEnable()
+        public override void OnOpen()
         {
+            dragRoot = UIManager.Instance.dragRoot;
+            InitUI();
             BattleCardManager.Instance.OnAddNewCard += HandleSetNewCard;
             BattleCardManager.Instance.OnRemoveCard += HandleRemoveCard;
+            base.OnOpen();
+        }
+        private void InitUI()
+        {
+            List<UICard> cards = BattleCardManager.Instance.GetAllPlayerCardInfo();
+            int enemyCardNum = BattleCardManager.Instance.GetEnemyCardNum();
+
+            foreach (var card in cards)
+            {
+                HandleSetNewCard(card);
+            }
+            for(int i = 0; i < enemyCardNum; i++)
+            {
+                UICard newCard = BattleCardManager.Instance.GenerateFakeCard();
+                HandleSetNewCard(newCard);
+            }
         }
         
         private void HandleSetNewCard(UICard newCard)
@@ -65,10 +83,12 @@ namespace Assets.Scripts.UI.Card
                 deleteCard.RemoveCard(isDrop);
             }
         }
-        private void OnDisable()
+        public override void OnClose()
         {
+            base.OnClose();
             BattleCardManager.Instance.OnAddNewCard -= HandleSetNewCard;
             BattleCardManager.Instance.OnRemoveCard -= HandleRemoveCard;
         }
+
     }
 }

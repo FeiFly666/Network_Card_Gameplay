@@ -23,9 +23,7 @@ namespace Assets.Scripts.Model
     public class BattleCharacter : MonoBehaviour,IPointerEnterHandler, IPointerExitHandler ,IPointerClickHandler
     {
         //public SpriteRenderer spriteRenderer;
-
         public Character character;
-
         public Animator anim;
         public string ownerID;
 
@@ -41,13 +39,13 @@ namespace Assets.Scripts.Model
         [SerializeField] private GameObject weaponObj;
         [SerializeField] public GameObject InfoPos;
 
-        //public bool isMain;
-
         public int targetID = -1;
         public Vector2 targetPosition;
         public bool canDefend = true;
         public bool canAttack = true;
         public bool canUseSkill = false;
+
+        private BattleAttackHandler currentActionHandler;
 
         public Action OnCharacterDead;
         public Action OnCharacterValueChanged;
@@ -70,7 +68,6 @@ namespace Assets.Scripts.Model
         public int skillBattleGroup;
         private void Awake()
         {
-            //spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             anim = GetComponentInChildren<Animator>();
             battleView = GetComponentInChildren<BattleView>();
             
@@ -164,6 +161,7 @@ namespace Assets.Scripts.Model
         public void RemoveThisCharacter(bool isDead)
         {
             this.isDead = true;
+            currentActionHandler?.Close();
             OnCharacterDead?.Invoke();
             if (isDead)
             {
@@ -224,10 +222,14 @@ namespace Assets.Scripts.Model
                 BattleAttackHandler handle = new BattleAttackHandler();
                 handle.MarkHit();
                 handle.MarkFinish();
-                return handle;
-            }
 
-            return battleView.PlayAttackAnim(target);
+                //currentActionHandler = handle;
+                //return handle;
+            }
+            else
+                currentActionHandler = battleView.PlayAttackAnim(target);
+            
+            return currentActionHandler;
 
         }
         public BattleAttackHandler PlaySkill(BattleCharacter target = null)
@@ -237,13 +239,14 @@ namespace Assets.Scripts.Model
                 BattleAttackHandler handle = new BattleAttackHandler();
                 handle.MarkHit();
                 handle.MarkFinish();
-                return handle;
+
+                //currentActionHandler = handle;
+                //return handle;
             }
+            else if(skillTargetType == SkillTargetType.SelectEnemy )currentActionHandler = battleView.PlaySelectSkillAnim(target);
+            else currentActionHandler = battleView.PlaySkillAnim();
 
-            if(skillTargetType == SkillTargetType.SelectEnemy )return battleView.PlaySelectSkillAnim(target);
-
-            return battleView.PlaySkillAnim();
-
+            return currentActionHandler;
         }
         public IEnumerator PlayHit()
         {

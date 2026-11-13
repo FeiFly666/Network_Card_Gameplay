@@ -20,6 +20,7 @@ namespace Assets.Scripts.Service
             MessageDispatcher.Instance.Subscribe<UserFriendListChangedBroadcast>(OnRecieveFriendList);
             MessageDispatcher.Instance.Subscribe<UserAddFriendResponse>(OnRecieveAddFriend);
             MessageDispatcher.Instance.Subscribe<UserSearchPlayerResponse>(OnRecieveSearchInfo);
+            MessageDispatcher.Instance.Subscribe<UserDeleteFriendResponse>(OnRecieveRemoveFriend);
         }
 
         public void SendGetFriendList()
@@ -58,6 +59,15 @@ namespace Assets.Scripts.Service
 
             NetClient.Instance.Send(message);
         }
+        public void SendRemoveFriendRequest(string targetID)
+        {
+            Message message = new Message();
+            message.Request = new RequestMessage();
+            message.Request.deleteFriend = new UserDeleteFriendRequest();
+            message.Request.deleteFriend.deleteID = targetID;
+
+            NetClient.Instance.Send(message);
+        }
         private void OnRecieveFriendList(ISession session, UserFriendListChangedBroadcast broadcast)
         {
             if (broadcast == null) return;
@@ -72,6 +82,10 @@ namespace Assets.Scripts.Service
             {
                 MessageBox.Show(UI.Common.MessageType.Warning, response.Msg);
             }
+            else
+            {
+                FriendManager.Instance.UpdateSearchInfo(response.Info);
+            }
         }
         private void OnRecieveSearchInfo(ISession session, UserSearchPlayerResponse response)
         {
@@ -83,6 +97,12 @@ namespace Assets.Scripts.Service
                 return;
             }
             OnSearchFinished?.Invoke(response.Players);
+        }
+
+        private void OnRecieveRemoveFriend(ISession session, UserDeleteFriendResponse response)
+        {
+            if (response == null) return;
+            MessageBox.Show(UI.Common.MessageType.Warning, response.Msg);
         }
 
     }

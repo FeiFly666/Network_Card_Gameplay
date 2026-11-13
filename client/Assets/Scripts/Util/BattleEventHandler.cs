@@ -97,7 +97,7 @@ namespace Assets.Scripts.Util
         }
         private static void HandleCharacterAttributeChange(BattleEvent e)
         {
-            BuffData effectData = DataManager.Instance.effectData[e.paramS];
+            BuffEffectData effectData = DataManager.Instance.buffEffectData[e.paramS];
             BattleCharacterManager.Instance.HandleCharacterAttributeChange(e.Id, effectData.EffectType, e.Param);
         }
     }

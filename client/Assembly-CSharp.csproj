@@ -61,7 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Model\UIChaCard.cs" />
+    <Compile Include="Assets\Scripts\UI\Battle\UIBattleRoundInfo.cs" />
     <Compile Include="Assets\Scripts\Model\BattleCharacter.cs" />
+    <Compile Include="Assets\Scripts\UI\SpecialEffectUI\UISpecialEffectSelectPanel.cs" />
     <Compile Include="Assets\Scripts\Util\VFXPlayer.cs" />
     <Compile Include="Assets\Scripts\UI\Chat\UIChatItem.cs" />
     <Compile Include="Assets\Scripts\Model\MainCharacter.cs" />
@@ -104,17 +106,23 @@
     <Compile Include="Assets\Scripts\UI\Setting\UISettingPanel.cs" />
     <Compile Include="Assets\Scripts\Util\InputFieldBox.cs" />
     <Compile Include="Assets\Scripts\Manager\DataManager.cs" />
+    <Compile Include="Assets\Scripts\UI\UIButton.cs" />
     <Compile Include="Assets\Scripts\UI\Battle\UIBattleCharacterInfo.cs" />
     <Compile Include="Assets\Scripts\LoadingService.cs" />
+    <Compile Include="Assets\Scripts\Util\MyResourceLoader.cs" />
+    <Compile Include="Assets\Scripts\UI\Main\UIChaSpecialEffectSlot.cs" />
     <Compile Include="Assets\Scripts\Animation\AnimationMeleeView.cs" />
     <Compile Include="Assets\Scripts\UI\Main\UIShowCard.cs" />
     <Compile Include="Assets\Scripts\Service\RoomService.cs" />
     <Compile Include="Assets\Scripts\Manager\ChatManager.cs" />
     <Compile Include="Assets\Scripts\UI\Start\UILogin.cs" />
+    <Compile Include="Assets\Scripts\UI\SpecialEffectUI\UISpecialEffectSelectItem.cs" />
     <Compile Include="Assets\Scripts\Util\BattleEventHandler.cs" />
+    <Compile Include="Assets\Scripts\SO\SpecialEffectPicture.cs" />
     <Compile Include="Assets\Scripts\UI\Setting\UISettingButton.cs" />
     <Compile Include="Assets\Scripts\Manager\BattleCharacterManager.cs" />
     <Compile Include="Assets\Scripts\Model\BattleView.cs" />
+    <Compile Include="Assets\Scripts\Service\SpecialEffectsService.cs" />
     <Compile Include="Assets\Scripts\UI\Friend\UIFriendRequestInfoItem.cs" />
     <Compile Include="Assets\Scripts\Service\FriendService.cs" />
     <Compile Include="Assets\Scripts\Animation\AnimationRangedView.cs" />
@@ -127,8 +135,14 @@
     <Compile Include="Assets\Scripts\UI\Battle\UIDragArea.cs" />
     <Compile Include="Assets\Scripts\SO\VisualContainer.cs" />
     <Compile Include="Assets\Scripts\UI\Main\UIMain.cs" />
+    <Compile Include="Assets\Scripts\UI\SpecialEffectUI\SpecialEffectInfoPanel.cs" />
+    <Compile Include="Assets\Scripts\UI\UISceneTag.cs" />
+    <Compile Include="Assets\Scripts\UI\SpecialEffectUI\UISpecialEffectInfoPanel.cs" />
+    <Compile Include="Assets\Scripts\Common\BattleSceneEnrty.cs" />
     <Compile Include="Assets\Scripts\Manager\BattleEventPlayer.cs" />
+    <Compile Include="Assets\Scripts\UI\UIWindow.cs" />
     <Compile Include="Assets\Scripts\ObjectPool\IPoolable.cs" />
+    <Compile Include="Assets\Scripts\Manager\SpecialEffectsManager.cs" />
     <Compile Include="Assets\Scripts\UI\Main\UISelectCharacterInfo.cs" />
     <Compile Include="Assets\Scripts\UI\Battle\UIBattleCharacterPanel.cs" />
     <Compile Include="Assets\Scripts\Service\BattleService.cs" />

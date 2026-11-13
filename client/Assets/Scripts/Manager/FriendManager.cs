@@ -18,6 +18,8 @@ namespace Assets.Scripts.Manager
         public Action<FriendRequestInfo> OnRequestChange;
         public Action<string> OnRemoveFriend;
         public Action<long> OnRemoveRequest;
+
+        public Action<PlayerSearchInfo> OnUpdateSearchedInfo;
         public void Init()
         {
 
@@ -89,6 +91,10 @@ namespace Assets.Scripts.Manager
                     requests.Remove(deleteRequest);
                 }
             }
+        }
+        public void UpdateSearchInfo(PlayerSearchInfo info)
+        {
+            OnUpdateSearchedInfo?.Invoke(info);
         }
     }
 }

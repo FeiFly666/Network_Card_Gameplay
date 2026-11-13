@@ -8,7 +8,6 @@ using UnityEngine;
 public class PoolManager : MonoBehaviour
 {
     private Dictionary<Type, object> _ClassPool = new Dictionary<Type, object>();
-
     private Dictionary<int, object> _GameObjectPool = new Dictionary<int, object>();
     private Dictionary<int,int> _instance2Prefab = new Dictionary<int, int>();
 

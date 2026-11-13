@@ -70,6 +70,14 @@ namespace Assets.Scripts.Manager
 
             NetClient.Instance.Send(message);
         }
+        public void SendChangeMainCharRequest(string currentCharacterID)
+        {
+            Message submitMainCha = new Message();
+            submitMainCha.Request = new RequestMessage();
+            submitMainCha.Request.changeMainCha = new UserChangeMainChaRequest();
+            submitMainCha.Request.changeMainCha.mainCharacterID = currentCharacterID;
+            NetClient.Instance.Send(submitMainCha);
+        }
         private void OnRecieveLoginResponse(ISession session, UserLoginResponse response)
         {
             if (response == null) { return; }

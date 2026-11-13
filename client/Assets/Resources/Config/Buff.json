@@ -1,0 +1,111 @@
+{
+  "buff1": {
+    "DataID": "buff1",
+    "Name": "回复I",
+    "Description": "回复1点血量",
+    "BuffEffects": [
+      "effect1"
+    ]
+  },
+  "buff2": {
+    "DataID": "buff2",
+    "Name": "防御I",
+    "Description": "增加1点防御值",
+    "BuffEffects": [
+      "effect2"
+    ]
+  },
+  "buff3": {
+    "DataID": "buff3",
+    "Name": "速度I",
+    "Description": "增加1点速度",
+    "BuffEffects": [
+      "effect3"
+    ]
+  },
+  "buff4": {
+    "DataID": "buff4",
+    "Name": "力量I",
+    "Description": "增加1点攻击力",
+    "BuffEffects": [
+      "effect4"
+    ]
+  },
+  "buff5": {
+    "DataID": "buff5",
+    "Name": "增强I",
+    "Description": "增加1点最大生命值",
+    "BuffEffects": [
+      "effect5"
+    ]
+  },
+  "buff6": {
+    "DataID": "buff6",
+    "Name": "回复II",
+    "Description": "回复2点血量",
+    "BuffEffects": [
+      "effect6"
+    ]
+  },
+  "buff7": {
+    "DataID": "buff7",
+    "Name": "防御II",
+    "Description": "增加2点防御值",
+    "BuffEffects": [
+      "effect7"
+    ]
+  },
+  "buff8": {
+    "DataID": "buff8",
+    "Name": "速度II",
+    "Description": "增加2点速度",
+    "BuffEffects": [
+      "effect8"
+    ]
+  },
+  "buff9": {
+    "DataID": "buff9",
+    "Name": "力量II",
+    "Description": "增加2点攻击力",
+    "BuffEffects": [
+      "effect9"
+    ]
+  },
+  "buff10": {
+    "DataID": "buff10",
+    "Name": "增强II",
+    "Description": "增加2点最大生命值",
+    "BuffEffects": [
+      "effect10"
+    ]
+  },
+  "buff11": {
+    "DataID": "buff11",
+    "Name": "治愈",
+    "Description": "立即回复1点生命，此后三回合持续回复1点生命",
+    "BuffEffects": [
+      "effect1",
+      "effect17"
+    ]
+  },
+  "buff12": {
+    "DataID": "buff12",
+    "Name": "兴奋剂",
+    "Description": "降低1点速度，此后三回合持续增加1点力量",
+    "BuffEffects": [
+      "effect21",
+      "effect23"
+    ]
+  },
+  "buff13": {
+    "DataID": "buff13",
+    "Name": "诅咒",
+    "Description": "三回合持续减少基本数值",
+    "BuffEffects": [
+      "effect12",
+      "effect13",
+      "effect14",
+      "effect11"
+    ]
+  }
+}

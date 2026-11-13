@@ -83,3 +83,10 @@ MonoBehaviour:
     effect: {fileID: 6909454670981132465, guid: 1da4ea89e59c6744c906ab03e9812a02, type: 3}
   - id: 12
     effect: {fileID: 7525491967679992508, guid: 528c5ec88208c6e4495895a2ae8c7c3b, type: 3}
+  profilePics:
+  - characterID: character1
+    picture: {fileID: 21300000, guid: 619265176563c4b46807604994c87590, type: 3}
+  - characterID: character2
+    picture: {fileID: 21300000, guid: 9098a17f56eaa394ea2d73e3d8a9af84, type: 3}
+  - characterID: character4
+    picture: {fileID: 21300000, guid: 9bde7bd519308a342b7e87f145720645, type: 3}

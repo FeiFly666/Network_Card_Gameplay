@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Assets.Scripts.Manager;
+using Assets.Scripts.Service;
+using Assets.Scripts.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +16,7 @@ namespace Assets.Scripts.UI.Friend
     {
         [SerializeField] TMP_Text ID;
         [SerializeField] TMP_Text Nickname;
+        [SerializeField] Image mainCharacterPic;
         [SerializeField] TMP_Text online;
         [SerializeField] Button greenButton;
         [SerializeField] Button redButton;
@@ -20,11 +24,19 @@ namespace Assets.Scripts.UI.Friend
         private string friendID;
         public string UserID { set; get; }
         public bool IsOnline { set; get; }
-        public void SetInfo(string id, string nickname, bool isOnline)
+        private void Awake()
+        {
+            redButton.onClick.RemoveAllListeners();
+            greenButton.onClick.RemoveAllListeners();
+
+            redButton.onClick.AddListener(RemoveFriend);
+        }
+        public void SetInfo(string id, string nickname, bool isOnline, string mainCharacterID)
         {
             ID.text = id;
             friendID = id;
             Nickname.text = nickname;
+            mainCharacterPic.overrideSprite = DataManager.Instance.profilePictures[mainCharacterID];
 
             if(isOnline)
             {
@@ -39,6 +51,13 @@ namespace Assets.Scripts.UI.Friend
 
             UserID = id;
             IsOnline = isOnline;
+        }
+        private void RemoveFriend()
+        {
+            MessageBox.Show(Common.MessageType.Warning, $"确定删除好友 {Nickname.text} 吗？", () =>
+            {
+                FriendService.Instance.SendRemoveFriendRequest(friendID);
+            }, null);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Service;
+﻿using Assets.Scripts.Manager;
+using Assets.Scripts.Service;
 using System;
 using System.Collections;
 using TMPro;
@@ -15,6 +16,7 @@ namespace Assets.Scripts.UI.Friend
         [SerializeField] TMP_Text time;
         [SerializeField] Button greenButton;
         [SerializeField] Button redButton;
+        [SerializeField] Image mainCharacterPic;
 
         private long requestID;
         private void Awake()
@@ -25,11 +27,13 @@ namespace Assets.Scripts.UI.Friend
             redButton.onClick.RemoveAllListeners();
             redButton.onClick.AddListener(RejectRequest);
         }
-        public void SetInfo(long requestID, string id, string nickname, long sendTime)
+        public void SetInfo(long requestID, string id, string nickname, long sendTime, string mainCharacterID)
         {
             this.requestID = requestID;
             ID.text = id;
             Nickname.text = nickname;
+
+            mainCharacterPic.overrideSprite = DataManager.Instance.profilePictures[mainCharacterID];
 
             DateTime sendTimeLocal = DateTimeOffset.FromUnixTimeMilliseconds(sendTime).LocalDateTime;
 

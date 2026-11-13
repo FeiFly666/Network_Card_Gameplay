@@ -1,5 +1,6 @@
 using Assets.Scripts.Manager;
 using Assets.Scripts.Model;
+using Assets.Scripts.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -7,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIBattleCharacterPanel : MonoBehaviour
+public class UIBattleCharacterPanel : UIWindow
 {
     private enum AttackType
     {
@@ -22,6 +23,7 @@ public class UIBattleCharacterPanel : MonoBehaviour
     [SerializeField] private Button characterCancleRemove;
     [SerializeField] private GameObject arrow;
     [SerializeField] private TMP_Text tips;
+    [SerializeField] private GameObject tipsGo;
     private BattleCharacter currentCharacter;
 
     private RectTransform rTransform;
@@ -35,8 +37,10 @@ public class UIBattleCharacterPanel : MonoBehaviour
     {
         rTransform = this.GetComponent<RectTransform>();
     }
-    private void OnEnable()
+    public override void OnOpen()
     {
+        this.rTransform.position = originPos;
+        base.OnOpen();
         BattleCharacterManager.Instance.OnCharacterClicked += HandleNewCharacterClicked;
         BattleCharacterManager.Instance.OnCharacterStateChanged += HandleCharacterStateChange;
         BattleCharacterManager.Instance.OnCharacterRemoved += CheckRemovedCharacter;
@@ -184,7 +188,7 @@ public class UIBattleCharacterPanel : MonoBehaviour
     private void CharacterSelectTarget()
     {
         isSelectingEnemy = true;
-        tips.gameObject.SetActive(true);
+        tipsGo.SetActive(true);
         if(currentCharacter.character.data.CharacterType == Common.Data.CharacterType.Attack)
         {
             tips.text = "请点击对方角色作为目标";
@@ -234,7 +238,7 @@ public class UIBattleCharacterPanel : MonoBehaviour
         this.gameObject.transform.position = originPos;
         currentCharacter = null;
         isSelectingEnemy = false;
-        tips.gameObject.SetActive(false);
+        tipsGo.SetActive(false);
         HideArrow();
     }
     private void ShowPanel()
@@ -280,11 +284,14 @@ public class UIBattleCharacterPanel : MonoBehaviour
     {
         arrow.gameObject.SetActive(false);
     }
-    private void OnDisable()
+    public override void OnClose()
     {
-        BattleCharacterManager.Instance.OnCharacterClicked -= HandleNewCharacterClicked;
-        BattleCharacterManager.Instance.OnCharacterStateChanged -= HandleCharacterStateChange;
-        BattleCharacterManager.Instance.OnCharacterRemoved -= CheckRemovedCharacter;
-        BattleManager.Instance.OnSubmitPhaseChanged -= HidePanel;
+        base.OnClose();
+        {
+            BattleCharacterManager.Instance.OnCharacterClicked -= HandleNewCharacterClicked;
+            BattleCharacterManager.Instance.OnCharacterStateChanged -= HandleCharacterStateChange;
+            BattleCharacterManager.Instance.OnCharacterRemoved -= CheckRemovedCharacter;
+            BattleManager.Instance.OnSubmitPhaseChanged -= HidePanel;
+        }
     }
 }

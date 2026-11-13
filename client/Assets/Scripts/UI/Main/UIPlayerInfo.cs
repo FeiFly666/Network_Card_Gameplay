@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.Main
 {
-    public class UIPlayerInfo : MonoBehaviour
+    public class UIPlayerInfo : UIWindow
     {
         [SerializeField] private TMP_Text playerID;
         [SerializeField] private TMP_Text playerNickname;

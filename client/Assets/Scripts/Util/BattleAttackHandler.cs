@@ -10,11 +10,13 @@ namespace Assets.Scripts.Util
     {
         public bool Hit {  get; set; }
         public bool Finish {  get; set; }
+        public bool Cancelled { get; set;}
         private int hitNum = 0;
         public void Refresh()
         {
             Hit = false;
             Finish = false;
+            Cancelled = false;
             hitNum = 0;
         }
 
@@ -29,17 +31,23 @@ namespace Assets.Scripts.Util
         }
         public IEnumerator WaitHit(int current)
         {
-            while (hitNum < current)
+            while (hitNum < current && !Cancelled)
             {
                 yield return null;
             }
         }
         public IEnumerator WaitFinish()
         {
-            while (!Finish)
+            while (!Finish && !Cancelled)
             {
                 yield return null;
             }
+        }
+
+        public void Close()
+        {
+            Cancelled = true;
+            Finish = true;
         }
     }
 }

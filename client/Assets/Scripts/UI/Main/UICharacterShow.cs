@@ -10,8 +10,10 @@ namespace Assets.Scripts.UI.Main
     public class UICharacterShow : MonoBehaviour
     {
         private Dictionary<string, GameObject> m_characterPrefabs = new Dictionary<string, GameObject>();
+        [SerializeField] private GameObject m_camera;
         private void Awake()
         {
+            ClearPreviewTexture();
             foreach (var cardData in DataManager.Instance.cardData)
             {
                 if (cardData.Value.Type == CardType.Character)
@@ -31,6 +33,10 @@ namespace Assets.Scripts.UI.Main
                 //Debug.Log(characterPrefab.Key + ' ' + cardCharacterID);
                 characterPrefab.Value.SetActive(characterPrefab.Key == cardCharacterID);
             }
+            if(!m_camera.activeSelf)
+            {
+                m_camera.SetActive(true);
+            }
         }
         public void HideAllPrefabs()
         {
@@ -38,6 +44,30 @@ namespace Assets.Scripts.UI.Main
             {
                 if(characterPrefab.Value != null)
                     characterPrefab.Value.SetActive(false);
+            }
+
+            m_camera.SetActive(false);
+            ClearPreviewTexture();
+        }
+
+        private void ClearPreviewTexture()
+        {
+            if (m_camera == null || !m_camera.TryGetComponent<Camera>(out var camera))
+                return;
+
+            var texture = camera.targetTexture;
+            if (texture == null)
+                return;
+
+            var previous = RenderTexture.active;
+            try
+            {
+                RenderTexture.active = texture;
+                GL.Clear(true, true, Color.clear);
+            }
+            finally
+            {
+                RenderTexture.active = previous;
             }
         }
     }

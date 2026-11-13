@@ -1,0 +1,232 @@
+{
+  "effect1": {
+    "DataID": "effect1",
+    "Name": "回复I",
+    "Description": "回复1点血量",
+    "ApplyType": 0,
+    "EffectType": 0,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect2": {
+    "DataID": "effect2",
+    "Name": "防御I",
+    "Description": "增加1点防御值",
+    "ApplyType": 0,
+    "EffectType": 3,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect3": {
+    "DataID": "effect3",
+    "Name": "速度I",
+    "Description": "增加1点速度",
+    "ApplyType": 0,
+    "EffectType": 4,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect4": {
+    "DataID": "effect4",
+    "Name": "力量I",
+    "Description": "增加1点攻击力",
+    "ApplyType": 0,
+    "EffectType": 2,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect5": {
+    "DataID": "effect5",
+    "Name": "增强I",
+    "Description": "增加1点血量上限",
+    "ApplyType": 0,
+    "EffectType": 1,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect6": {
+    "DataID": "effect6",
+    "Name": "回复II",
+    "Description": "回复2点血量",
+    "ApplyType": 0,
+    "EffectType": 0,
+    "Param": 2,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect7": {
+    "DataID": "effect7",
+    "Name": "防御II",
+    "Description": "增加2点防御值",
+    "ApplyType": 0,
+    "EffectType": 3,
+    "Param": 2,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect8": {
+    "DataID": "effect8",
+    "Name": "速度II",
+    "Description": "增加2点速度",
+    "ApplyType": 0,
+    "EffectType": 4,
+    "Param": 2,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect9": {
+    "DataID": "effect9",
+    "Name": "力量II",
+    "Description": "增加2点攻击力",
+    "ApplyType": 0,
+    "EffectType": 2,
+    "Param": 2,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect10": {
+    "DataID": "effect10",
+    "Name": "增强II",
+    "Description": "增加2点血量上限",
+    "ApplyType": 0,
+    "EffectType": 1,
+    "Param": 2,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect11": {
+    "DataID": "effect11",
+    "Name": "减伤I-Buff",
+    "Description": "持续降低1点血量",
+    "ApplyType": 1,
+    "EffectType": 0,
+    "Param": -1,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect12": {
+    "DataID": "effect12",
+    "Name": "弱化I-Buff",
+    "Description": "持续降低1点攻击力",
+    "ApplyType": 1,
+    "EffectType": 2,
+    "Param": -1,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect13": {
+    "DataID": "effect13",
+    "Name": "溶解I-Buff",
+    "Description": "持续降低1点防御力",
+    "ApplyType": 1,
+    "EffectType": 3,
+    "Param": -1,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect14": {
+    "DataID": "effect14",
+    "Name": "减速I-Buff",
+    "Description": "持续降低1点速度",
+    "ApplyType": 1,
+    "EffectType": 4,
+    "Param": -1,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect15": {
+    "DataID": "effect15",
+    "Name": "虚弱I-Buff",
+    "Description": "持续时间内减少两成原力量",
+    "ApplyType": 3,
+    "EffectType": 2,
+    "Param": -20,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect16": {
+    "DataID": "effect16",
+    "Name": "虚弱II-Buff",
+    "Description": "持续时间内减少四成原力量",
+    "ApplyType": 3,
+    "EffectType": 2,
+    "Param": -40,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect17": {
+    "DataID": "effect17",
+    "Name": "治愈I-Buff",
+    "Description": "持续获得1点生命",
+    "ApplyType": 1,
+    "EffectType": 0,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect18": {
+    "DataID": "effect18",
+    "Name": "增肌I-Buff",
+    "Description": "持续时间内增加两成原力量",
+    "ApplyType": 3,
+    "EffectType": 2,
+    "Param": 20,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect19": {
+    "DataID": "effect19",
+    "Name": "硬化I-Buff",
+    "Description": "持续获得2点护盾",
+    "ApplyType": 1,
+    "EffectType": 3,
+    "Param": 2,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect20": {
+    "DataID": "effect20",
+    "Name": "魔化I-Buff",
+    "Description": "持续获得1点魔力",
+    "ApplyType": 1,
+    "EffectType": 5,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 3
+  },
+  "effect21": {
+    "DataID": "effect21",
+    "Name": "缓慢I",
+    "Description": "减少1点速度",
+    "ApplyType": 0,
+    "EffectType": 4,
+    "Param": -1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect22": {
+    "DataID": "effect22",
+    "Name": "虚弱I",
+    "Description": "减少1点力量",
+    "ApplyType": 0,
+    "EffectType": 2,
+    "Param": -1,
+    "ParamStr": "",
+    "Duration": 0
+  },
+  "effect23": {
+    "DataID": "effect23",
+    "Name": "力量I-Buff",
+    "Description": "持续获得1点力量",
+    "ApplyType": 1,
+    "EffectType": 2,
+    "Param": 1,
+    "ParamStr": "",
+    "Duration": 3
+  }
+}

@@ -28,14 +28,19 @@ namespace Assets.Scripts.UI.Characters
         {
             BattleCharacterManager.Instance.OnNewCharacterSpawn += SetNewBattleCharacterPosition;
             BattleCharacterManager.Instance.OnCharacterRemoved += RemoveBattleCharacter;
+            uiRoot = UIManager.Instance.uiChaValRoot;
         }
         void Start()
         {
-            for(int i = 0; i<playerCharacterSlots.Length; i++)
+            Init();
+        }
+        public void Init()
+        {
+            for (int i = 0; i < playerCharacterSlots.Length; i++)
             {
                 playerAvialableSlot[i] = true;
             }
-            for(int i = 0;i<enemyCharacterSlots.Length; i++)
+            for (int i = 0; i < enemyCharacterSlots.Length; i++)
             {
                 enemyAvialableSlot[i] = true;
             }

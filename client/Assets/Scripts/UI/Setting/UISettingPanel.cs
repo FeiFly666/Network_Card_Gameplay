@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.Setting
 {
-    public class UISettingPanel : MonoBehaviour
+    public class UISettingPanel : UIWindow
     {
         [Header("分辨率下拉栏")]
         [SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -284,10 +284,6 @@ namespace Assets.Scripts.UI.Setting
 
             SettingManager.Instance.Save();
             SettingManager.Instance.Apply();
-        }
-        public void Close()
-        {
-            Destroy(this.gameObject);
         }
     }
 }
