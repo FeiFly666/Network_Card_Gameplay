@@ -161,7 +161,7 @@ namespace GameServer.Model.Battle.States
 
                             foreach (var effectID in room.players[player].battlePlayer.cards[cardID].Data.TargetID)
                             {
-                                if(!DataManager.Instance.m_effects.TryGetValue(effectID, out var effect))
+                                if(!DataManager.Instance.m_buffs.TryGetValue(effectID, out var effect))
                                 {
                                     Console.WriteLine($"battle room {room.Id} : player {player} use card {cardID} effect {effectID} not exist");
                                     continue;

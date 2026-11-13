@@ -1,6 +1,7 @@
 ﻿using Common.Data;
 using Common.Model;
 using GameServer.Model;
+using GameServer.Model.Battle;
 using GameServer.Utils;
 using NetMessage;
 using System;
@@ -11,7 +12,7 @@ namespace GameServer.Manager
     public class BattleCharacterManager
     {
         private BattleRoom room;
-        private Dictionary<int,Character> m_characters = new Dictionary<int,Character>();
+        private Dictionary<int,BattleCharacter> m_characters = new Dictionary<int, BattleCharacter>();
         public Dictionary<int,string> characterOwner = new Dictionary<int, string>();
 
         private Dictionary<int, int> characterDefendRound = new Dictionary<int, int>();
@@ -46,9 +47,12 @@ namespace GameServer.Manager
 
             player.battlePlayer.characters[character.ID] = character;
 
-            m_characters[character.ID] = character;
-
             characterOwner[character.ID] = player.id;
+
+            BattleCharacter battleCha = new BattleCharacter();
+            battleCha.InitBattleCharacter(player, character, room.round);
+
+            m_characters[character.ID] = battleCha;
 
             BattleEvent e = new BattleEvent();
             e.Type = BattleEvent.EventType.EventSpawnCharacter;
@@ -134,24 +138,52 @@ namespace GameServer.Manager
             characterOwner.Remove(characterID);
             room.players[playerID].battlePlayer.characters.Remove(characterID);
         }
+        public bool GetBattleCharacter(int charactetID, out BattleCharacter character)
+        {
+            return m_characters.TryGetValue(charactetID, out character);
+        }
         public bool GetCharacterOwner(int characterID, out string player)
         {
             return characterOwner.TryGetValue(characterID, out player);
         }
-        public bool GetCharacter(int characterID, out Character character)
+        public bool GetCharacter(int characterID, out Character? character)
         {
-            return m_characters.TryGetValue(characterID, out character);
+            bool res = m_characters.TryGetValue(characterID, out var battleCha);
+
+            character = res ? battleCha.character : null;
+
+            return res;
         }
         public bool GetCharacterData(int characterID, out CharacterData data)
         {
             data = null;
-            if(m_characters.TryGetValue(characterID, out var Character))
+            if(m_characters.TryGetValue(characterID, out var battleCharacter))
             {
-                data = Character.data;
+                data = battleCharacter.character.data;
                 return true;
             }
             return false;
         }
+
+        public IReadOnlyList<Character> GetPlayerCharacters(int characterID)
+        {
+            if(!GetCharacterOwner(characterID,out var playerID))
+            {
+                return null;
+            }
+            if(!room.players.TryGetValue(playerID, out var player))
+            {
+                return null;
+            }
+
+            var allies = new List<Character>();
+            foreach(var ally in player.battlePlayer.characters.Values)
+            {
+                allies.Add(ally);
+            }
+            return allies;
+        }
+
         public bool IsCharacterExist(int characterID)
         {
             return m_characters.ContainsKey(characterID);
@@ -181,23 +213,27 @@ namespace GameServer.Manager
         }
         public bool CanCharacterUseSkill(int characterID)
         {
+            if (!m_characters.TryGetValue(characterID, out var battleCharacter))
+            {
+                return false;
+            }
+
+            string skillID = battleCharacter.character.data.SkillID;
+
+            if (!DataManager.Instance.m_Skills.TryGetValue(skillID, out var skill))
+            {
+                return false;
+            }
+
+            bool isMPEnough = battleCharacter.character.CurMP >= skill.Cost;
+            
             if (characterCantSkillStartRound.TryGetValue(characterID, out var startRound))
             {
-                return room.round - startRound >= 1;
+                return room.round - startRound >= 1 && isMPEnough;
             }
 
-            if (!m_characters.TryGetValue(characterID, out var character))
-            {
-                return false;
-            }
-            string skillID = character.data.SkillID;
-
-            if(!DataManager.Instance.m_Skills.TryGetValue(skillID, out var skill))
-            {
-                return false;
-            }
-
-            return character.CurMP >= skill.Cost;
+            return isMPEnough;
+           
         }
         public void CharacterDefend(int characterID)
         {

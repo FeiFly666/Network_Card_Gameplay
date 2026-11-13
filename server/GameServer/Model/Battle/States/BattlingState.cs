@@ -1,6 +1,7 @@
 ﻿using Common.Data;
 using Common.Model;
 using GameServer.Manager;
+using GameServer.Model.Battle.BattleCharaccterEffects.BattleEffectContexts;
 using GameServer.Model.Battle.SkillHandler;
 using GameServer.Utils;
 using NetMessage;
@@ -20,6 +21,13 @@ namespace GameServer.Model.Battle.States
         public BattleEvent Event;
         public List<BattleCharacterSnapshot> BeforeCharacters;
         public List<BattleCardSnapshot> BeforeCards;
+    }
+    public enum AttackOrigin
+    { 
+        Player,
+        FollowUp,
+        Reflect,
+        Skill
     }
     public class BattlingState : IState, IResumeState
     {
@@ -244,71 +252,7 @@ namespace GameServer.Model.Battle.States
                         break;
                     case CharacterActionType.ChaActionTypeAttack:
                         {
-                            Character attacker = room.players[playerID].battlePlayer.characters[characterID];
-                            string targetPlayer = string.Empty;
-                            Character target = null;
-                            
-                            if(!room.characterManager.GetCharacter(action.Target.Id, out target))
-                            {
-                                continue;
-                            }
-                            if(!room.characterManager.GetCharacterOwner(characterID, out targetPlayer))
-                            {
-                                continue;
-                            }
-                            room.characterManager.GetCharacterData(attacker.ID, out var attackerData);
-                            //首先播放攻击
-                            BattleEvent playAttack = new BattleEvent();
-                            //协议有点少，因为这是系统自动生成的不需要actionid，所以把actionid当成被攻击对象的id
-                            playAttack.actionID = action.Target.Id;
-                            playAttack.Id = characterID;
-                            playAttack.Type = BattleEvent.EventType.EventCharacterAttack;
-
-                            AddNewEvents(playAttack);
-                            if(attackerData.CharacterType == Common.Data.CharacterType.Attack)
-                            {
-                                int defendDecrease = 0;
-
-                                int damage = BattleUtil.CalculateDamage(attacker, target, out defendDecrease);
-                                if (defendDecrease > 0)
-                                {
-                                    BattleEvent changeDef = BattleUtil.GenerateAttributeChangeEvent(target.ID, Common.Data.EffectType.Defence, -defendDecrease);
-                                    AddNewEvents(changeDef);
-                                    target.CurDEF -= defendDecrease;
-                                }
-                                if (damage > 0)
-                                {
-                                    damage = Math.Min(damage, target.CurHP);
-                                    BattleEvent changeHP = BattleUtil.GenerateAttributeChangeEvent(target.ID, Common.Data.EffectType.Health, -damage);
-                                    AddNewEvents(changeHP);
-                                    target.CurHP -= damage;
-                                    if (target.CurHP < 0)
-                                    {
-                                        target.CurHP = 0;
-                                    }
-                                }
-                                if (target.isDefend)
-                                {
-                                    AttackBeDefended(attacker);
-                                    DefendSuccess(target);
-                                }
-                                //如果target死亡则remove
-                                if (target.CurHP > 0) continue;
-
-                                CharacterDie(target);
-                            }
-                            else
-                            {
-                                int healNum = BattleUtil.CalculateHealNum(attacker, target);
-                                if(healNum > 0)
-                                {
-                                    BattleEvent increaseHP = BattleUtil.GenerateAttributeChangeEvent(target.ID, Common.Data.EffectType.Health, healNum);
-                                    AddNewEvents(increaseHP);
-                                    target.CurHP += healNum;
-                                }
-
-                            }
-                            
+                            ExecuteAttack(characterID, action.Target.Id, AttackOrigin.Player);
                         }
                         break;
                     case CharacterActionType.ChaActionTypeSkill:
@@ -432,6 +376,107 @@ namespace GameServer.Model.Battle.States
                 }
             }
         }
+        private bool ExecuteAttack(int attackerID, int targetID, AttackOrigin origin, int specialAttack = -100)
+        {
+            // 每次真正执行时重新获取，不能沿用排队时的对象状态
+            if (!room.characterManager.GetCharacter(attackerID, out var attacker) || attacker == null || attacker.CurHP <= 0)
+                return false;
+
+            if (!room.characterManager.GetCharacter(targetID, out var target) || target == null || target.CurHP <= 0)
+                return false;
+
+            room.characterManager.GetCharacterData(attackerID, out var attackerData);
+            if(origin != AttackOrigin.Reflect)
+            {
+                //首先播放攻击
+                BattleEvent playAttack = new BattleEvent();
+                //协议有点少，因为这是系统自动生成的不需要actionid，所以把actionid当成被攻击对象的id
+                playAttack.actionID = targetID;
+                playAttack.Id = attackerID;
+                playAttack.Type = BattleEvent.EventType.EventCharacterAttack;
+
+                AddNewEvents(playAttack);
+                if (origin == AttackOrigin.FollowUp)
+                {
+                    maxTime += 5f;
+                    timeLeft += 5f;
+                }
+            }
+
+            if(origin == AttackOrigin.Reflect)
+            {
+                int damage = specialAttack;
+                damage = Math.Min(damage, target.CurHP);
+
+                BattleEvent changeHP = BattleUtil.GenerateAttributeChangeEvent(target.ID, EffectType.Health, -damage);
+                AddNewEvents(changeHP);
+                target.CurHP -= damage;
+                if (target.CurHP < 0)
+                {
+                    target.CurHP = 0;
+                }
+
+                //如果target死亡则remove
+                if (target.CurHP <= 0)
+                {
+                    CharacterDie(target);
+                }
+                return true;
+            }
+
+            if (attackerData.CharacterType == CharacterType.Attack)
+            {
+
+                int damage = BattleUtil.CalculateDamage(attacker, target, out var defendDecrease);
+
+                if (defendDecrease > 0)
+                {
+                    BattleEvent changeDef = BattleUtil.GenerateAttributeChangeEvent(target.ID, EffectType.Defence, -defendDecrease);
+                    AddNewEvents(changeDef);
+                    target.CurDEF -= defendDecrease;
+                }
+
+                if (damage > 0)
+                {
+                    damage = Math.Min(damage, target.CurHP);
+                    BattleEvent changeHP = BattleUtil.GenerateAttributeChangeEvent(target.ID, EffectType.Health, -damage);
+                    AddNewEvents(changeHP);
+                    target.CurHP -= damage;
+                    if (target.CurHP < 0)
+                    {
+                        target.CurHP = 0;
+                    }
+                }
+
+                if (target.isDefend)
+                {
+                    AttackBeDefended(attacker);
+                    DefendSuccess(target);
+                }
+                //触发受击特殊效果
+                NotifyAfterDamage(attacker, target, origin);
+
+                //如果target死亡则remove
+                if (target.CurHP <= 0)
+                {
+                    CharacterDie(target);
+                }
+                //触发攻击效果
+                NotifyAfterAttack(attacker, target, origin);
+            }
+            else
+            {
+                int healNum = BattleUtil.CalculateHealNum(attacker, target);
+                if (healNum > 0)
+                {
+                    BattleEvent increaseHP = BattleUtil.GenerateAttributeChangeEvent(target.ID, Common.Data.EffectType.Health, healNum);
+                    AddNewEvents(increaseHP);
+                    target.CurHP += healNum;
+                }
+
+            }
+            return true;
+        }
         private void CharacterDie(Character target, int battleGroup = -1)
         {
             BattleEvent targetDie = new BattleEvent();
@@ -445,7 +490,10 @@ namespace GameServer.Model.Battle.States
             targetDie.battleGroup = battleGroup;
             AddNewEvents(targetDie);
 
+            NotifyDeath(target, battleGroup);
+
             room.characterManager.RemoveCharacter(targetPlayer, target.ID);
+
         }
         public void AddNewEvents(BattleEvent e)
         {
@@ -529,5 +577,58 @@ namespace GameServer.Model.Battle.States
             maxPlayEventID = Math.Max(maxPlayEventID, eventID);
             Console.WriteLine($"battle room {room.Id} : battle event finish request recieve  [current maxPlayID {maxPlayEventID}]");
         }
+
+        #region 特殊效果广播区域
+        public void NotifyAfterAttack(Character attacker, Character target, AttackOrigin origin)
+        {
+            if (!room.characterManager.GetBattleCharacter(attacker.ID, out var attackerCha) || attackerCha == null)
+                return;
+
+            var context = new AfterAttackContext
+            {
+                targetID = target.ID,
+                isTargetDefended = target.isDefend,
+                origin = origin,
+                ExecuteAttack = id => ExecuteAttack(attacker.ID, id, AttackOrigin.FollowUp)
+            };
+
+            attackerCha.ApplyAfterAttackEffects(context);
+        }
+        //触发受击
+        public void NotifyAfterDamage(Character attacker, Character target, AttackOrigin origion, int battleGroup = -1)
+        {
+            if (!room.characterManager.GetBattleCharacter(target.ID, out var targetCha) || targetCha == null)
+                return;
+
+            room.characterManager.GetBattleCharacter(attacker.ID, out var attackerCha);
+
+            var context = new AfterDamageContext
+            {
+                attacker = attackerCha,
+                isDefended = target.isDefend,
+                battleGroup = battleGroup,
+                AddEvent = AddNewEvents,
+                origin = origion,
+                ExecuteAttack = (origin, damage) => ExecuteAttack(target.ID, attacker.ID, origin, damage)
+            };
+
+            targetCha.ApplyAfterDamageEffects(context);
+        }
+        //触发死亡
+        private void NotifyDeath(Character deather, int battleGroup = -1)
+        {
+            if (!room.characterManager.GetBattleCharacter(deather.ID, out var targetCha) || targetCha == null)
+                return;
+
+            var context = new DeathContext
+            {
+                allies = room.characterManager.GetPlayerCharacters(deather.ID),
+                battleGroup = battleGroup,
+                AddEvent = AddNewEvents
+            };
+
+           targetCha.ApplyDeathEffects(context);
+        }
+        #endregion
     }
 }

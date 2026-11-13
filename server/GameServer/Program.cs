@@ -1,4 +1,5 @@
 ﻿using GameServer.Manager;
+using GameServer.Monitoring;
 using GameServer.Service;
 using System.Text;
 
@@ -8,8 +9,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        GameService gameService = new GameService();
-        CommandHandler commandHandler = new CommandHandler();
+        var monitoring = MonitorChannel.Create(args);
+        GameService gameService = new GameService { Monitoring = monitoring };
+        CommandHandler commandHandler = new CommandHandler { Monitoring = monitoring };
 
         gameService.Init();
 

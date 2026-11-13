@@ -4,12 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using NetMessage;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameServer.DataBase.Service
 {
@@ -23,25 +17,25 @@ namespace GameServer.DataBase.Service
             options = new DbContextOptionsBuilder<GameDbContext>().UseSqlServer(DataManager.Instance.DbConnectionString).Options;
         }
 
-        public async Task<(bool success, string msg, FriendRequestInfo? friend)> AddFriendAsync(string fromID, string toID)
+        public async Task<(bool success, string msg, FriendRequestInfo? friend, PlayerSearchInfo? info)> AddFriendAsync(string fromID, string toID)
         {
             await using var db = new GameDbContext(options);
 
             UserEntity? requester = await db.Users.FirstOrDefaultAsync(u => u.UserID == fromID);
             if(requester == null)
             {
-                return (false, "请求方不存在", null);
+                return (false, "请求方不存在", null, null);
             }
 
             UserEntity? target = await db.Users.FirstOrDefaultAsync(u => u.UserID == toID);
             if(target == null)
             {
-                return (false, "目标不存在", null);
+                return (false, "目标不存在", null, null);
             }
             string requesterID = fromID;
             if(fromID.Equals(toID))
             {
-                return (false, "不能自己添加自己", null);
+                return (false, "不能自己添加自己", null, null);
             }
             string userAID = string.CompareOrdinal(fromID, toID) < 0 ? fromID : toID;
             string userBID = string.CompareOrdinal(fromID, toID) < 0 ? toID : fromID;
@@ -51,23 +45,26 @@ namespace GameServer.DataBase.Service
             {
                 if(friendShip.Status == FriendStatus.FriendStatusPending)
                 {
-                    return (false, $"不可重复申请", null);
+                    return (false, $"不可重复申请", null, null);
                 }
                 else if(friendShip.Status == FriendStatus.FriendStatusAccepted)
                 {
-                    return (false, $"已添加该玩家为好友", null);
+                    return (false, $"已添加该玩家为好友", null, null);
                 }
                 else if(friendShip.Status == FriendStatus.FriendStatusRejected || friendShip.Status == FriendStatus.FriendStatusDelete)
                 {
-                    DateTime nextAvailableTime = friendShip.UpdateAtUtc.AddMinutes(friendShip.Status == FriendStatus.FriendStatusRejected ? rejectTimeLimit : deleteTimeLimit);
-                    //未到达时限不可重复申请
-                    if (DateTime.UtcNow < nextAvailableTime )
+                    if(fromID != friendShip.RemoveByID)//删除方无视重复申请时限
                     {
-                        TimeSpan leftMinutes = nextAvailableTime - DateTime.UtcNow;
+                        DateTime nextAvailableTime = friendShip.UpdateAtUtc.AddMinutes(friendShip.Status == FriendStatus.FriendStatusRejected ? rejectTimeLimit : deleteTimeLimit);
+                        //未到达时限不可重复申请
+                        if (DateTime.UtcNow < nextAvailableTime)
+                        {
+                            TimeSpan leftMinutes = nextAvailableTime - DateTime.UtcNow;
 
-                        int leftMinutesNum = (int)leftMinutes.TotalMinutes;
+                            int leftMinutesNum = (int)leftMinutes.TotalMinutes;
 
-                        return (false, $"请在{leftMinutesNum}分钟后再尝试添加该玩家", null);
+                            return (false, $"请在{leftMinutesNum}分钟后再尝试添加该玩家", null, null);
+                        }
                     }
                 }
             }
@@ -98,7 +95,13 @@ namespace GameServer.DataBase.Service
             res.requestMainCharacterID = requester.MainCharacterDataID;
             res.createTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            return (true, "已向该玩家发送好友请求", res);
+            PlayerSearchInfo info = new PlayerSearchInfo();
+            info.userID = target.UserID;
+            info.Nickname = target.Nickname;
+            info.mainCharacterID = target.MainCharacterDataID;
+            info.Relation = FriendRelationState.FriendRelationRequestSent;
+
+            return (true, "已向该玩家发送好友请求", res, info);
         }
 
         public async Task<(bool success, string msg ,HashSet<FriendInfo>? friends, HashSet<FriendRequestInfo>? requests)> GetFriendInfo(string userID)
@@ -194,7 +197,7 @@ namespace GameServer.DataBase.Service
             return FriendRelationState.FriendRelationNone;
         }
 
-        public async Task<(bool success, string msg)> HandleFriend(long id, bool accept)
+        public async Task<(bool success, string msg)> HandleFriend(string handleID, long id, bool accept)
         {
             await using var db = new GameDbContext(options);
 
@@ -208,6 +211,11 @@ namespace GameServer.DataBase.Service
             if(friendShip.Status != FriendStatus.FriendStatusPending)
             {
                 return (false, "请求已答复");
+            }
+            var receiverID = friendShip.RequiredByID == friendShip.UserAID ? friendShip.UserBID : friendShip.UserAID;
+            if (receiverID != handleID)
+            {
+                return (false, "处理方ID错误");
             }
 
             friendShip.Status = accept ? FriendStatus.FriendStatusAccepted : FriendStatus.FriendStatusRejected;
@@ -258,6 +266,49 @@ namespace GameServer.DataBase.Service
             }
 
             return (true, "请求答复成功");
+        }
+        public async Task<(bool success, string msg)> RemoveFriendAsync(string selfID, string removeID)//还没做完
+        {
+            await using var db = new GameDbContext(options);
+
+            UserEntity? self = await db.Users.FirstOrDefaultAsync(u => u.UserID == selfID);
+            if(self == null)
+            {
+                return (false, "请求方不存在");
+            }
+
+            string userAID = string.CompareOrdinal(selfID, removeID) < 0 ? selfID : removeID;
+            string userBID = string.CompareOrdinal(selfID, removeID) < 0 ? removeID : selfID;
+
+            FriendShipEntity? target = await db.FriendShips.FirstOrDefaultAsync(f => f.UserAID == userAID && f.UserBID == userBID);
+            if(target == null)
+            {
+                return (false, "该好友关系不存在");
+            }
+
+            if(target.Status == FriendStatus.FriendStatusDelete)
+            {
+                return (false, "已删除该好友");
+            }
+
+            target.Status = FriendStatus.FriendStatusDelete;
+
+            target.RemoveByID = selfID;
+
+            await db.SaveChangesAsync();
+
+            //请求方在线
+            if(OnlinePlayerManager.Instance.TryGetClientSession(userAID, out var sessionA))
+            {
+                sessionA.player.friendState.MarkRemoveFriend(userBID);
+            }
+            //被删除方在线
+            if(OnlinePlayerManager.Instance.TryGetClientSession(userBID, out var sessionB))
+            {
+                sessionB.player.friendState.MarkRemoveFriend(userAID);
+            }
+
+            return (true, "好友删除成功");
         }
     }
 }

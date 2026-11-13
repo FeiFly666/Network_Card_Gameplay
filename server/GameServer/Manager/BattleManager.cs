@@ -2,11 +2,13 @@
 using Common.Model;
 using Common.Network;
 using GameServer.Model;
+using GameServer.Monitoring;
 using GameServer.Network;
 using NetMessage;
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace GameServer.Manager
 {
@@ -34,6 +36,11 @@ namespace GameServer.Manager
                 }
             }
         }
+        internal BattleRoomSnapshot[] CaptureBattleRooms()
+        {
+            return MonitorSnapshotBuilder.CaptureBattleRooms(m_battleRooms.Values);
+        }
+
         public void RemoveBattleRoom(BattleRoom room)
         {
             foreach(var playerkv in room.players)
@@ -117,6 +124,7 @@ namespace GameServer.Manager
             message.Response.userEnterBattle = new UserEnterBattleResponse();
 
             ClientSession client = (ClientSession) session;
+            if (client.player == null) return;
 
             string playerID = client.player.id;
             Console.WriteLine($"battle manager : player {playerID} try enter battle room");
@@ -147,6 +155,19 @@ namespace GameServer.Manager
         private void OnPlayerSendBattleAction(ISession session, BattleActionRequest request)
         {
             ClientSession client = (ClientSession)session;
+            if(client.player == null) {
+                Console.WriteLine($"battle room manager : unknown battle action");
+                Message backmessage = new Message();
+                backmessage.Response = new ResponseMessage();
+                backmessage.Response.battleAction = new BattleActionResponse();
+
+                backmessage.Response.battleAction.actionID = -1;
+                backmessage.Response.battleAction.Success = false;
+                backmessage.Response.battleAction.Msg = "未知动作";
+
+                session.Send(backmessage);
+                return;
+            }
             string playerID = client.player.id;
 
             Message message = new Message();
@@ -174,6 +195,7 @@ namespace GameServer.Manager
         private void OnPlayerStateChangedFinished(ISession session, BattleStateSyncReq request)
         {
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             string playerID = client.player.id;
 
@@ -189,6 +211,7 @@ namespace GameServer.Manager
         private void OnPlayerBattlePlayFinished(ISession session, BattlePlayingFinishRequest request)
         {
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             string playerID = client.player.id;
 
@@ -205,6 +228,7 @@ namespace GameServer.Manager
         private void OnPlayerEventPlayFinish(ISession session, BattleEventPlayFinishRequest finish)
         {
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             string playerID = client.player.id;
 

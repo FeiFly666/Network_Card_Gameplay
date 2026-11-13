@@ -11,7 +11,7 @@ namespace GameServer.Model
 {
     public enum BattleState
     {
-        Loading,//等待玩家加载（可在断线重连时复用？）
+        Loading,//等待玩家加载
         SubmitBattle,//玩家进行使用卡牌和角色状态设置（除了角色目标即角色要进攻还是防御外实时同步）
         Battle,//显示角色目标，并按在场角色速度先后执行角色攻击（防御进入该状态后就执行）
         RoundEnd//结算，未结束进入下一回合，即新的submitbattle

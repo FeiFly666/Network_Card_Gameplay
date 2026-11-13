@@ -49,7 +49,7 @@ namespace GameServer.Network
 
         public Action<ClientSession> OnDisconnected;
 
-        private Message heartMessage;
+        //private Message heartMessage;
 
         public ClientSession(int clientID, Socket client)
         {
@@ -70,11 +70,11 @@ namespace GameServer.Network
 
             lastCommunicateTime = Time.time;
 
-            heartMessage = new Message();
-            heartMessage.Response = new ResponseMessage();
-            heartMessage.Response.Heart = new HeartCheckResponse();
+            //heartMessage = new Message();
+            //heartMessage.Response = new ResponseMessage();
+            //heartMessage.Response.Heart = new HeartCheckResponse();
 
-            MessageDispatcher.Instance.Subscribe<HeartCheckRequest>(OnClientSendHeart);
+            //MessageDispatcher.Instance.Subscribe<HeartCheckRequest>(OnClientSendHeart);
         }
 
         public void StartReceive()
@@ -123,13 +123,6 @@ namespace GameServer.Network
         {
             return Time.time - lastCommunicateTime >= timeout;
         }
-        private void OnClientSendHeart(ISession session, HeartCheckRequest request)
-        {
-            FriendShipManager.Instance.AppendDirtyFriendData(this, heartMessage);
-            this.Send(heartMessage);
-            heartMessage.Response.friendList = null;
-        }
-
         public void Send(Message message)
         {
             if(IsClosed) return;
@@ -212,7 +205,7 @@ namespace GameServer.Network
             }
             finally
             {
-                MessageDispatcher.Instance.Unsubscribe<HeartCheckRequest>(OnClientSendHeart);
+                //MessageDispatcher.Instance.Unsubscribe<HeartCheckRequest>(OnClientSendHeart);
 
                 try
                 {

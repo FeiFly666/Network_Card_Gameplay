@@ -44,6 +44,7 @@ namespace GameServer.Utils
         {
             switch (actionType)
             {
+                case CharacterActionType.ChaActionTypeSkill: return 1;
                 case CharacterActionType.ChaActionTypeAttack: return 1; 
                 case CharacterActionType.ChaActionTypeDefend: return 0;
 

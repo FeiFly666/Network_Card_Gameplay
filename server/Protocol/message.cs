@@ -85,6 +85,15 @@ namespace NetMessage
         [global::ProtoBuf.ProtoMember(19)]
         public UserSearchPlayerRequest searchPlayer { get; set; }
 
+        [global::ProtoBuf.ProtoMember(20)]
+        public UserGetSpecialEffectListRequest getSpecialEffectList { get; set; }
+
+        [global::ProtoBuf.ProtoMember(21)]
+        public UserEquipSpecialEffectRequest equipSpecialEffect { get; set; }
+
+        [global::ProtoBuf.ProtoMember(22)]
+        public UserUnEquipSpecialEffectRequest unEquipSpecialEffect { get; set; }
+
         [global::ProtoBuf.ProtoMember(100, Name = @"heart")]
         public HeartCheckRequest Heart { get; set; }
 
@@ -180,6 +189,15 @@ namespace NetMessage
 
         [global::ProtoBuf.ProtoMember(28)]
         public UserSearchPlayerResponse searchPlayer { get; set; }
+
+        [global::ProtoBuf.ProtoMember(29)]
+        public UserGetSpecialEffectListResponse getSpecialEffectList { get; set; }
+
+        [global::ProtoBuf.ProtoMember(30)]
+        public UserEquipSpecialEffectResponse equipSpecialEffect { get; set; }
+
+        [global::ProtoBuf.ProtoMember(31)]
+        public UserUnEquipSpecialEffectResponse unEquipSpecialEffect { get; set; }
 
         [global::ProtoBuf.ProtoMember(100, Name = @"heart")]
         public HeartCheckResponse Heart { get; set; }
@@ -1107,6 +1125,9 @@ namespace NetMessage
         [global::System.ComponentModel.DefaultValue("")]
         public string Msg { get; set; } = "";
 
+        [global::ProtoBuf.ProtoMember(3, Name = @"info")]
+        public PlayerSearchInfo Info { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1271,6 +1292,125 @@ namespace NetMessage
 
         [global::ProtoBuf.ProtoMember(5, Name = @"relation")]
         public FriendRelationState Relation { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserSpecialEffectInfo : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string specialEffectDataID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string equippedCharacterDataID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public int slotIndex { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserGetSpecialEffectListRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserGetSpecialEffectListResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public global::System.Collections.Generic.List<UserSpecialEffectInfo> specialEffects { get; } = new global::System.Collections.Generic.List<UserSpecialEffectInfo>();
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserEquipSpecialEffectRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string specialEffectDataID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string characterDataID { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public int slotIndex { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserEquipSpecialEffectResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public global::System.Collections.Generic.List<UserSpecialEffectInfo> specialEffects { get; } = new global::System.Collections.Generic.List<UserSpecialEffectInfo>();
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserUnEquipSpecialEffectRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string specialEffectDataID { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class UserUnEquipSpecialEffectResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"success")]
+        public bool Success { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"msg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Msg { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public global::System.Collections.Generic.List<UserSpecialEffectInfo> specialEffects { get; } = new global::System.Collections.Generic.List<UserSpecialEffectInfo>();
 
     }
 

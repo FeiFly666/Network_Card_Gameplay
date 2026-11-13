@@ -31,6 +31,7 @@ namespace Common.Data
         public int Speed { get; set; }
         public string SkillID { get; set; }
         public string PrefabPath { get; set; }
+        public List<string> SpecialEffectIDs { get; set; } = new List<string>();
 
     }
 }

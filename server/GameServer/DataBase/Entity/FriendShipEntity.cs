@@ -18,6 +18,7 @@ namespace GameServer.DataBase.Entity
         public string UserBID { get; set; } = string.Empty;
         [Required]
         public string RequiredByID { get; set; } = string.Empty;
+        public string RemoveByID { get; set; } = string.Empty;
         [Required]
         public DateTime CreateAtUtc { get; set; } = DateTime.UtcNow;
         [Required]

@@ -1,5 +1,6 @@
 ﻿using Common.Network;
 using GameServer.Manager;
+using GameServer.Monitoring;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,10 @@ namespace GameServer.Service
 
     public class GameService
     {
+        internal MonitorChannel? Monitoring { get; init; }
         Thread? thread;
         bool isRunning;
-        ChatService chatService;
+        ChatService? chatService;
         public void Init()
         {
             chatService = new ChatService();
@@ -25,6 +27,9 @@ namespace GameServer.Service
             BattleManager.Instance.Init();
             UserService.Instance.Init();
             FriendShipManager.Instance.Init();
+            NetService.Instance.Init();
+
+            SpecialEffectManager.Instance.Init();
         }
 
         public void Start()
@@ -46,6 +51,10 @@ namespace GameServer.Service
                 BattleManager.Instance.Tick();
                 MessageDispatcher.Instance.Update();
                 NetService.Instance.Update();
+                Monitoring?.CompletePendingSnapshot(static () => new ServerSnapshot(
+                    DateTimeOffset.UtcNow,
+                    OnlinePlayerManager.Instance.CaptureOnlinePlayers(),
+                    BattleManager.Instance.CaptureBattleRooms()));
                 Thread.Sleep(100);
             }
         }

@@ -33,6 +33,10 @@ namespace GameServer.Migrations
                     b.Property<DateTime>("CreateAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RemoveByID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RequiredByID")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -100,6 +104,46 @@ namespace GameServer.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("GameServer.DataBase.Entity.UserSpecialEffectEntity", b =>
+                {
+                    b.Property<string>("UserID")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("SpecialEffectDataID")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("EquippedCharacterDataID")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int?>("SlotIndex")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UnlockedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserID", "SpecialEffectDataID");
+
+                    b.HasIndex("UserID", "EquippedCharacterDataID", "SlotIndex")
+                        .IsUnique()
+                        .HasFilter("[EquippedCharacterDataID] IS NOT NULL AND [SlotIndex] IS NOT NULL");
+
+                    b.ToTable("UserSpecialEffects", (string)null);
+
+                    b.HasCheckConstraint("CK_UserSpecialEffects_Equipment", "([EquippedCharacterDataID] IS NULL AND [SlotIndex] IS NULL) OR ([EquippedCharacterDataID] IS NOT NULL AND [SlotIndex] IS NOT NULL AND [SlotIndex] IN (0, 1))");
+                });
+
+            modelBuilder.Entity("GameServer.DataBase.Entity.UserSpecialEffectEntity", b =>
+                {
+                    b.HasOne("GameServer.DataBase.Entity.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

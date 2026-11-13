@@ -65,6 +65,8 @@ namespace GameServer.Service
             ClientSession client = OnlinePlayerManager.Instance.OnPlayerLogin(session, request);
             FriendShipManager.Instance.OnUserLogin((ClientSession)session);
 
+            SpecialEffectManager.Instance.UnlockAllEffects(client.player.id);
+
             client.player.mainCharcterID = loginResult.user!.MainCharacterDataID;
             client.player.nickname = loginResult.user!.Nickname;
 
@@ -81,6 +83,8 @@ namespace GameServer.Service
         {
             string newCharacterID = request.mainCharacterID;
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
+
             string playerID = client.player.id;
 
             Message message = new Message();
@@ -126,6 +130,8 @@ namespace GameServer.Service
         {
             string newNickname = request.nickName;
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
+
             string playerID = client.player.id;
 
             Message message = new Message();

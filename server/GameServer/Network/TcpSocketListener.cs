@@ -152,7 +152,7 @@ namespace GameServer.Network
                 if (onlineSession == session)
                 {
                     FriendShipManager.Instance.OnUserExit(onlineSession);
-                    OnlinePlayerManager.Instance.RemoveOnlinePlayer(session.player.id);
+                    OnlinePlayerManager.Instance.RemoveOnlinePlayer(session.player.id, session);
                 }
             }
             

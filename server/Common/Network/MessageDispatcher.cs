@@ -52,6 +52,10 @@ namespace Common.Network
                 if (message.deleteFriend != null) Execute(session, message.deleteFriend);
                 if (message.getFriendList != null) Execute(session, message.getFriendList);
                 if (message.searchPlayer != null) Execute(session, message.searchPlayer);
+
+                if (message.getSpecialEffectList != null) Execute(session, message.getSpecialEffectList);
+                if (message.equipSpecialEffect != null) Execute(session, message.equipSpecialEffect);
+                if (message.unEquipSpecialEffect != null) Execute(session, message.unEquipSpecialEffect);
             }
         }
 
@@ -97,6 +101,10 @@ namespace Common.Network
                 if (message.getFriendList != null) Execute(session, message.getFriendList);
                 if (message.friendList != null) Execute(session, message.friendList);
                 if (message.searchPlayer != null) Execute(session, message.searchPlayer);
+
+                if (message.getSpecialEffectList != null) Execute(session, message.getSpecialEffectList);
+                if (message.equipSpecialEffect != null) Execute(session, message.equipSpecialEffect);
+                if (message.unEquipSpecialEffect != null) Execute(session, message.unEquipSpecialEffect);
             }
         }
         public void Enqueue(Action action)

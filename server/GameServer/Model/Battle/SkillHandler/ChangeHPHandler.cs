@@ -60,6 +60,8 @@ namespace GameServer.Model.Battle.SkillHandler
                         target.CurHP = 0;
                     }
                 }
+
+                owner.NotifyAfterDamage(attacker, target, AttackOrigin.Skill ,hitGroup);
             }
         }
     }

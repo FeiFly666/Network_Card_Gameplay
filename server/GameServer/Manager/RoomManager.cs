@@ -35,6 +35,7 @@ namespace GameServer.Manager
             message.Response.userMatch = new UserMatchResponse();
 
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             string userID = client.player.id;
 
@@ -117,6 +118,7 @@ namespace GameServer.Manager
             message.Response.userReady = new UserReadyResponse();
 
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             string userID = client.player.id;
             if(!m_PlayInRoom.TryGetValue(userID,out var room))
@@ -166,6 +168,8 @@ namespace GameServer.Manager
             message.Response.userExit = new UserExitResponse();
 
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
+
             string userID = client.player.id;
 
             if (!m_PlayInRoom.TryGetValue(userID, out var room))
@@ -249,7 +253,8 @@ namespace GameServer.Manager
             foreach (var player in room.Players)
             {
                 ClientSession client = null;
-                if(NetService.Instance.m_listener.TryGetClient(player.socketID, out client))
+
+                if (NetService.Instance.m_listener.TryGetClient(player.socketID, out client))
                 {
                     client.Send(message);
                 }

@@ -106,6 +106,12 @@ message RequestMessage
 
 	UserSearchPlayerRequest searchPlayer = 19;
 
+	UserGetSpecialEffectListRequest getSpecialEffectList = 20;
+
+	UserEquipSpecialEffectRequest equipSpecialEffect = 21;
+
+	UserUnEquipSpecialEffectRequest unEquipSpecialEffect = 22;
+
 	HeartCheckRequest heart = 100;
 
 }
@@ -155,6 +161,12 @@ message ResponseMessage
 	UserFriendListChangedBroadcast friendList = 27;
 
 	UserSearchPlayerResponse searchPlayer = 28;
+
+	UserGetSpecialEffectListResponse getSpecialEffectList = 29;
+
+	UserEquipSpecialEffectResponse equipSpecialEffect = 30;
+
+	UserUnEquipSpecialEffectResponse unEquipSpecialEffect = 31;
 
 	HeartCheckResponse heart = 100;
 
@@ -567,6 +579,8 @@ message UserAddFriendResponse
 {
 	bool success = 1;
 	string msg = 2;
+
+	PlayerSearchInfo info = 3;
 }
 
 //服务端好友列表信息广播
@@ -644,3 +658,49 @@ enum FriendRelationState
 
 
 //好友协议结束
+
+//玩家特殊效果开始
+message UserSpecialEffectInfo
+{
+	string specialEffectDataID = 1;
+	string equippedCharacterDataID = 2;
+	int32 slotIndex = 3;
+}
+
+message UserGetSpecialEffectListRequest
+{
+
+}
+
+message UserGetSpecialEffectListResponse
+{
+	bool success = 1;
+	string msg = 2;
+	repeated UserSpecialEffectInfo specialEffects = 3;
+}
+
+message UserEquipSpecialEffectRequest
+{
+	string specialEffectDataID = 1;
+	string characterDataID = 2;
+	int32 slotIndex = 3;
+}
+
+message UserEquipSpecialEffectResponse
+{
+	bool success = 1;
+	string msg = 2;
+	repeated UserSpecialEffectInfo specialEffects = 3;
+}
+
+message UserUnEquipSpecialEffectRequest
+{
+	string specialEffectDataID = 1;
+}
+
+message UserUnEquipSpecialEffectResponse
+{
+	bool success = 1;
+	string msg = 2;
+	repeated UserSpecialEffectInfo specialEffects = 3;
+}

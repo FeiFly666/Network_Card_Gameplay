@@ -1,8 +1,10 @@
 ﻿using Common;
 using Common.Network;
+using GameServer.Monitoring;
 using GameServer.Network;
 using NetMessage;
 using System;
+using System.Collections.Concurrent;
 using Common.Model;
 using System.Net.Http.Headers;
 
@@ -10,17 +12,15 @@ namespace GameServer.Manager
 {
     public class OnlinePlayerManager : Singleton<OnlinePlayerManager>
     {
-        private Dictionary<string, ClientSession> m_playerToClient = new Dictionary<string, ClientSession>();
+        private readonly ConcurrentDictionary<string, ClientSession> m_playerToClient = new();
 
        
         public ClientSession OnPlayerLogin(ISession session, UserLoginRequest request)
         {
             string playerID = request.userID;
 
-            if(m_playerToClient.ContainsKey(playerID))
+            if (m_playerToClient.TryGetValue(playerID, out var oldSession))
             {
-                ClientSession oldSession = m_playerToClient[playerID];
-
                 RoomManager.Instance.RemovePlayerFromRoomBySession(oldSession);
 
                 ForceLeave(oldSession, "您已在别处登录");
@@ -60,10 +60,17 @@ namespace GameServer.Manager
         }
         public void RemoveOnlinePlayer(string playerID)
         {
-            if(m_playerToClient.ContainsKey(playerID))
-            {
-                m_playerToClient.Remove(playerID);
-            }
+            m_playerToClient.TryRemove(playerID, out _);
+        }
+
+        internal void RemoveOnlinePlayer(string playerID, ClientSession session)
+        {
+            m_playerToClient.TryRemove(new KeyValuePair<string, ClientSession>(playerID, session));
+        }
+
+        internal OnlinePlayerSnapshot[] CaptureOnlinePlayers()
+        {
+            return MonitorSnapshotBuilder.CaptureOnlinePlayers(m_playerToClient.ToArray());
         }
     }
 }

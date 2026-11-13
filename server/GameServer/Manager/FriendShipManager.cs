@@ -23,9 +23,11 @@ namespace GameServer.Manager
             MessageDispatcher.Instance.Subscribe<UserGetFriendListRequest>(OnRecieveUserGetFriendRequest);
             MessageDispatcher.Instance.Subscribe<UserHandleFriendRequest>(OnRecieveUserHandleFriendRequest);
             MessageDispatcher.Instance.Subscribe<UserSearchPlayerRequest>(OnRecieveUserSearchPlayer);
+            MessageDispatcher.Instance.Subscribe<UserDeleteFriendRequest>(OnRecieveUserRemoveFriendRequest);
         }
         public async void OnUserLogin(ClientSession client)
         {
+            if (client.player == null) return;
             var info = await friendShipService.GetFriendInfo(client.player.id);
 
             if (!info.success)
@@ -56,6 +58,7 @@ namespace GameServer.Manager
         }
         public void OnUserExit(ClientSession client)
         {
+            if (client.player == null) return;
             PlayerFriendState friendState = client.player.friendState;
 
             foreach(var friendID in friendState.friends.Keys)
@@ -80,6 +83,8 @@ namespace GameServer.Manager
         {
             if (request == null) return;
             ClientSession client = (ClientSession)session;
+            if(client.player == null) return;
+
             string fromID = client.player.id;
             string toID = request.targetID;
 
@@ -93,6 +98,7 @@ namespace GameServer.Manager
 
             message.Response.addFriend.Success = addResult.success;
             message.Response.addFriend.Msg = addResult.msg;
+            message.Response.addFriend.Info = addResult.info;
 
             session.Send(message);
 
@@ -101,6 +107,8 @@ namespace GameServer.Manager
                 if (OnlinePlayerManager.Instance.TryGetClientSession(toID, out var targetClient))
                 {
                     targetClient.player.friendState.SetFriendRequestInfo(addResult.friend);
+
+                    
                 }
             }
 
@@ -114,8 +122,9 @@ namespace GameServer.Manager
             message.Response.handleFriendRequest = new UserHandleFriendResponse();
             
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
-            var result = await friendShipService.HandleFriend(request.requestID, request.Accept);
+            var result = await friendShipService.HandleFriend(client.player.id, request.requestID, request.Accept);
 
             message.Response.handleFriendRequest.Success = result.success;
             message.Response.handleFriendRequest.Msg = result.msg;
@@ -128,6 +137,7 @@ namespace GameServer.Manager
         {
             if (request == null) return;
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             Message message = new Message();
             message.Response = new ResponseMessage();
@@ -141,6 +151,7 @@ namespace GameServer.Manager
             if (request == null) return;
 
             ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
 
             Message message = new Message();
             message.Response = new ResponseMessage();
@@ -163,6 +174,22 @@ namespace GameServer.Manager
 
             session.Send(message);
         }
-       
+        private async void OnRecieveUserRemoveFriendRequest(ISession session, UserDeleteFriendRequest request)
+        {
+            if (request == null) return;
+            ClientSession client = (ClientSession)session;
+            if (client.player == null) return;
+
+            Message message = new Message();
+            message.Response = new ResponseMessage();
+            message.Response.deleteFriend = new UserDeleteFriendResponse();
+
+            var deleteResult = await friendShipService.RemoveFriendAsync(client.player.id, request.deleteID);
+
+            message.Response.deleteFriend.Success = deleteResult.success;
+            message.Response.deleteFriend.Msg = deleteResult.msg;
+
+            session .Send(message);
+        }
     }
 }

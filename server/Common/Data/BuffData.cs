@@ -12,10 +12,23 @@ namespace Common.Data
         MP
     }
 
-    public enum BuffType//具体类型
+    public enum ApplyType//具体类型
     {
-        Gain,
-        Buff
+        Gain,//直接获取
+        ContinuousGain, //持续获取
+        TempAdd, //限时增加
+        TempAddPercent //限时百分比增加
+    }
+    public class BuffEffectData
+    {
+        public string DataID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public ApplyType ApplyType { get; set; }
+        public EffectType EffectType { get; set; }
+        public int Param { get; set; }
+        public string ParamStr { get; set; } = string.Empty;
+        public int Duration { get; set; }
     }
 
     public class BuffData
@@ -23,11 +36,7 @@ namespace Common.Data
         public string DataID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public BuffType Type { get; set; }
-        public EffectType EffectType { get; set; }
-        //数值可正可负
-        public int Param{ get; set; }
-        public int Duration { get; set; }
+        public List<string> BuffEffects { get; set; } = new List<string>();
 
     }
 }
