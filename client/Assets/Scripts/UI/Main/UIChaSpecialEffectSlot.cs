@@ -16,7 +16,7 @@ namespace Assets.Scripts.UI.Main
         [SerializeField] public GameObject lockObj;
         private RectTransform rect_Transform => GetComponent<RectTransform>();
         public event Action<int, string> OnClicked;
-        private bool isLocked = false;
+        //private bool isLocked = false;
 
         public void UpdateIcon(string effectID)
         {

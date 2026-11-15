@@ -29,6 +29,8 @@ namespace Assets.Scripts.Manager
         public Action<bool> OnRegistResponse;
         public Action<bool> NicknameResponse;
 
+        public bool isLogin = false;
+
         public void Init()
         {
             MessageDispatcher.Instance.Subscribe<UserLoginResponse>(OnRecieveLoginResponse);
@@ -38,7 +40,7 @@ namespace Assets.Scripts.Manager
             MessageDispatcher.Instance.Subscribe<UserChangeNicknameResponse>(OnRecieveChangeNickName);
 
             userID = string.Empty;
-
+            isLogin = false;
         }
         public void SendLogin(string username, string password)
         {
@@ -89,6 +91,7 @@ namespace Assets.Scripts.Manager
                 mainCharacterID = response.playerData.mainCharacterID;
                 nickname = response.playerData.nickName;
                 hasSetNickname = response.playerData.hasSetNickName;
+                isLogin = true;
                 MySceneManager.Instance.EnterScene("MainScene");
             }
             else
@@ -96,6 +99,7 @@ namespace Assets.Scripts.Manager
                 pendingID = null;
                 pendingPassword = null;
                 hasSetNickname = false;
+                isLogin = false;
                 MessageBox.Show(UI.Common.MessageType.Error, response.Msg);
             }
         }
@@ -118,6 +122,7 @@ namespace Assets.Scripts.Manager
                 () =>
                 {
                     NetClient.Instance.Close(true);
+                    isLogin = false;
                     MySceneManager.Instance.EnterScene("StartScene");
                 }
 

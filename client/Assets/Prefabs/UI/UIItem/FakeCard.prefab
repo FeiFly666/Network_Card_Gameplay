@@ -53,6 +53,11 @@ MonoBehaviour:
   img: {fileID: 0}
   bg: {fileID: 0}
   cardName: {fileID: 0}
+  root: {fileID: 7990437841714103733}
+  hoverRoot: {fileID: 0}
+  characterLayer:
+    serializedVersion: 2
+    m_Bits: 0
   dragRoot: {fileID: 0}
 --- !u!95 &2960324649366944099
 Animator:

@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Manager;
 using Assets.Scripts.Service;
+using Assets.Scripts.Util;
 using Common.Network;
 using NetMessage;
 using System;
@@ -73,6 +74,17 @@ namespace Assets.Scripts
         private void Update()
         {
             MessageDispatcher.Instance.Update();
+
+#if !UnityEdior
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                MessageBox.Show(UI.Common.MessageType.Warning, "确认退出游戏吗？", () =>
+                {
+                    NetClient.Instance.Close(true);
+                    Application.Quit();
+                }, () => { });
+            }
+#endif
 
         }
         private void StartHeart()

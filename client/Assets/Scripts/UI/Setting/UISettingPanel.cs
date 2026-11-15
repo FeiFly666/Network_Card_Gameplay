@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Manager;
+using Assets.Scripts.Util;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,6 +25,7 @@ namespace Assets.Scripts.UI.Setting
         [SerializeField] private Image fullScreenButtonImg;
         [Header("应用按钮")]
         [SerializeField] private Button applyButton;
+        [SerializeField] private Button logoutButton;
         private readonly List<Vector2Int> resolutionOptions = new List<Vector2Int>();
         private readonly int[] fpsCandidates = { 30, 60, 90, 120, 144, 165, 180, 240, 360 };
         private readonly List<int> fpsOptions = new List<int>();
@@ -41,16 +43,36 @@ namespace Assets.Scripts.UI.Setting
 
             useVsync.onClick.RemoveAllListeners();
             useVsync.onClick.AddListener(ChangeUseVsync);
-            ChangeVsyncButtonImg();
 
             fullScreen.onClick.RemoveAllListeners();
             fullScreen.onClick.AddListener(ChangeFullScreen);
+
+            logoutButton.onClick.RemoveAllListeners();
+            logoutButton.onClick.AddListener(HandleLeaveButton);
+        }
+        public override void OnOpen()
+        {
+            base.OnOpen();
+            ChangeVsyncButtonImg();
             ChangeFullScreenButtonImg();
         }
         private void InitResolutionDropdown()
         {
             resolutionDropdown.ClearOptions();
             resolutionOptions.Clear();
+
+            if (UnityEngine.Device.Application.isMobilePlatform)
+            {
+                resolutionDropdown.AddOptions(new List<string> { "自动（设备分辨率）" });
+                resolutionDropdown.SetValueWithoutNotify(0);
+                resolutionDropdown.RefreshShownValue();
+                resolutionDropdown.interactable = false;
+
+                pendingFullScreen = true;
+                fullScreen.interactable = false;
+                ChangeFullScreenButtonImg(); 
+                return;
+            }
 
             List<string> optionTexts = new List<string>();
 
@@ -218,15 +240,14 @@ namespace Assets.Scripts.UI.Setting
         }
         private int GetMaxRefreshRate()
         {
-            int maxRefreshRate = Screen.currentResolution.refreshRate;
+            double maxRefreshRate = Screen.currentResolution.refreshRateRatio.value;
             Resolution[] resolutions = Screen.resolutions;
 
             for (int i = 0; i < resolutions.Length; i++)
             {
-                if (resolutions[i].refreshRate > maxRefreshRate)
-                {
-                    maxRefreshRate = resolutions[i].refreshRate;
-                }
+                double refreshRate = resolutions[i].refreshRateRatio.value;
+                if (refreshRate > maxRefreshRate)
+                    maxRefreshRate = refreshRate;
             }
 
             if (maxRefreshRate <= 0)
@@ -234,7 +255,33 @@ namespace Assets.Scripts.UI.Setting
                 maxRefreshRate = 60;
             }
 
-            return maxRefreshRate;
+            return maxRefreshRate > 0 ? (int)System.Math.Round(maxRefreshRate) : 60;
+        }
+        private void HandleLeaveButton()
+        {
+            //已经登录则该按钮为退出登录并返回登陆页面
+            //未登录为退出游戏
+            var playerInfo = PlayerInfoManager.Instance;
+
+            if(playerInfo.isLogin)
+            {
+                MessageBox.Show(Common.MessageType.Warning, "确定退出登录？", () =>
+                {
+                    NetClient.Instance.Close(true);
+                    playerInfo.isLogin = false;
+                    MySceneManager.Instance.EnterScene("StartScene");
+                },
+                () => { });
+            }
+            else
+            {
+                MessageBox.Show(Common.MessageType.Warning, "确定退出游戏？", () =>
+                {
+                    Application.Quit();
+                },
+                () => { });
+            }
+            
         }
         private void OnFpsChanged(int index)
         {
@@ -275,15 +322,21 @@ namespace Assets.Scripts.UI.Setting
         }
         private void ApplySettings()
         {
-            SettingManager.Instance.Settings.width = pendingResolution.x;
-            SettingManager.Instance.Settings.height = pendingResolution.y;
+            var manager = SettingManager.Instance;
+            var settings = manager.Settings;
 
-            SettingManager.Instance.Settings.targetFps = pendingFps;
-            SettingManager.Instance.Settings.vSync = pendingSync;
-            SettingManager.Instance.Settings.screenMode = pendingFullScreen ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
+            if (!UnityEngine.Device.Application.isMobilePlatform)
+            {
+                settings.width = pendingResolution.x;
+                settings.height = pendingResolution.y;
+                settings.screenMode = pendingFullScreen ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
+            }
 
-            SettingManager.Instance.Save();
-            SettingManager.Instance.Apply();
+            settings.targetFps = pendingFps;
+            settings.vSync = pendingSync;
+
+            manager.Save();
+            manager.Apply();
         }
     }
 }

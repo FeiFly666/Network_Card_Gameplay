@@ -1,7 +1,5 @@
 ﻿using Assets.Scripts.Manager;
 using Assets.Scripts.Model;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.UI.Card
@@ -12,10 +10,6 @@ namespace Assets.Scripts.UI.Card
         [SerializeField] private Transform playerCardRoot;
         private Transform dragRoot;
 
-        [SerializeField] private List<UICard> enemyCards = new List<UICard>();
-
-        private Dictionary<int, UICard> playerCards = new Dictionary<int, UICard>();
-        // Use this for initialization
         public override void OnOpen()
         {
             dragRoot = UIManager.Instance.dragRoot;
@@ -26,63 +20,31 @@ namespace Assets.Scripts.UI.Card
         }
         private void InitUI()
         {
-            List<UICard> cards = BattleCardManager.Instance.GetAllPlayerCardInfo();
-            int enemyCardNum = BattleCardManager.Instance.GetEnemyCardNum();
-
-            foreach (var card in cards)
-            {
+            var cardManager = BattleCardManager.Instance;
+            foreach (var card in cardManager.GetAllPlayerCardInfo())
                 HandleSetNewCard(card);
-            }
-            for(int i = 0; i < enemyCardNum; i++)
-            {
-                UICard newCard = BattleCardManager.Instance.GenerateFakeCard();
-                HandleSetNewCard(newCard);
-            }
+
+            foreach (var card in cardManager.GetEnemyCards())
+                HandleSetNewCard(card);
         }
-        
+
         private void HandleSetNewCard(UICard newCard)
         {
-            if(newCard.card == null)//对手的
+            if (newCard.card == null)
             {
-                enemyCards.Add(newCard);
                 newCard.transform.SetParent(enemyCardRoot, false);
                 return;
             }
-            if(playerCards.ContainsKey(newCard.card.ID))
-                playerCards[newCard.card.ID] = newCard;
-            else
-                playerCards.Add(newCard.card.ID, newCard);
+
             newCard.transform.SetParent(playerCardRoot, false);
-            newCard.dragRoot = this.dragRoot;
+            newCard.dragRoot = dragRoot;
         }
-        private void HandleRemoveCard(bool isPlayer, int cardID, bool isDrop)
+
+        private void HandleRemoveCard(UICard card, bool isDrop)
         {
-            //Debug.LogError("UI删除卡片");
-            UICard deleteCard = null;
-            bool findCard = false;
-            if (!isPlayer)
-            {
-                if(enemyCards.Count > 0)
-                {
-                    findCard = true;
-                    deleteCard = enemyCards[enemyCards.Count - 1];
-                    enemyCards.RemoveAt(enemyCards.Count - 1);
-                }
-            }
-            else
-            {
-                if(playerCards.TryGetValue(cardID, out deleteCard))
-                {
-                    findCard = true;
-                    playerCards.Remove(cardID);
-                }
-            }
-            if(findCard)
-            {
-                //Debug.LogError("UI删除卡片成功");
-                deleteCard.RemoveCard(isDrop);
-            }
+            card.RemoveCard(isDrop);
         }
+
         public override void OnClose()
         {
             base.OnClose();

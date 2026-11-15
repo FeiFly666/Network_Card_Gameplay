@@ -32,7 +32,7 @@ namespace Assets.Scripts.Service
         }
         public void Reset()
         {
-            currentAvailableActionID = 0;
+            //currentAvailableActionID = 0;
             m_pendings.Clear();
         }
         private void InitBattleActionMessage()
@@ -320,6 +320,8 @@ namespace Assets.Scripts.Service
         private void OnReciceveBattleSnapShot(ISession session, BattleReconnectSnapshot snapshot)
         {
             if (snapshot == null) return;
+
+            Reset();
             BattleManager.Instance.ApplyReconnectSnapshot(snapshot);
         }
     }

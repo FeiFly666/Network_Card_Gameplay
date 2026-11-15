@@ -20,9 +20,8 @@ namespace Assets.Scripts.UI
             else if(tip == "battle")
             {
                 UIManager.Instance.ShowUI("UIBattleInfoHUD");
-                UIManager.Instance.ShowUI("UICharacterPanel");
                 UIManager.Instance.ShowUI("UICardContainer");
-
+                UIManager.Instance.ShowUI("UICharacterPanel");
             }
         }
     }

@@ -148,11 +148,17 @@ namespace Assets.Scripts.Model
         }
         public void OnPointerEnter(PointerEventData data)
         {
+            if (UnityEngine.Device.Application.isMobilePlatform && data.pointerId < 0)
+                return;
             BattleCharacterManager.Instance.HandlePointerEnterCharacter(this);
+            //Debug.LogWarning($"触发进入 {data.pointerId}");
         }
         public void OnPointerExit(PointerEventData data)
         {
+            if (UnityEngine.Device.Application.isMobilePlatform && data.pointerId < 0)
+                return;
             BattleCharacterManager.Instance.HandlePointerExitCharacter(this);
+            //Debug.LogWarning($"触发退出 {data.pointerId}");
         }
         public void OnPointerClick(PointerEventData data)
         {

@@ -36,7 +36,7 @@ namespace Assets.Scripts.UI.Battle
             base.OnOpen();
             BattleCharacterManager.Instance.OnCharacterAttributeChanged += OnOneCharacterAttributeChanged;
             //BattleCharacterManager.Instance.OnPointerEnterCharacter += OnPointerInNewCharacter;
-            BattleCharacterManager.Instance.OnPointerExitCharacter += OnPointerOut;
+            //BattleCharacterManager.Instance.OnPointerExitCharacter += OnPointerOut;
         }
         public void OnPointerInNewCharacter(BattleCharacter character)
         {
@@ -145,9 +145,16 @@ namespace Assets.Scripts.UI.Battle
         public override void OnClose()
         {
             base.OnClose();
+
+            if (showRoutine != null)
+                StopCoroutine(showRoutine);
+
+            showRoutine = null;
+            pendingCharacter = null;
+            currentCharacter = null;
             BattleCharacterManager.Instance.OnCharacterAttributeChanged -= OnOneCharacterAttributeChanged;
             //BattleCharacterManager.Instance.OnPointerEnterCharacter -= OnPointerInNewCharacter;
-            BattleCharacterManager.Instance.OnPointerExitCharacter -= OnPointerOut;
+            //BattleCharacterManager.Instance.OnPointerExitCharacter -= OnPointerOut;
         }
         private void HideInfo()
         {

@@ -23,7 +23,8 @@ namespace Assets.Scripts.UI.Start
         }
         private void LoginButtonCanInteract(bool result)
         {
-            login.loginButton.interactable = true;
+            //login.loginButton.interactable = true;
+            ActiveWindow();
             if(!result)
             {
                 login.ClearPassword();
@@ -31,9 +32,9 @@ namespace Assets.Scripts.UI.Start
         }
         private void RegistButtonCanInteract(bool result)
         {
-            regist.submit.interactable = true;
-
-            if(result)
+            //regist.submit.interactable = true;
+            ActiveWindow();
+            if (result)
             {
                 login.id.text = regist.id.text;
                 SetPanel(Panel.Login);

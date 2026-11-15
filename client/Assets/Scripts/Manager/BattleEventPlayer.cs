@@ -154,6 +154,11 @@ namespace Assets.Scripts.Manager
                     BattleCharacterManager.Instance.RemoveCharacter(e.Id, e.paramS, e.Param == 1);
                     yield return new WaitForSeconds(1f);
                     break;
+                case BattleEvent.EventType.EventSpawnCharacter:
+                    BattleEventHandler.HandleBattleEvent(e);
+                    yield return new WaitForSeconds(0.01f);
+                    break;
+                    
             }
             playOneEventFinished.Request.eventPlayFinish.eventID = e.eventID;
             playOneEventFinished.Request.eventPlayFinish.eventBatchID = e.eventBatchID;
@@ -165,7 +170,7 @@ namespace Assets.Scripts.Manager
             return e.Type == BattleEvent.EventType.EventCharacterDie
                 || e.Type == BattleEvent.EventType.EventCharacterHpDecrease || e.Type == BattleEvent.EventType.EventCharacterHpIncrease
                 || e.Type == BattleEvent.EventType.EventCharacterAddBuff || e.Type == BattleEvent.EventType.EventCharacterRemoveBuff
-                || e.Type == BattleEvent.EventType.EventCharacterAttributechange;
+                || e.Type == BattleEvent.EventType.EventCharacterAttributechange || e.Type == BattleEvent.EventType.EventSpawnCharacter;
         }
     }
 }

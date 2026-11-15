@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,13 +37,23 @@ namespace Assets.Scripts.UI.Main
         {
             submitButton.onClick.AddListener(SendChangeMainCharRequest);
 
-            showCha = GameObject.Find("ShowCharacterROOT").GetComponent<UICharacterShow>();
+            //showCha = GameObject.Find("ShowCharacterROOT").GetComponent<UICharacterShow>();
 
             InitSlot();
         }
-        public void OnEnable()
+        public override void OnOpen()
         {
+            base.OnOpen();
+
+            if(showCha == null)
+            {
+                showCha = GameObject.Find("ShowCharacterROOT").GetComponent<UICharacterShow>();
+            }
+
             InitShowCards();
+
+            selectInfo.InitText();
+
             currentCharacterID = string.Empty;
             PlayerInfoManager.Instance.OnMainCharacterChanged += ChangeButtonUI;
 
@@ -117,7 +128,10 @@ namespace Assets.Scripts.UI.Main
 
         private void HandleClickCard(string cardCharacterID)
         {
-            showCha.ChangeShowPrefab(cardCharacterID);
+            if (showCha != null)
+            {
+                showCha.ChangeShowPrefab(cardCharacterID);
+            }
 
             selectInfo.ChangeInfo(cardCharacterID);
             currentCharacterID = cardCharacterID;
@@ -147,15 +161,22 @@ namespace Assets.Scripts.UI.Main
         {
             PlayerInfoManager.Instance.SendChangeMainCharRequest(currentCharacterID);
         }
-        private void OnDisable()
+        public override void OnClose()
         {
-            ClearCards();
-            HideAllPrefabs();
+            base.OnClose();
+
             PlayerInfoManager.Instance.OnMainCharacterChanged -= ChangeButtonUI;
-            
+
             SpecialEffectsManager.Instance.OnEffectChanged -= HandleEffectChange;
 
             SpecialEffectInfoPanel.OnPanelClosed -= HideLockObj;
+        }
+        protected override void OnCloseAnimFinish()
+        {
+            base.OnCloseAnimFinish();
+
+            ClearCards();
+            HideAllPrefabs();
 
             slotOne.gameObject.SetActive(false);
             slotTwo.gameObject.SetActive(false);
@@ -165,6 +186,7 @@ namespace Assets.Scripts.UI.Main
 
             effectSelectPanel.gameObject.SetActive(false);
         }
+
         private void ClearCards()
         {
             foreach(var card in m_generatedCards.ToList())

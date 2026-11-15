@@ -38,7 +38,11 @@ namespace Assets.Scripts.UI.Start
                 }
             }
             PlayerInfoManager.Instance.SendLogin(id.text, password.text);
-            loginButton.interactable = false;
+            if (UIManager.Instance.GetUIWindow("UIStartPanel", out var ui))
+            {
+                ui.DeAcviveWindow();
+            }
+            //loginButton.interactable = false;
         }
         public void ClearPassword()
         {

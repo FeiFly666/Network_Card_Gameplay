@@ -54,7 +54,10 @@ namespace Assets.Scripts.Manager
             QualitySettings.vSyncCount = Settings.vSync ? 1 : 0;
             Application.targetFrameRate = Settings.vSync ? -1 : Settings.targetFps;
 
-            Screen.SetResolution(Settings.width,Settings.height,Settings.screenMode);
+            if (!UnityEngine.Device.Application.isMobilePlatform)
+            {
+                Screen.SetResolution(Settings.width, Settings.height, Settings.screenMode);
+            }
 
         }
     }

@@ -19,21 +19,22 @@ namespace Assets.Scripts.Manager
         private Dictionary<int, UICard> m_cards = new Dictionary<int, UICard>();
         private Dictionary<int,UICard>m_lockedCards = new Dictionary<int, UICard>();
 
-        //存其他玩家的卡牌数量
-        [SerializeField]private int m_otherCardNum = 0;
+        private readonly List<UICard> m_enemyCards = new List<UICard>();
 
         [SerializeField] private UICard cCardPrefab;
         [SerializeField] private UICard bCardPrefab;
         [SerializeField] private UICard eCardPrefab;
         [SerializeField] private UICard fCardPrefab;
 
-        public Action<UICard> OnAddNewCard;
-        public Action<bool, int, bool> OnRemoveCard;
+        public event Action<UICard> OnAddNewCard;
+        public event Action<UICard, bool> OnRemoveCard;
 
         public Action OnStartDragCard;
         public Action OnStopDragCard;
 
         public bool HasDraggingCard = false;
+
+        private readonly HashSet<UICard> m_rentedCards = new HashSet<UICard>();
 
         private void Awake()
         {
@@ -50,25 +51,31 @@ namespace Assets.Scripts.Manager
         //用于新对局清理残留信息
         public void Init()
         {
+            foreach (var ui in m_rentedCards.ToList())
+                ReleaseCard(ui);
+
             m_cards.Clear();
             m_lockedCards.Clear();
-            m_otherCardNum = 0;
+            m_enemyCards.Clear();
+            HasDraggingCard = false;
+
+            OnStopDragCard?.Invoke();
         }
         public List<UICard> GetAllPlayerCardInfo()
         {
             return m_cards.Values.ToList();
         }
-        public int GetEnemyCardNum()
+        public IReadOnlyList<UICard> GetEnemyCards()
         {
-            return m_otherCardNum;
+            return m_enemyCards;
         }
         public void SetNewCard(string playerID, Card newCard = null)//生成UICard
         {
             UICard newUICard = null;
             if(newCard == null)//生成对方假卡
             {
-                newUICard = GenerateFakeCard();
-               
+                newUICard = GenerateCard(fCardPrefab);
+                m_enemyCards.Add(newUICard);
                 OnAddNewCard?.Invoke(newUICard);
                 return;
             }
@@ -76,13 +83,13 @@ namespace Assets.Scripts.Manager
             switch(newCard.Data.Type)
             {
                 case Common.Data.CardType.Character:
-                    newUICard = GameObject.Instantiate(cCardPrefab); 
+                    newUICard = GenerateCard(cCardPrefab);
                     break;
                 case Common.Data.CardType.Buff:
-                    newUICard = GameObject.Instantiate(bCardPrefab);
+                    newUICard = GenerateCard(bCardPrefab);
                     break;
                 case Common.Data.CardType.Gain:
-                    newUICard = GameObject.Instantiate(eCardPrefab);
+                    newUICard = GenerateCard(eCardPrefab);
                     break;
             }
 
@@ -99,34 +106,44 @@ namespace Assets.Scripts.Manager
 
             OnAddNewCard?.Invoke(newUICard);
         }
-        public UICard GenerateFakeCard()
+        private UICard GenerateCard(UICard Prefab)
         {
-            UICard newUICard = GameObject.Instantiate(fCardPrefab);
+            var pool = PoolManager.Instance;
+            pool.CreateGameObjectPool<UICard>(Prefab, maxNum: 8, preWarmNum: 2);
 
-            m_otherCardNum++;
+            var ui = pool.GetGameObject<UICard>(Prefab.gameObject.GetInstanceID());
+            m_rentedCards.Add(ui);
 
-            return newUICard;
+            return ui;
         }
+
+        public void ReleaseCard(UICard ui)
+        {
+            if (m_rentedCards.Remove(ui) && ui != null)
+                PoolManager.Instance.ReleaseGameObject<UICard>(ui);
+        }
+
         public void RemoveCard(int cardID, bool isDrop)
         {
-
-            bool isPlayer = true;
-
-            if(!m_cards.TryGetValue(cardID, out var card))
+            if (m_cards.TryGetValue(cardID, out var card))
             {
-                isPlayer = false;
-                m_otherCardNum--;
-
+                m_cards.Remove(cardID);
+                m_lockedCards.Remove(cardID);
             }
             else
             {
-                m_cards.Remove(cardID);
+                if (m_enemyCards.Count == 0) return;
+
+                int lastIndex = m_enemyCards.Count - 1;
+                card = m_enemyCards[lastIndex];
+                m_enemyCards.RemoveAt(lastIndex);
             }
 
-            OnRemoveCard?.Invoke(isPlayer, cardID, isDrop);
-
+            if (OnRemoveCard == null)
+                ReleaseCard(card);
+            else
+                OnRemoveCard.Invoke(card, isDrop);
         }
-
 
         public bool UpdateUsingCard(UICard card)
         {
@@ -148,7 +165,7 @@ namespace Assets.Scripts.Manager
 
         public bool SendDiscardRequest(UICard request)
         {
-            bool result = BattleService.Instance.SendDropCard(request.card, 
+            /*bool result = BattleService.Instance.SendDropCard(request.card, 
                 (success)=>
                     {
                         m_lockedCards.Remove(request.card.ID);
@@ -157,28 +174,32 @@ namespace Assets.Scripts.Manager
             );
             if(result) m_lockedCards[request.card.ID] = request;
 
-            return result;
+            return result;*/
+            return SendCardRequest(request, callback => BattleService.Instance.SendDropCard(request.card, callback));
         }
         public bool SendSpawnChaRequest(UICard request)
         {
-            bool result = BattleCharacterManager.Instance.SendSpawnCharacterRequest(request,
+          /*  bool result = BattleCharacterManager.Instance.SendSpawnCharacterRequest(request,
                 (success) =>
                 {
                     m_lockedCards.Remove(request.card.ID);
                     OnRecieveActionResponse(success, request);
                 });
-            if(result) m_lockedCards[request.card.ID] = request;
-            return result;
+            if (result) m_lockedCards[request.card.ID] = request;
+            return result;*/
+            return SendCardRequest(request, callback =>BattleCharacterManager.Instance.SendSpawnCharacterRequest(request, callback));
         }
         public bool SendAttributeChangeRequest(UICard request, BattleCharacter targetCharacter)
         {
-            bool result = BattleService.Instance.SendCharacterAttributeChangeRequest(request.card.ID, targetCharacter.character.ID,(success) =>
+          /*bool result = BattleService.Instance.SendCharacterAttributeChangeRequest(request.card.ID, targetCharacter.character.ID,(success) =>
             {
                 m_lockedCards.Remove(request.card.ID);
                 OnRecieveActionResponse(success, request);
             });
             if(result) m_lockedCards[request.card.ID] = request;
-            return result;
+            return result;*/
+
+            return SendCardRequest(request, callback => BattleService.Instance.SendCharacterAttributeChangeRequest(request.card.ID, targetCharacter.character.ID, callback));
         }
         public void OnRecieveActionResponse(bool result, UICard card)
         {
@@ -196,6 +217,34 @@ namespace Assets.Scripts.Manager
             }
             OnStopDragCard?.Invoke();
         }
+        private bool SendCardRequest(UICard ui, Func<Action<bool>, bool> send)
+        {
+            Card submittedCard = ui.card;
+            int cardId = submittedCard.ID;
+
+            if (!send(success => HandleCardResponse(success, cardId, submittedCard, ui)))
+                return false;
+
+            m_lockedCards[cardId] = ui;
+            return true;
+        }
+
+        private void HandleCardResponse(bool success, int cardId, Card submittedCard, UICard ui)
+        {
+            //仅处理失败回包，且 UI 卡绑定卡与请求卡相同。
+            if (success || ui == null || !ReferenceEquals(ui.card, submittedCard))
+                return;
+
+            if (!m_cards.TryGetValue(cardId, out var currentUI) || currentUI != ui)
+                return;
+
+            if (!m_lockedCards.TryGetValue(cardId, out var lockedUI) || lockedUI != ui)
+                return;
+
+            m_lockedCards.Remove(cardId);
+            ui.ReturnToOrigin();
+        }
+
         public bool CanDragThisCard(UICard card)
         {
             return !m_lockedCards.ContainsKey((card.card.ID)) && !HasDraggingCard && BattleManager.Instance.CurrentPhase == BattlePhase.PhasePrepare;

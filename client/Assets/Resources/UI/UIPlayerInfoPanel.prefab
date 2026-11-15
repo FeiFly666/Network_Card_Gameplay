@@ -1169,6 +1169,7 @@ MonoBehaviour:
   id: UIPlayerInfoPanel
   sleepTime: 60
   layer: 1
+  hoverRoot: {fileID: 1256460985524878257}
   playerID: {fileID: 8846353173208988157}
   playerNickname: {fileID: 8909221678639734852}
   changeNicknameButton: {fileID: 3984326779285062131}

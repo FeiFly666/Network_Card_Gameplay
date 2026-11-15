@@ -28,6 +28,9 @@ namespace Assets.Scripts.Manager
 
         private HashSet<int> m_lockedCharacters = new HashSet<int>();
 
+        private const string CharacterInfoId = "UIBattleCharacterInfo";
+        private BattleCharacter hoveredCharacter;
+
         public Action<BattleCharacter> OnCharacterClicked;
         public Action<BattleCharacter> OnCharacterAttributeChanged;
 
@@ -61,14 +64,7 @@ namespace Assets.Scripts.Manager
             m_characterRank.Clear();
             m_lockedCharacters.Clear();
 
-            OnPointerEnterCharacter += OnPointerEnterCharacterFunc;
-        }
-        private void OnPointerEnterCharacterFunc(BattleCharacter character)
-        {
-            UIManager.Instance.ShowUI<UIBattleCharacterInfo>("UIBattleCharacterInfo", (ui) =>
-            {
-                ui.OnPointerInNewCharacter(character);
-            });
+            //OnPointerEnterCharacter += OnPointerEnterCharacterFunc;
         }
         public void HandleCharacterClicked(BattleCharacter character)
         {
@@ -113,10 +109,27 @@ namespace Assets.Scripts.Manager
         public void HandlePointerEnterCharacter(BattleCharacter character)
         {
             OnPointerEnterCharacter?.Invoke(character);
+            
+            if (character == null || hoveredCharacter == character) return;
+
+            if (hoveredCharacter != null)
+                HandlePointerExitCharacter(hoveredCharacter);
+
+            hoveredCharacter = character;
+
+            UIManager.Instance.ShowUI<UIBattleCharacterInfo>(CharacterInfoId, (ui) =>
+            {
+                ui.OnPointerInNewCharacter(character);
+            });
         }
         public void HandlePointerExitCharacter(BattleCharacter character)
         {
             OnPointerExitCharacter?.Invoke(character);
+
+            if (hoveredCharacter != character) return;
+
+            hoveredCharacter = null;
+            UIManager.Instance.CloseUI(CharacterInfoId);
         }
         public bool IsEnemyHasCharacters()
         {

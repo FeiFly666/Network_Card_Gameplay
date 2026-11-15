@@ -31,7 +31,7 @@ namespace Assets.Scripts.UI.SpecialEffectUI
 
             SpecialEffectsManager.Instance.OnPointerExited += CloseUI;
 
-            originPos = new Vector2(2400, 0);
+            originPos = new Vector2(5000, 0);
             this.rect_Transfrom.position = originPos;
         }
         /// <summary>
@@ -65,7 +65,7 @@ namespace Assets.Scripts.UI.SpecialEffectUI
             descirption.text = specialEffect.Description;
 
             Vector2 newPos = new Vector2(callPos.x, callPos.y + upperHeight);
-            if(newPos.x > rightXLimit) newPos.x = rightXLimit;
+            if(!UnityEngine.Device.Application.isMobilePlatform && newPos.x > rightXLimit) newPos.x = rightXLimit;
 
             this.rect_Transfrom.position = newPos;
 

@@ -44,7 +44,7 @@ namespace Assets.Scripts.UI.Rooms
         }
         public override void OnOpen()
         {
-            //base.OnOpen();
+            base.OnOpen();
             RoomManager.Instance.OnRoomInfoChanged += RefreshUI;
             character1Show = GameObject.Find("ShowCharacterROOT")?.GetComponent<UICharacterShow>();
             character2Show = GameObject.Find("ShowCharacterROOT2")?.GetComponent<UICharacterShow>();
@@ -107,12 +107,13 @@ namespace Assets.Scripts.UI.Rooms
         }
         private void OnDisable()
         {
-            character1Show.HideAllPrefabs();
-            character2Show.HideAllPrefabs();
+
         }
         public override void OnClose()
         {
             base.OnClose();
+            character1Show?.HideAllPrefabs();
+            character2Show?.HideAllPrefabs();
             RoomManager.Instance.OnRoomInfoChanged -= RefreshUI;
         }
     }

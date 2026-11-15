@@ -29,6 +29,10 @@ namespace Assets.Scripts.CommonScript
                 bg.transform.localScale = new Vector3(-1, 1, 1);
             }
         }
-
+        private void OnDestroy()
+        {
+            if (BattleCardManager.Instance != null && PoolManager.Instance != null)
+                BattleCardManager.Instance.Init();
+        }
     }
 }

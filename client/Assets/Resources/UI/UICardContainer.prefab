@@ -53,10 +53,11 @@ MonoBehaviour:
   id: UICardContainer
   sleepTime: 60
   layer: 4
+  hoverRoot: {fileID: 0}
+  UseOpenAnim: 0
+  UseCloseAnim: 0
   enemyCardRoot: {fileID: 2648962555703545879}
   playerCardRoot: {fileID: 5682655079807889170}
-  dragRoot: {fileID: 0}
-  enemyCards: []
 --- !u!1 &6173539507441215027
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,9 +89,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4252068732858695361}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -139, y: -338}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -139, y: -285}
   m_SizeDelta: {x: 1590, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6237641419282994957
@@ -148,9 +149,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4252068732858695361}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 436, y: 454}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 525, y: 311}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2380588855122744683

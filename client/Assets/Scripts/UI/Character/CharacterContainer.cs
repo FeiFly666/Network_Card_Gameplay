@@ -21,6 +21,8 @@ namespace Assets.Scripts.UI.Characters
         private Dictionary<int, bool> playerAvialableSlot = new Dictionary<int, bool>();
         private Dictionary<int, bool> enemyAvialableSlot = new Dictionary<int, bool>();
 
+        private readonly Dictionary<BattleCharacter, UICharacterValue> activeValueUIs = new();
+
         [SerializeField] private UICharacterValue UIChaValPrefab;
         [SerializeField] private Transform uiRoot;
         // Use this for initialization
@@ -29,6 +31,8 @@ namespace Assets.Scripts.UI.Characters
             BattleCharacterManager.Instance.OnNewCharacterSpawn += SetNewBattleCharacterPosition;
             BattleCharacterManager.Instance.OnCharacterRemoved += RemoveBattleCharacter;
             uiRoot = UIManager.Instance.uiChaValRoot;
+
+            PoolManager.Instance.CreateGameObjectPool(UIChaValPrefab, maxNum: 8, preWarmNum: 0);
         }
         void Start()
         {
@@ -130,14 +134,41 @@ namespace Assets.Scripts.UI.Characters
 
         private void GiveCharacterValUI(BattleCharacter character)
         {
-            UICharacterValue newUI = Instantiate(UIChaValPrefab, uiRoot, false);
+            if (activeValueUIs.ContainsKey(character)) return;
 
-            newUI.SetOwner(character);
+            int prefabId = UIChaValPrefab.gameObject.GetInstanceID();
+            var ui = PoolManager.Instance.GetGameObject<UICharacterValue>(prefabId);
+
+            ui.transform.SetParent(uiRoot, false);
+            ui.transform.localScale = UIChaValPrefab.transform.localScale;
+            ui.SetOwner(character);
+            activeValueUIs.Add(character, ui);
+        }
+
+        private void ReleaseCharacterValUI(BattleCharacter character)
+        {
+            if (!activeValueUIs.TryGetValue(character, out var ui)) return;
+
+            activeValueUIs.Remove(character);
+            ui.ClearOwner();
+            PoolManager.Instance.ReleaseGameObject(ui);
+        }
+
+        private void ReleaseAllCharacterValUIs()
+        {
+            foreach (var ui in activeValueUIs.Values)
+            {
+                ui.ClearOwner();
+                PoolManager.Instance.ReleaseGameObject(ui);
+            }
+
+            activeValueUIs.Clear();
         }
         private void RemoveBattleCharacter(BattleCharacter character)
         {
             Debug.Log("删除角色位置信息");
-            if(character.character.isMain)
+            ReleaseCharacterValUI(character);
+            if (character.character.isMain)
             {
                 return;
             }
@@ -160,7 +191,7 @@ namespace Assets.Scripts.UI.Characters
         {
             BattleCharacterManager.Instance.OnNewCharacterSpawn -= SetNewBattleCharacterPosition;
             BattleCharacterManager.Instance.OnCharacterRemoved -= RemoveBattleCharacter;
-
+            ReleaseAllCharacterValUIs();
         }
     }
 }

@@ -40,7 +40,11 @@ namespace Assets.Scripts.UI.Start
             }
 
             PlayerInfoManager.Instance.SendRegist(id.text, password.text);
-            submit.interactable = false;
+            if(UIManager.Instance.GetUIWindow("UIStartPanel",out var ui))
+            {
+                ui.DeAcviveWindow();
+            }
+            //submit.interactable = false;
         }
     }
 }

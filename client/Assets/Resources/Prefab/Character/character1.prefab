@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2710214278964271259}
   - component: {fileID: 2724738270442269302}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3062155562247432542}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9120437111252170884}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: vfxPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -161,7 +161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8064624439406291612}
   - component: {fileID: 3638737934467399473}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: statusIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8549385972203085190}
   - component: {fileID: 4159519507159615882}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -329,7 +329,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1417339758434082435}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EffectPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -361,7 +361,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8059607473137878688}
   - component: {fileID: 2764546691856721359}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: defend
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -444,7 +444,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5712492006485806604}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: fireRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -476,7 +476,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1720066030508716509}
   - component: {fileID: 706570409930455841}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +561,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6053705132290252830}
   - component: {fileID: 1461314243789616873}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SkillWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -647,7 +647,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7586729139736098732}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: VisualRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -680,7 +680,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4874901821609169723}
   - component: {fileID: 4475006495144567412}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: character1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -750,7 +750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8086928162767836402}
   - component: {fileID: 8461234493100331311}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -834,7 +834,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3023008006140162783}
   - component: {fileID: 7750224475431329033}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -921,7 +921,7 @@ GameObject:
   - component: {fileID: 4239780700819080378}
   - component: {fileID: 3662049627020606649}
   - component: {fileID: 2746783744301527707}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1101,7 +1101,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3583184402993646174}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: fireRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1132,7 +1132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7987875390699868270}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1205,6 +1205,10 @@ PrefabInstance:
     - target: {fileID: 5573231152654408585, guid: c8b27b2b32ede704eb1d021d0dfe4297, type: 3}
       propertyPath: m_Name
       value: specialBulet
+      objectReference: {fileID: 0}
+    - target: {fileID: 5573231152654408585, guid: c8b27b2b32ede704eb1d021d0dfe4297, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -42,9 +42,13 @@ namespace Assets.ObjectPool
         public override void OnGet(T item)
         {
             item.gameObject.SetActive(true);
+            if (item is IPoolable poolable)
+                poolable.OnSpawn();
         }
         public override void OnRelease(T item)
         {
+            if (item is IPoolable poolable)
+                poolable.OnDeSpawn();
             item.gameObject.SetActive(false);
             item.transform.SetParent(root,true);
         }

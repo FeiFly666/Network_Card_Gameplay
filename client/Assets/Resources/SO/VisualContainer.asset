@@ -83,6 +83,8 @@ MonoBehaviour:
     effect: {fileID: 6909454670981132465, guid: 1da4ea89e59c6744c906ab03e9812a02, type: 3}
   - id: 12
     effect: {fileID: 7525491967679992508, guid: 528c5ec88208c6e4495895a2ae8c7c3b, type: 3}
+  - id: 21
+    effect: {fileID: 6909454670981132465, guid: 0fbde366c5e780a45bfba4ee8cec5070, type: 3}
   profilePics:
   - characterID: character1
     picture: {fileID: 21300000, guid: 619265176563c4b46807604994c87590, type: 3}

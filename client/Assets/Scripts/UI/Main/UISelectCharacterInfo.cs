@@ -23,6 +23,10 @@ namespace Assets.Scripts.UI.Main
         [SerializeField] private TMP_Text characterSkillTip;
         private void OnEnable()
         {
+            InitText();
+        }
+        public void InitText()
+        {
             characterName.text = string.Empty;
             characterDescription.text = string.Empty;
             characterHP.text = string.Empty;

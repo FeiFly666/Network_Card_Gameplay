@@ -24,6 +24,8 @@ namespace Assets.Scripts.UI.Main
             matchButton.onClick.AddListener(SendMatch);
 
             PlayerInfoManager.Instance.NicknameResponse += SetNewNickNameCallback;
+
+            OnPlayerEnterScene();
         }
         private void Start()
         {
@@ -37,10 +39,6 @@ namespace Assets.Scripts.UI.Main
                     PlayerInfoManager.Instance.SendNewNickname(PlayerInfoManager.Instance.userID);
                 });
             }
-            else
-            {
-                OnPlayerEnterScene();
-            }
         }
 
         private void SendMatch()
@@ -50,7 +48,8 @@ namespace Assets.Scripts.UI.Main
 
         private void OnPlayerEnterScene()
         {
-            playerID.text = PlayerInfoManager.Instance.nickname;
+            if(PlayerInfoManager.Instance.hasSetNickname)
+                playerID.text = PlayerInfoManager.Instance.nickname;
         }
         private void OnDisable()
         {

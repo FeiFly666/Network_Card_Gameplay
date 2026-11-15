@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class UIBattleCharacterPanel : UIWindow
 {
@@ -21,7 +22,7 @@ public class UIBattleCharacterPanel : UIWindow
     [SerializeField] private Button characterRemove;
     [SerializeField] private Button characterSkill;
     [SerializeField] private Button characterCancleRemove;
-    [SerializeField] private GameObject arrow;
+    [SerializeField] private Image arrow;
     [SerializeField] private TMP_Text tips;
     [SerializeField] private GameObject tipsGo;
     private BattleCharacter currentCharacter;
@@ -90,7 +91,12 @@ public class UIBattleCharacterPanel : UIWindow
         }
         else if(currentCharacter.character.data.CharacterType == Common.Data.CharacterType.Heal)
         {
-            if (!isSelectingEnemy && character.ownerID == PlayerInfoManager.Instance.userID && character != currentCharacter) { return; }
+            if (!isSelectingEnemy && character.ownerID == PlayerInfoManager.Instance.userID && character != currentCharacter) 
+            {
+                currentCharacter = character;
+                ShowPanel();
+                return; 
+            }
         }
         //点击角色两次关闭
         if(character == currentCharacter)
@@ -271,9 +277,26 @@ public class UIBattleCharacterPanel : UIWindow
     }
     private void ShowArrow(BattleCharacter enemy)
     {
-        arrow.gameObject.SetActive(true);
+        Camera battleCamera = Camera.main;
+        if (enemy == null || battleCamera == null)
+        {
+            HideArrow();
+            return;
+        }
 
-        arrow.transform.position = enemy.transform.position;
+        Vector3 worldPosition = enemy.transform.position + Vector3.up * 1.2f;
+        Vector3 screenPosition = battleCamera.WorldToScreenPoint(worldPosition);
+
+        if (screenPosition.z <= 0f ||
+            !RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                rTransform, screenPosition, null, out Vector3 uiPosition))
+        {
+            HideArrow();
+            return;
+        }
+
+        arrow.transform.position = uiPosition;
+        arrow.gameObject.SetActive(true);
     }
     private void HandleCharacterStateChange(BattleCharacter character)
     {

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 using Assets.Scripts.Model;
+using Assets.ObjectPool;
 
 namespace Assets.Scripts.UI.Characters
 {
-    public class UICharacterValue : MonoBehaviour
+    public class UICharacterValue : MonoBehaviour, IPoolable
     {
         [SerializeField] private TMP_Text hp;
         [SerializeField] private TMP_Text defense;
@@ -20,13 +21,19 @@ namespace Assets.Scripts.UI.Characters
         {
             rTransfrom = GetComponent<RectTransform>();
         }
-
+        public void OnSpawn()
+        {
+            if(owner != null)
+            {
+                gameObject.SetActive(true);
+            }
+        }
         public void SetOwner(BattleCharacter owner)
         {
             this.owner = owner;
 
             owner.OnCharacterValueChanged += ChangeValue;
-            owner.OnCharacterDead += DestroyThisUI;
+            //owner.OnCharacterDead += DestroyThisUI;
 
             ChangeValue();
 
@@ -40,16 +47,26 @@ namespace Assets.Scripts.UI.Characters
             hp.text = owner.character.CurHP.ToString();
             defense.text = owner.character.CurDEF.ToString();
         }
-        private void DestroyThisUI()
-        {
-            Destroy(this.gameObject);
-        }
-        private void OnDisable()
+        public void ClearOwner()
         {
             if (owner == null) return;
 
             owner.OnCharacterValueChanged -= ChangeValue;
-            owner.OnCharacterDead -= DestroyThisUI;
+
+            this.owner = null;
+        }
+        public void OnDeSpawn()
+        {
+            if (owner == null) return;
+
+            owner.OnCharacterValueChanged -= ChangeValue;
+        }
+        private void OnDisable()
+        {
+            //if (owner == null) return;
+
+            //owner.OnCharacterValueChanged -= ChangeValue;
+            //owner.OnCharacterDead -= DestroyThisUI;
         }
     }
 }

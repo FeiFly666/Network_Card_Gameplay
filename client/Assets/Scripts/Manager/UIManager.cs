@@ -39,7 +39,8 @@ namespace Assets.Scripts.Manager
 
         private Dictionary<UILayer, Transform> m_roots = new Dictionary<UILayer, Transform>();
 
-        private List<UIWindow> m_pendingUIs = new List<UIWindow>();
+        private readonly Dictionary<string, double> m_pendingUIs = new Dictionary<string, double>();
+        private List<string> m_deadUIs = new List<string>();
 
         public static UIManager Instance;
         private string UIPath = "UI/";
@@ -78,6 +79,30 @@ namespace Assets.Scripts.Manager
             m_layerStack[UILayer.MessageBox] = new Stack<UIWindow>();
             m_layerStack[UILayer.HUD] = new Stack<UIWindow>();
         }
+        private void Update()
+        {
+            if (m_pendingUIs.Count == 0) return;
+
+            double now = Time.unscaledTimeAsDouble;
+            m_deadUIs.Clear();
+
+            foreach (var entry in m_pendingUIs)
+            {
+                if (entry.Value <= now)
+                    m_deadUIs.Add(entry.Key);
+            }
+
+            foreach (string id in m_deadUIs)
+            {
+                m_pendingUIs.Remove(id);
+
+                if (!m_UI.TryGetValue(id, out var ui)) continue;
+
+                m_UI.Remove(id);
+                if (ui != null)
+                    Destroy(ui.gameObject);
+            }
+        }
         /// <summary>
         /// 开启静态UI
         /// </summary>
@@ -93,6 +118,15 @@ namespace Assets.Scripts.Manager
             }
         }
         /// <summary>
+        /// 获取指定UI窗口
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool GetUIWindow(string id,out UIWindow ui)
+        {
+            return m_UI.TryGetValue(id,out ui);
+        }
+        /// <summary>
         /// 生成UI预制体
         /// </summary>
         /// <param name="ui_id"></param>
@@ -101,21 +135,17 @@ namespace Assets.Scripts.Manager
             UIWindow ui = null;
             if(m_UI.TryGetValue(ui_id, out ui))
             {
-                if (ui.gameObject.activeSelf)
-                    return;
+                if (!m_pendingUIs.Remove(ui_id)) return;
 
                 ui.OnOpen();
                 if (callback != null && !callback(ui))
                 {
-                    ui.OnClose();
+                    HideUIPrefab(ui);
                     return;
                 }
 
-                m_layerStack[ui.layer].Push(ui);
-                if(m_pendingUIs.Contains(ui))
-                {
-                    m_pendingUIs.Remove(ui);
-                }
+                PushWindow(ui);
+                return;
             }
             else
             {
@@ -136,6 +166,7 @@ namespace Assets.Scripts.Manager
                         return;
 
                     UIWindow ui = GameObject.Instantiate(uiPrefab, m_roots[uiPrefab.layer], false);
+                    ui.Init();
 
                     ui.OnOpen();
 
@@ -145,7 +176,7 @@ namespace Assets.Scripts.Manager
                         Destroy(ui.gameObject);
                         return;
                     }
-                    m_layerStack[ui.layer].Push(ui);
+                    PushWindow(ui);
                     m_UI.Add(ui_id, ui);
                 }));
             }
@@ -170,16 +201,57 @@ namespace Assets.Scripts.Manager
         
         private void HideUIPrefab(UIWindow ui)
         {
-            ui.OnClose();
-            if (m_layerStack[ui.layer].Count > 0 && m_layerStack[ui.layer].Peek() == ui)
+            if (ui == null || m_pendingUIs.ContainsKey(ui.id)) return;
+
+            m_pendingUIs.Add(ui.id, Time.unscaledTimeAsDouble + Mathf.Max(0f, ui.sleepTime));
+
+            var stack = m_layerStack[ui.layer];
+
+            bool wasTop = stack.Count > 0 && stack.Peek() == ui;
+            if (wasTop)
             {
-                m_layerStack[ui.layer].Pop();
+                stack.Pop();
             }
-            if (!m_pendingUIs.Contains(ui))
-                m_pendingUIs.Add(ui);
+            else
+            {
+                var windows = stack.ToArray();
+                stack.Clear();
+
+                for (int i = windows.Length - 1; i >= 0; i--)
+                {
+                    if (windows[i] != null && windows[i] != ui)
+                        stack.Push(windows[i]);
+                }
+            }
+            bool controlsInteraction = ui.layer == UILayer.Window;
+
+            if (controlsInteraction)
+                ui.DeAcviveWindow();
+
+            ui.OnClose();
+
+            if (controlsInteraction && wasTop && stack.Count > 0 && stack.Peek() != null)
+            {
+                stack.Peek().ActiveWindow();
+            }
+        }
+        private void PushWindow(UIWindow ui)
+        {
+            var stack = m_layerStack[ui.layer];
+
+            if (ui.layer == UILayer.Window)
+            {
+                if (stack.Count > 0 && stack.Peek() != null)
+                    stack.Peek().DeAcviveWindow();
+
+                ui.transform.SetAsLastSibling();
+                ui.ActiveWindow();
+            }
+
+            stack.Push(ui);
         }
         /// <summary>
-        /// 生成Window层UI
+        /// 生成UI
         /// </summary>
         public void ShowUI(string ui_id)
         {
@@ -200,7 +272,7 @@ namespace Assets.Scripts.Manager
             });
         }
         /// <summary>
-        ///  关闭Window层UI
+        ///  关闭UI
         /// </summary>
         public void CloseUI(string ui_id)
         {
@@ -214,6 +286,7 @@ namespace Assets.Scripts.Manager
             // 切场景时，旧的加载请求完成后跳过显示。
             foreach (var id in new List<string>(m_loadingUIs.Keys))
                 m_loadingUIs[id] = (false, null);
+
 
             foreach (var stack in m_layerStack.Values)
             {

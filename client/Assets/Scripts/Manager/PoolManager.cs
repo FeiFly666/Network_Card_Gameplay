@@ -112,6 +112,8 @@ public class PoolManager : MonoBehaviour
     public void ReleaseGameObject<T>(T item) where T : Component
     {
         int prefabID = -1;
+        if (item == null || item.gameObject == null) return;
+
         if(!_instance2Prefab.TryGetValue(item.gameObject.GetInstanceID(), out prefabID))
         {
             Destroy(item.gameObject);

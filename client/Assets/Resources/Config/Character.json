@@ -2,7 +2,7 @@
   "character1": {
     "DataID": "character1",
     "Name": "工程师",
-    "Description": "远程",
+    "Description": "远程单位，使用炮台攻击敌人",
     "CharacterType": 0,
     "AttackType": 0,
     "HP": 6,
@@ -19,7 +19,7 @@
   "character2": {
     "DataID": "character2",
     "Name": "骑士",
-    "Description": "近战",
+    "Description": "近战单位，使用一把小破剑",
     "CharacterType": 0,
     "AttackType": 0,
     "HP": 4,
@@ -36,7 +36,7 @@
   "character4": {
     "DataID": "character4",
     "Name": "牧师",
-    "Description": "回血",
+    "Description": "辅助单位，治疗友军",
     "CharacterType": 1,
     "AttackType": 0,
     "HP": 4,

@@ -5,11 +5,11 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts.Manager
 {
-    public class BattleClickHandler : MonoBehaviour
+    public class BattleClickHandler : MonoBehaviour,IPointerClickHandler
     {
         private void Update()
         {
-            if(Input.GetMouseButtonDown(0)&&!EventSystem.current.IsPointerOverGameObject())
+            /*if(Input.GetMouseButtonDown(0)&&!EventSystem.current.IsPointerOverGameObject())
             {
                 BattleCharacter character = null;
 
@@ -22,12 +22,16 @@ namespace Assets.Scripts.Manager
                 }
 
                 BattleCharacterManager.Instance.HandleCharacterClicked(character);
-                /*if (character != null)
+                *//*if (character != null)
                 {
                     //Debug.Log("发现鼠标点击角色");
                     BattleCharacterManager.Instance.HandleCharacterClicked(character);
-                }*/
-            }
+                }*//*
+            }*/
+        }
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            BattleCharacterManager.Instance.HandleCharacterClicked(null);
         }
     }
 }

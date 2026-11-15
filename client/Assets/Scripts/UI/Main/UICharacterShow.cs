@@ -45,8 +45,6 @@ namespace Assets.Scripts.UI.Main
                 if(characterPrefab.Value != null)
                     characterPrefab.Value.SetActive(false);
             }
-
-            m_camera.SetActive(false);
             ClearPreviewTexture();
         }
 
@@ -54,7 +52,7 @@ namespace Assets.Scripts.UI.Main
         {
             if (m_camera == null || !m_camera.TryGetComponent<Camera>(out var camera))
                 return;
-
+            m_camera?.SetActive(false);
             var texture = camera.targetTexture;
             if (texture == null)
                 return;

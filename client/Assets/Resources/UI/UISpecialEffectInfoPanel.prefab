@@ -284,7 +284,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2169544092506283318
 RectTransform:
   m_ObjectHideFlags: 0
@@ -322,6 +322,9 @@ MonoBehaviour:
   id: UISpecialEffectInfoPanel
   sleepTime: 30
   layer: 2
+  hoverRoot: {fileID: 0}
+  UseOpenAnim: 1
+  UseCloseAnim: 1
   title: {fileID: 2872792587957072066}
   descirption: {fileID: 1754864637448160873}
   rightXLimit: 1720
