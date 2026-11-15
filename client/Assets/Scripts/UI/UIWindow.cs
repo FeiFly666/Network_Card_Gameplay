@@ -25,11 +25,13 @@ namespace Assets.Scripts.UI
         {
             canvasGroup = this.AddComponent<CanvasGroup>();
 
-            if(hoverRoot != null && UseOpenAnim)
+            if (hoverRoot == null) return;
+
+            originScale = hoverRoot.localScale;
+
+            if(UseOpenAnim && UseCloseAnim )
             {
-                originScale = hoverRoot.localScale;
-                if(UseCloseAnim)
-                    hoverRoot.localScale = minScale;
+                hoverRoot.localScale = minScale;
             }
         }
 
@@ -46,9 +48,13 @@ namespace Assets.Scripts.UI
             if (hoverRoot == null) return;
 
             if (UseOpenAnim)
+            {
                 OpenAnim();
+            }
             else
-                hoverRoot.localScale = minScale;
+            {
+                hoverRoot.localScale = originScale;
+            }
         }
         protected virtual void OpenAnim()
         {
