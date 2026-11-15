@@ -105,17 +105,31 @@ namespace GameServer.Network
 
             if(e.BytesTransferred + m_buffer.Position  > m_buffer.Capacity)
             {
+                Console.WriteLine($"[network] Receive buffer overflow. ClientID={ClientID}, Remote={RemoteEndPoint}");
                 Close();
-                throw new Exception("overflow");
+                return;
             }
             //Î´Òç³öÐ´Èë
             m_buffer.Write(e.Buffer, 0, e.BytesTransferred);
 
             //ParsePackage();
 
-            MessageHandler.ParseAndDispatch(this,m_buffer);
-            
-            lastCommunicateTime= Time.time;
+            //MessageHandler.ParseAndDispatch(this,m_buffer);
+
+            try
+            {
+                MessageHandler.ParseAndDispatch(this, m_buffer);
+            }
+            catch (Exception ex) when (ex is ProtoBuf.ProtoException or EndOfStreamException or OverflowException)
+            {
+                Console.WriteLine(
+                    $"[network] Invalid packet. ClientID={ClientID}, Remote={RemoteEndPoint}, " +
+                    $"{ex.GetType().Name}: {ex.Message}");
+                Close();
+                return;
+            }
+
+            lastCommunicateTime = Time.time;
             
             StartReceive();
         }
