@@ -269,7 +269,7 @@ namespace Assets.Scripts.UI.Setting
                 {
                     NetClient.Instance.Close(true);
                     playerInfo.isLogin = false;
-                    MySceneManager.Instance.EnterScene("StartScene");
+                    MySceneManager.Instance.EnterScene("HotUpdate");
                 },
                 () => { });
             }

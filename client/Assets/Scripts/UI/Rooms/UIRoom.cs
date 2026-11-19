@@ -25,8 +25,11 @@ namespace Assets.Scripts.UI.Rooms
         [SerializeField] private Image player1ReadyStatus;
         [SerializeField] private Image player2ReadyStatus;
 
-        [SerializeField] private UICharacterShow character1Show;
-        [SerializeField] private UICharacterShow character2Show;
+        [SerializeField] protected RawImage player1PreviewImage;
+        [SerializeField] protected RawImage player2PreviewImage;
+
+        private UICharacterShow character1Show;
+        private UICharacterShow character2Show;
 
         private void Awake()
         {
@@ -46,8 +49,14 @@ namespace Assets.Scripts.UI.Rooms
         {
             base.OnOpen();
             RoomManager.Instance.OnRoomInfoChanged += RefreshUI;
-            character1Show = GameObject.Find("ShowCharacterROOT")?.GetComponent<UICharacterShow>();
-            character2Show = GameObject.Find("ShowCharacterROOT2")?.GetComponent<UICharacterShow>();
+
+            character1Show = GameObject.Find("ShowCharacterROOT").GetComponent<UICharacterShow>();
+            player1PreviewImage.gameObject.SetActive(true);
+            player1PreviewImage.texture = character1Show?.PreviewTexture;
+
+            character2Show = GameObject.Find("ShowCharacterROOT2").GetComponent<UICharacterShow>();
+            player2PreviewImage.gameObject.SetActive(true);
+            player2PreviewImage.texture = character2Show?.PreviewTexture;
         }
         private void Start()
         {

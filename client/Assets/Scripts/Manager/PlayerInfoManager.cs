@@ -123,7 +123,7 @@ namespace Assets.Scripts.Manager
                 {
                     NetClient.Instance.Close(true);
                     isLogin = false;
-                    MySceneManager.Instance.EnterScene("StartScene");
+                    MySceneManager.Instance.EnterScene("HotUpdate");
                 }
 
                 );

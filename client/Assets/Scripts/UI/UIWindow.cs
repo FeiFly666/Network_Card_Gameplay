@@ -120,5 +120,9 @@ namespace Assets.Scripts.UI
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
+        public void SetCloseAnimUsed(bool newBool)
+        {
+            this.UseCloseAnim = newBool;
+        }
     }
 }

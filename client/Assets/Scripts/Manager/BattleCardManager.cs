@@ -21,10 +21,15 @@ namespace Assets.Scripts.Manager
 
         private readonly List<UICard> m_enemyCards = new List<UICard>();
 
-        [SerializeField] private UICard cCardPrefab;
-        [SerializeField] private UICard bCardPrefab;
-        [SerializeField] private UICard eCardPrefab;
-        [SerializeField] private UICard fCardPrefab;
+        private UICard cCardPrefab;
+        [SerializeField] private string UICharacterCardID;
+        private UICard bCardPrefab;
+        [SerializeField] private string UIBuffCardID;
+        private UICard eCardPrefab;
+        [SerializeField] private string UIEffectCardID;
+        private UICard fCardPrefab;
+        [SerializeField] private string UIFakeCardID;
+        private bool isPrefabLoaded = false;
 
         public event Action<UICard> OnAddNewCard;
         public event Action<UICard, bool> OnRemoveCard;
@@ -60,6 +65,52 @@ namespace Assets.Scripts.Manager
             HasDraggingCard = false;
 
             OnStopDragCard?.Invoke();
+
+            if(!isPrefabLoaded)
+            {
+                GetPrefab();
+            }
+        }
+        public void Restart()
+        {
+            isPrefabLoaded = false;
+        }
+        private void GetPrefab()
+        {
+            UIManager.Instance.GetUIPrefab<UICard>(UICharacterCardID, prefab =>
+            {
+                if (prefab == null)
+                    return;
+                if (this == null)
+                {
+                    AssetBundleManager.instance.ReleaseAsset("UI/Item/" + UICharacterCardID);
+                    return;
+                }
+                cCardPrefab = prefab;
+                UIManager.Instance.GetUIPrefab<UICard>(UIEffectCardID, prefab =>
+                {
+                    if (prefab == null)
+                        return;
+                    if (this == null)
+                    {
+                        AssetBundleManager.instance.ReleaseAsset("UI/Item/" + UIEffectCardID);
+                        return;
+                    }
+                    eCardPrefab = prefab;
+                    UIManager.Instance.GetUIPrefab<UICard>(UIFakeCardID, prefab =>
+                    {
+                        if (prefab == null)
+                            return;
+                        if (this == null)
+                        {
+                            AssetBundleManager.instance.ReleaseAsset( "UI/Item/" + UIFakeCardID);
+                            return;
+                        }
+                        fCardPrefab = prefab;
+                        isPrefabLoaded = true;
+                    });
+                });
+            });
         }
         public List<UICard> GetAllPlayerCardInfo()
         {

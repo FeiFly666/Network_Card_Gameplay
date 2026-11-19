@@ -40,26 +40,42 @@ namespace Assets.Scripts.Manager
         private Dictionary<UILayer, Transform> m_roots = new Dictionary<UILayer, Transform>();
 
         private readonly Dictionary<string, double> m_pendingUIs = new Dictionary<string, double>();
+
+        private readonly List<GameObject> m_popupInstances = new List<GameObject>();
+
         private List<string> m_deadUIs = new List<string>();
 
         public static UIManager Instance;
-        private string UIPath = "UI/";
+        private string UIPath = "UI/Window/";
+        private string UIItemPath = "UI/Item/";
+        [SerializeField] private bool isBootstrap;
         [SerializeField] private List<SceneStaticUIData> m_sceneStaticUIs = new List<SceneStaticUIData>();
         [SerializeField] private List<LayerRoot> m_layerRoots = new List<LayerRoot>();
         [SerializeField] public Transform dragRoot;
         [SerializeField] public Transform uiChaValRoot;
+        
         private void Awake()
         {
-            if(Instance == null)
+            if(Instance != null)
             {
-                Instance = this;
+                if (isBootstrap)
+                {
+                    Destroy(this);
+                    return;
+                }
+
+                if (!Instance.isBootstrap)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+
+                Destroy(Instance.gameObject);
             }
-            else
-            {
-                Destroy(this.gameObject);
-                return;
-            }
-            DontDestroyOnLoad(this.gameObject);
+
+            Instance = this;
+            
+
             InitUIRoots();
             InitStack();
         }
@@ -101,6 +117,7 @@ namespace Assets.Scripts.Manager
                 m_UI.Remove(id);
                 if (ui != null)
                     Destroy(ui.gameObject);
+                AssetBundleManager.instance.ReleaseAsset(UIPath + id);
             }
         }
         /// <summary>
@@ -157,13 +174,18 @@ namespace Assets.Scripts.Manager
 
                 m_loadingUIs.Add(ui_id, (true, callback));
 
-                StartCoroutine(MyResourceLoader.LoadResources<UIWindow>(UIPath + ui_id, (uiPrefab) =>
+                AssetBundleManager.instance.LoadAssetAsync<UIWindow>(UIPath + ui_id, (uiPrefab) =>
                 {
                     var (shouldShow, callback) = m_loadingUIs[ui_id];
                     m_loadingUIs.Remove(ui_id);
 
-                    if (!shouldShow || uiPrefab == null)
+                    if (uiPrefab == null)
                         return;
+                    if(!shouldShow)
+                    {
+                        AssetBundleManager.instance.ReleaseAsset(UIPath + ui_id);
+                        return;
+                    }
 
                     UIWindow ui = GameObject.Instantiate(uiPrefab, m_roots[uiPrefab.layer], false);
                     ui.Init();
@@ -174,13 +196,15 @@ namespace Assets.Scripts.Manager
                     {
                         ui.OnClose();
                         Destroy(ui.gameObject);
+                        AssetBundleManager.instance.ReleaseAsset(UIPath + ui_id);
                         return;
                     }
                     PushWindow(ui);
                     m_UI.Add(ui_id, ui);
-                }));
+                });
             }
         }
+   
         /// <summary>
         /// 隐藏UI预制体
         /// </summary>
@@ -298,10 +322,55 @@ namespace Assets.Scripts.Manager
                         stack.Pop();
                         continue;
                     }
-
+                    ui.SetCloseAnimUsed(false);
                     HideUIPrefab(ui);
                 }
             }
+
+            foreach (GameObject popup in new List<GameObject>(m_popupInstances))
+            {
+                if (popup == null)
+                    continue;
+
+                popup.GetComponent<UIWindow>().SetCloseAnimUsed(false);
+                ClosePopup(popup);
+            }
+        }
+
+        public void GetUIPrefab<T>(string id, Action<T>callback) where T : Component
+        {
+            AssetBundleManager.instance.LoadAssetAsync<T>(UIItemPath + id, (uiPrefab) =>
+            {
+                callback?.Invoke(uiPrefab);
+            });
+        }
+
+        public T CreatePopup<T>(GameObject prefab) where T : UIWindow
+        {
+            GameObject instance = Instantiate(prefab, m_roots[UILayer.MessageBox], false);
+
+            T popup = instance.GetComponent<T>();
+
+            m_popupInstances.Add(instance);
+
+            popup.Init();
+            popup.OnOpen();
+
+            return popup;
+        }
+        public void ClosePopup(GameObject instance)
+        {
+            if (instance == null)
+                return;
+
+            UIWindow popup = instance.GetComponent<UIWindow>();
+            popup.DeAcviveWindow();
+            popup.OnClose();
+        }
+        public void DestroyPopup(GameObject instance)
+        {
+            m_popupInstances.Remove(instance);
+            Destroy(instance);
         }
     }
 }

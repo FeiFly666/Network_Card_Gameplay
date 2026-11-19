@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.UI.Common;
+﻿using Assets.Scripts.Manager;
+using Assets.Scripts.UI.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,20 @@ namespace Assets.Scripts.Util
 {
     public static class InputFieldBox
     {
-        private static GameObject prefab;
+        private static UIInputFieldBox boxPrefab;
         private static UIInputFieldBox showedBox;
+        public static void Init()
+        {
+            UIManager.Instance.GetUIPrefab<UIInputFieldBox>("Share/UIInputFieldBox", prefab =>
+            {
+                boxPrefab = prefab;
+            });
+        }
 
         public static void Show(string msg, Action<string> buttonFunc, Action backFunc)
         {
-            if (prefab == null)
-            {
-                prefab = Resources.Load<GameObject>("UI/UIInputFieldBox");
-            }
-
-            UIInputFieldBox box = GameObject.Instantiate(prefab).GetComponent<UIInputFieldBox>();
-            if(showedBox != null && showedBox != box)
+            UIInputFieldBox box = UIManager.Instance.CreatePopup<UIInputFieldBox>(boxPrefab.gameObject);
+            if (showedBox != null && showedBox != box)
             {
                 showedBox.HideThisBox();
             }

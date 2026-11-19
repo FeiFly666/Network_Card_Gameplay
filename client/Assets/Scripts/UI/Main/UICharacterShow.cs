@@ -11,6 +11,8 @@ namespace Assets.Scripts.UI.Main
     {
         private Dictionary<string, GameObject> m_characterPrefabs = new Dictionary<string, GameObject>();
         [SerializeField] private GameObject m_camera;
+        public RenderTexture PreviewTexture => m_camera.GetComponent<Camera>().targetTexture;
+
         private void Awake()
         {
             ClearPreviewTexture();

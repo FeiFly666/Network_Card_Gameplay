@@ -19,7 +19,11 @@ namespace Assets.Scripts
         private WaitForSecondsRealtime waitTime = new WaitForSecondsRealtime(2);
         private Coroutine heartCoroutine = null;
         private Message hearMessage;
+
+        public string platform;
+
         [SerializeField] private bool isRelease = false;
+        [SerializeField] public bool onlineHotUpdate = false;
 
         [SerializeField] public string ServerIP => isRelease ? "49.233.150.200" : "127.0.0.1";
         private void Awake()
@@ -27,11 +31,16 @@ namespace Assets.Scripts
             if(Instance == null)
             {
                 Instance = this;
+                Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-                DontDestroyOnLoad(this.gameObject);
+                platform = "";
+
+                if (Application.isMobilePlatform) platform = "android";
+                else platform = "windows64";
+
                 NetClient.Instance.Init();
 
-                DataManager.Instance.Init();
+                //DataManager.Instance.Init();
                 PlayerInfoManager.Instance.Init();
 
                 ChatService.Instance.Init();
@@ -48,8 +57,6 @@ namespace Assets.Scripts
                 NetClient.Instance.OnConnected += StartHeart;
 
                 SettingManager.Instance.Init();
-
-                
 
                 hearMessage = new Message();
                 hearMessage.Request = new RequestMessage();

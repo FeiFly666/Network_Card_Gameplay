@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Manager;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Assets.Scripts.UI.Common
         Warning, //有点小问题
         Error // 发生错误
     }
-    public class UIMessageBox : MonoBehaviour
+    public class UIMessageBox : UIWindow
     {
         [SerializeField] private Image bg;
         [SerializeField] private Sprite[] infoTypeBg;
@@ -84,8 +85,20 @@ namespace Assets.Scripts.UI.Common
 
         private void HideThisMessageBox()
         {
-            Destroy(this.gameObject);
+            //UIManager.Instance.ClosePopup(gameObject);
+            CloseUI();
+        }
+        public override void CloseUI()
+        {
+            UIManager.Instance.ClosePopup(gameObject);
         }
 
+        protected override void OnCloseAnimFinish()
+        {
+            base.OnCloseAnimFinish();
+
+            if (!gameObject.activeSelf)
+                UIManager.Instance.DestroyPopup(gameObject);
+        }
     }
 }

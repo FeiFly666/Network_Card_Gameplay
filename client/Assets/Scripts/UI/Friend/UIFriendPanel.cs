@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Manager;
 using Assets.Scripts.Service;
+using Assets.Scripts.UI.Main;
 using NetMessage;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +45,13 @@ namespace Assets.Scripts.UI.Friend
             searchButton.onClick.AddListener(SendSearchRequest);
         }
 
-        private void OnEnable()
+        public override void OnOpen()
+        {
+            base.OnOpen();
+            InitPanel();
+
+        }
+        private void InitPanel()
         {
             FriendManager.Instance.OnFriendChange += ChangeFriend;
             FriendManager.Instance.OnRemoveFriend += RemoveFriend;
@@ -53,8 +60,6 @@ namespace Assets.Scripts.UI.Friend
             FriendManager.Instance.OnUpdateSearchedInfo += UpdateSearchInfo;
 
             FriendService.Instance.OnSearchFinished += ShowSearchInfo;
-            
-
             FriendManager.Instance.CallActionForCurrentData();
             currentPanel = CurrentPanel.Search;
             ChangePanel(0);
@@ -170,8 +175,10 @@ namespace Assets.Scripts.UI.Friend
             }
             searchInfoItems.Clear();
         }
-        private void OnDisable()
+        public override void OnClose()
         {
+            base.OnClose();
+
             FriendManager.Instance.OnFriendChange -= ChangeFriend;
             FriendManager.Instance.OnRemoveFriend -= RemoveFriend;
             FriendManager.Instance.OnRequestChange -= ChangeRequest;

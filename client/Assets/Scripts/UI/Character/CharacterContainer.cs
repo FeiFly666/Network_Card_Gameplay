@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Manager;
 using Assets.Scripts.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -23,23 +24,46 @@ namespace Assets.Scripts.UI.Characters
 
         private readonly Dictionary<BattleCharacter, UICharacterValue> activeValueUIs = new();
 
-        [SerializeField] private UICharacterValue UIChaValPrefab;
+        private UICharacterValue UIChaValPrefab;
+        [SerializeField] private string UIChaValPrefabID;
         [SerializeField] private Transform uiRoot;
+        bool isLoadPrefab = false;
+
         // Use this for initialization
-        private void OnEnable()
+        public void LoadPrefab(Action<bool> onComplete)
+        {
+            uiRoot = UIManager.Instance.uiChaValRoot;
+
+            UIManager.Instance.GetUIPrefab<UICharacterValue>(UIChaValPrefabID, prefab =>
+            {
+                if (this == null)
+                {
+                    if(prefab != null)
+                    {
+                        AssetBundleManager.instance.ReleaseAsset("UI/Item/" + UIChaValPrefabID);
+                    }
+                    return;
+                }
+                if(prefab == null)
+                {
+                    onComplete?.Invoke(false);
+                    return;
+                }
+
+                UIChaValPrefab = prefab;
+
+                PoolManager.Instance.CreateGameObjectPool(UIChaValPrefab, maxNum: 8, preWarmNum: 0);
+                isLoadPrefab = true;
+
+                Init();
+                onComplete?.Invoke(true);
+            });
+        }
+        
+        public void Init()
         {
             BattleCharacterManager.Instance.OnNewCharacterSpawn += SetNewBattleCharacterPosition;
             BattleCharacterManager.Instance.OnCharacterRemoved += RemoveBattleCharacter;
-            uiRoot = UIManager.Instance.uiChaValRoot;
-
-            PoolManager.Instance.CreateGameObjectPool(UIChaValPrefab, maxNum: 8, preWarmNum: 0);
-        }
-        void Start()
-        {
-            Init();
-        }
-        public void Init()
-        {
             for (int i = 0; i < playerCharacterSlots.Length; i++)
             {
                 playerAvialableSlot[i] = true;
@@ -189,8 +213,12 @@ namespace Assets.Scripts.UI.Characters
         }
         private void OnDisable()
         {
-            BattleCharacterManager.Instance.OnNewCharacterSpawn -= SetNewBattleCharacterPosition;
-            BattleCharacterManager.Instance.OnCharacterRemoved -= RemoveBattleCharacter;
+            if (this == null) return;
+            if(isLoadPrefab)
+            {
+                BattleCharacterManager.Instance.OnNewCharacterSpawn -= SetNewBattleCharacterPosition;
+                BattleCharacterManager.Instance.OnCharacterRemoved -= RemoveBattleCharacter;
+            }
             ReleaseAllCharacterValUIs();
         }
     }

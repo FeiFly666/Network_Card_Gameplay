@@ -35,15 +35,20 @@ namespace Assets.Scripts.Manager
         private string characterPath = "Prefab/Character";
 
         public Dictionary<string, BattleCharacter> characterPrefabs = new Dictionary<string, BattleCharacter>();
+        public bool isInit;
 
+        public void InitForEditor()
+        {
+            LoadConfigForEditor();
+            LoadVisualContainerForEditor();
+            LoadSpecialEffectPicturesForEditor();
+            LoadCharacterPrefabForEditor();
+        }
         public void Init()
         {
-            LoadCardData();
-            LoadVisualContainuer();
-            LoadSpecialEffectPictures();
-            LoadCharacterPrefab();
+            LoadConfig();
         }
-        private void LoadCardData()
+        private void LoadConfigForEditor()
         {
             TextAsset text = Resources.Load<TextAsset>(configPath + "Card");
 
@@ -69,7 +74,7 @@ namespace Assets.Scripts.Manager
 
             specialEffectData = JsonConvert.DeserializeObject<Dictionary<string, SpecialEffectData>>(text.text);
         }
-        private void LoadSpecialEffectPictures()
+        private void LoadSpecialEffectPicturesForEditor()
         {
             SpecialEffectPicture pictures = Resources.Load<SpecialEffectPicture>(sOPath + "SpecialEffectPicture");
 
@@ -87,7 +92,7 @@ namespace Assets.Scripts.Manager
                 }
             }
         }
-        private void LoadVisualContainuer()
+        private void LoadVisualContainerForEditor()
         {
             VisualContainer VisualContianer = Resources.Load<VisualContainer>(sOPath + "VisualContainer");
 
@@ -164,11 +169,169 @@ namespace Assets.Scripts.Manager
                     profilePictures[picture.characterID] = picture.picture;
                 }
             }
+            InitPools();
+        }
+        private void LoadCharacterPrefabForEditor()
+        {
+            BattleCharacter[] gameObjects = Resources.LoadAll<BattleCharacter>(characterPath);
 
+            foreach (var gameObject in gameObjects)
+            {
+                string key = gameObject.name;
+
+                characterPrefabs.Add(key, gameObject);
+
+            }
+        }
+
+        private void LoadConfig()
+        {
+            AssetBundleManager.instance.LoadAssetAsync<TextAsset>(configPath + "Card", (asset) =>
+            {
+                cardData = JsonConvert.DeserializeObject<Dictionary<string, CardData>>(asset.text);
+                AssetBundleManager.instance.LoadAssetAsync<TextAsset>(configPath + "Character", (asset) =>
+                {
+                    characterData = JsonConvert.DeserializeObject<Dictionary<string, CharacterData>>(asset.text);
+                    AssetBundleManager.instance.LoadAssetAsync<TextAsset>(configPath + "Buff", (asset) =>
+                    {
+                        buffData = JsonConvert.DeserializeObject<Dictionary<string, BuffData>>(asset.text);
+                        AssetBundleManager.instance.LoadAssetAsync<TextAsset>(configPath + "BuffEffect", (asset) =>
+                        {
+                            buffEffectData = JsonConvert.DeserializeObject<Dictionary<string, BuffEffectData>>(asset.text);
+                            AssetBundleManager.instance.LoadAssetAsync<TextAsset>(configPath + "Skill", (asset) =>
+                            {
+                                skillData = JsonConvert.DeserializeObject<Dictionary<string, SkillData>>(asset.text);
+                                AssetBundleManager.instance.LoadAssetAsync<TextAsset>(configPath + "SpecialEffectInfos", (asset) =>
+                                {
+                                    specialEffectData = JsonConvert.DeserializeObject<Dictionary<string, SpecialEffectData>>(asset.text);
+                                    LoadSpecialEffectPictures();
+                                });
+                            });
+                        });
+                    });
+                });
+                
+            });
+
+        }
+        private void LoadSpecialEffectPictures()
+        {
+            AssetBundleManager.instance.LoadAssetAsync<SpecialEffectPicture>(sOPath + "SpecialEffectPicture",pictures=>
+            {
+                specialEffectPictures.Clear();
+
+                foreach (var pic in pictures.pics)
+                {
+                    if (!specialEffectPictures.ContainsKey(pic.name))
+                    {
+                        specialEffectPictures.Add(pic.name, pic.icon);
+                    }
+                    else
+                    {
+                        specialEffectPictures[pic.name] = pic.icon;
+                    }
+                }
+                LoadVisualContainer();
+            });
+        }
+        private void LoadVisualContainer()
+        {
+            AssetBundleManager.instance.LoadAssetAsync<VisualContainer>(sOPath + "VisualContainer", VisualContainer=>
+            {
+                cardImages.Clear();
+                buffImages.Clear();
+
+                foreach (var cardInfo in VisualContainer.CardImages)
+                {
+                    if (!cardImages.ContainsKey(cardInfo.id))
+                    {
+                        cardImages.Add(cardInfo.id, cardInfo.icon);
+                    }
+                    else
+                    {
+                        //Debug.LogWarning($"Duplicate card id: {cardImg.id}");
+                        cardImages[cardInfo.id] = cardInfo.icon;
+                    }
+                    if (!cardBgColors.ContainsKey(cardInfo.id))
+                    {
+                        cardBgColors.Add(cardInfo.id, cardInfo.bgColor);
+                    }
+                    else
+                    {
+                        cardBgColors[cardInfo.id] = cardInfo.bgColor;
+                    }
+                }
+
+                foreach (var buffImg in VisualContainer.BuffImages)
+                {
+                    if (!buffImages.ContainsKey(buffImg.type))
+                    {
+                        buffImages.Add(buffImg.type, buffImg.icon);
+                    }
+                    else
+                    {
+                        //Debug.LogWarning($"Duplicate buff id: {buffImg.id}");
+                        buffImages[buffImg.type] = buffImg.icon;
+                    }
+                }
+
+                foreach (var buffVFX in VisualContainer.BuffVFXs)
+                {
+                    if (!buffImages.ContainsKey(buffVFX.type))
+                    {
+                        buffVFXs.Add(buffVFX.type, buffVFX.effect.GetComponent<EffectObject>());
+                    }
+                    else
+                    {
+                        //Debug.LogWarning($"Duplicate buff id: {buffImg.id}");
+                        buffVFXs[buffVFX.type] = buffVFX.effect.GetComponent<EffectObject>();
+                    }
+                }
+
+                foreach (var vfx in VisualContainer.VFXs)
+                {
+                    if (!VFXs.ContainsKey(vfx.id))
+                    {
+                        VFXs.Add(vfx.id, vfx.effect.GetComponent<EffectObject>());
+                    }
+                    else
+                    {
+                        VFXs[vfx.id] = vfx.effect.GetComponent<EffectObject>();
+                    }
+                }
+
+                foreach (var picture in VisualContainer.profilePics)
+                {
+                    if (!profilePictures.ContainsKey(picture.characterID))
+                    {
+                        profilePictures.Add(picture.characterID, picture.picture);
+                    }
+                    else
+                    {
+                        profilePictures[picture.characterID] = picture.picture;
+                    }
+                }
+                InitPools();
+                LoadCharacterPrefab();
+            });
+        }
+        private void LoadCharacterPrefab()
+        {
+            BattleCharacter[] gameObjects = Resources.LoadAll<BattleCharacter>(characterPath);
+            characterPrefabs.Clear();
+
+            foreach (var gameObject in gameObjects)
+            {
+                string key = gameObject.name;
+
+                characterPrefabs.Add(key, gameObject);
+
+            }
+            isInit = true;
         }
         public void Start()
         {
-            InitPools();
+            //InitPools();
         }
         private void InitPools()
         {
@@ -179,18 +342,6 @@ namespace Assets.Scripts.Manager
             foreach(var vfx in VFXs.Values)
             {
                 PoolManager.Instance.CreateGameObjectPool<EffectObject>(vfx, 2, 1);
-            }
-        }
-        private void LoadCharacterPrefab()
-        {
-            BattleCharacter[] gameObjects = Resources.LoadAll<BattleCharacter>(characterPath);
-
-            foreach (var gameObject in gameObjects)
-            {
-                string key = gameObject.name;
-
-                characterPrefabs.Add(key, gameObject);
-
             }
         }
     }

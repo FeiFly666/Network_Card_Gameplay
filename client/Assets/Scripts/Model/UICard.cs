@@ -56,7 +56,6 @@ namespace Assets.Scripts.Model
         private Vector3? followTarget;
         private Vector3 shownPosition;
         private TweenerCore<Vector3, Vector3, VectorOptions> followTween;
-        private int lastFollowTweenFrame = -1;
 
         private Vector3 FollowOffset => followTarget.HasValue ? shownPosition - rTransform.position : Vector3.zero;
 
@@ -178,8 +177,7 @@ namespace Assets.Scripts.Model
 
             if (isDragging && Time.frameCount % 15 == 0)
             {
-                Debug.Log($"[CardFollow] target={target:F1} shown={shownPosition:F1} " +
-                          $"face={followRoot.position:F1} tween={followTween?.Elapsed():F3}");
+                //Debug.Log($"[CardFollow] target={target:F1} shown={shownPosition:F1} " + $"face={followRoot.position:F1} tween={followTween?.Elapsed():F3}");
             }
         }
         public virtual void SetCardInfo()

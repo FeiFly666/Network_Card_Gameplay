@@ -6,6 +6,7 @@ using Common.Data;
 using Common.Model;
 using NetMessage;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
@@ -20,8 +21,11 @@ namespace Assets.Scripts.UI.Main
         //private Dictionary<string, GameObject> m_characterPrefabs = new Dictionary<string, GameObject>();
         private List<UIShowCard> m_generatedCards = new List<UIShowCard>();
         [Header("UI相关配置")]
+        [SerializeField] private RawImage previewImage;
         [SerializeField] private UICharacterShow showCha;
+
         [SerializeField] private UIShowCard cardPrefab;
+
         [SerializeField] private Transform cardRoot;
         [SerializeField] UISelectCharacterInfo selectInfo;
         [Header("按钮配置")]
@@ -32,6 +36,7 @@ namespace Assets.Scripts.UI.Main
         [SerializeField] private UIChaSpecialEffectSlot slotOne;
         [SerializeField] private UIChaSpecialEffectSlot slotTwo;
         [SerializeField] private UISpecialEffectSelectPanel effectSelectPanel;
+
         private string currentCharacterID;
         private void Awake()
         {
@@ -44,13 +49,14 @@ namespace Assets.Scripts.UI.Main
         public override void OnOpen()
         {
             base.OnOpen();
-
-            if(showCha == null)
+            if (showCha == null)
             {
                 showCha = GameObject.Find("ShowCharacterROOT").GetComponent<UICharacterShow>();
             }
+            previewImage.texture = showCha.PreviewTexture;
+            previewImage.gameObject.SetActive(true);
 
-            InitShowCards();
+            //InitShowCards();
 
             selectInfo.InitText();
 
@@ -62,6 +68,8 @@ namespace Assets.Scripts.UI.Main
             SpecialEffectsService.Instance.SendGetSpecialEffectLists();
 
             SpecialEffectInfoPanel.OnPanelClosed += HideLockObj;
+
+            InitShowCards();
         }
         private void InitShowCards()
         {
